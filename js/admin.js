@@ -304,6 +304,15 @@ function updateDriverPower(id, value) {
 function renderAdminSeason() {
   const label = document.getElementById("current-season-label");
   if (label) label.textContent = DB.season;
+   const cont = document.getElementById("current-season-label").parentElement;
+
+if (!document.getElementById("sync-data-btn")) {
+  cont.insertAdjacentHTML("beforeend", `
+    <button id="sync-data-btn" class="btn" onclick="syncFromDataJS()">
+      🔄 Actualizar Firebase desde data.js
+    </button>
+  `);
+                         }
 }
 function closeSeasonFromForm() {
   if (!confirm("Esto archiva la temporada actual en el historial y reinicia los puntos para la próxima. ¿Continuar?")) return;
