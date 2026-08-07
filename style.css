@@ -1,0 +1,399 @@
+/* ============================================================
+   F1 INTERNATIONAL CHAMPIONSHIP — style.css
+   ------------------------------------------------------------
+   Sistema de diseño:
+   - Tipografía: Titillium Web (display, la familia oficial del
+     mundo F1) + Inter (texto de lectura).
+   - Paleta: negro carbono, rojo carrera, blanco, gris pizarra.
+   - Firma visual: franjas diagonales tipo "livery" que dividen
+     secciones, y numeración de posición en todas las tablas
+     (tiene sentido: todo el sitio es un ranking deportivo).
+   ============================================================ */
+
+:root {
+  --bg:        #0a0a0b;
+  --bg-alt:    #131316;
+  --bg-card:   #17171b;
+  --border:    #26262b;
+  --red:       #e10600;
+  --red-dark:  #a80500;
+  --white:     #f5f5f7;
+  --gray:      #8a8d93;
+  --gray-light:#c9c9cf;
+  --green:     #17c964;
+  --gold:      #d4af37;
+  --radius:    10px;
+  --shadow:    0 10px 30px rgba(0,0,0,.45);
+  --font-display: 'Titillium Web', 'Inter', sans-serif;
+  --font-body: 'Inter', 'Titillium Web', sans-serif;
+}
+[data-theme="light"] {
+  --bg:        #f2f2f4;
+  --bg-alt:    #ffffff;
+  --bg-card:   #ffffff;
+  --border:    #dcdce0;
+  --white:     #111114;
+  --gray:      #55575e;
+  --gray-light:#33343a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: .01em;
+  margin: 0 0 .4em;
+}
+p { margin: 0 0 1em; color: var(--gray-light); }
+ul { list-style: none; margin: 0; padding: 0; }
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+.container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------------------- HEADER / NAV ---------------------- */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,11,.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .25s, background .25s;
+}
+.site-header.scrolled { border-color: var(--border); background: rgba(10,10,11,.97); }
+[data-theme="light"] .site-header { background: rgba(255,255,255,.9); }
+[data-theme="light"] .site-header.scrolled { background: rgba(255,255,255,.98); }
+
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; max-width: 1280px; margin: 0 auto; padding: 0 20px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 900; font-size: 1.05rem; }
+.brand .stripe { width: 6px; height: 26px; background: var(--red); border-radius: 2px; transform: skewX(-12deg); }
+.brand small { display: block; font-weight: 400; font-size: .62rem; letter-spacing: .12em; color: var(--gray); text-transform: uppercase; }
+
+.nav-menu {
+  display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+}
+.nav-menu a {
+  font-size: .82rem; font-weight: 600; color: var(--gray-light);
+  padding: 8px 12px; border-radius: 6px; white-space: nowrap;
+  transition: color .2s, background .2s;
+  touch-action: manipulation; /* toque instantáneo, sin delay ni doble-tap */
+  -webkit-tap-highlight-color: rgba(225,6,0,.25);
+}
+/* Los :hover van dentro de @media (hover:hover) para que SOLO se
+   activen con mouse/trackpad real. En touch (celular/tablet), Safari
+   y Chrome interpretan el primer toque sobre un elemento con :hover
+   como "activar el hover" y recién el segundo toque navega — por eso
+   los links "no hacían nada" al primer toque en mobile. Sacando el
+   hover del camino en touch, el primer toque navega directo. */
+@media (hover: hover) and (pointer: fine) {
+  .nav-menu a:hover { color: var(--white); background: rgba(255,255,255,.06); }
+}
+.nav-menu a.active { color: var(--white); background: var(--red); }
+
+.nav-extra { display: flex; align-items: center; gap: 8px; }
+.mode-toggle {
+  background: transparent; border: 1px solid var(--border); color: var(--white);
+  width: 34px; height: 34px; border-radius: 50%; font-size: .95rem;
+}
+.nav-toggle {
+  display: none; flex-direction: column; gap: 5px; background: none; border: none;
+  width: 34px; height: 34px; justify-content: center; align-items: center;
+}
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--white); transition: transform .25s, opacity .25s; }
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 980px) {
+  .nav-toggle { display: flex; }
+  .nav-menu {
+    position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+    background: var(--bg); flex-direction: column; align-items: stretch;
+    padding: 16px 20px; gap: 4px; transform: translateX(100%);
+    transition: transform .3s ease; overflow-y: auto;
+  }
+  .nav-menu.open { transform: translateX(0); }
+  .nav-menu a { padding: 14px 10px; font-size: .95rem; border-bottom: 1px solid var(--border); }
+}
+
+main { padding-top: 64px; min-height: 70vh; }
+
+/* ---------------------- HERO / BANNER ---------------------- */
+.hero {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #17070a 0%, var(--bg) 75%);
+  padding: 90px 0 60px;
+  border-bottom: 1px solid var(--border);
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(-15deg, rgba(225,6,0,.08) 0 2px, transparent 2px 60px);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--red); font-weight: 700; margin-bottom: 14px;
+}
+.hero-eyebrow::before { content: ""; width: 20px; height: 2px; background: var(--red); }
+.hero h1 {
+  font-size: clamp(2.1rem, 6vw, 4rem); font-weight: 900; line-height: 1.02;
+  text-transform: uppercase; letter-spacing: -.01em; max-width: 900px;
+}
+.hero h1 span { color: var(--red); }
+.hero-sub { font-size: 1.05rem; color: var(--gray-light); max-width: 560px; }
+
+.hero-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 40px;
+}
+@media (max-width: 720px) { .hero-grid { grid-template-columns: 1fr; } }
+
+/* ---------------------- CARDS ---------------------- */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-3px); border-color: #3a3a40; box-shadow: var(--shadow); }
+}
+
+.fade-up { animation: fadeUp .5s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+.section { padding: 56px 0; }
+.section-title {
+  font-size: 1.5rem; text-transform: uppercase; letter-spacing: .01em;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 22px;
+}
+.section-title::before { content: ""; width: 5px; height: 22px; background: var(--red); border-radius: 2px; transform: skewX(-12deg); }
+.section-title .count { font-size: .8rem; color: var(--gray); font-weight: 400; }
+
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+@media (max-width: 720px) { .grid-3 { grid-template-columns: 1fr; } }
+
+/* ---------------------- HOME WIDGETS ---------------------- */
+.fav-driver { display: flex; align-items: center; gap: 14px; }
+.fav-number { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; }
+.fav-name { font-weight: 700; font-size: 1.05rem; }
+.fav-team { color: var(--gray); font-size: .85rem; }
+.fav-odds { margin-top: 14px; font-size: .9rem; color: var(--gray-light); }
+.next-gp { display: flex; align-items: center; gap: 14px; }
+.flag-big { font-size: 2.4rem; }
+.next-gp-name { font-weight: 700; }
+.next-gp-date { color: var(--gray); font-size: .85rem; }
+.mini-driver-card { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: .85rem; }
+.mini-driver-card:last-child { border: none; }
+.mini-team { margin-left: auto; color: var(--gray); }
+.dot, .team-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+/* ---------------------- BADGES / CHIPS ---------------------- */
+.badge {
+  display: inline-block; font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; padding: 3px 9px; border-radius: 20px; background: var(--bg-alt);
+  border: 1px solid var(--border); color: var(--gray-light);
+}
+.badge-ok { color: var(--green); border-color: var(--green); }
+.badge-warn { color: var(--gold); border-color: var(--gold); }
+.badge-info { color: var(--gray-light); }
+.badge-finalizado { color: var(--gray); }
+.badge-proximo { color: var(--red); border-color: var(--red); }
+.badge-pendiente { color: var(--gray-light); }
+
+.chip {
+  background: var(--bg-alt); border: 1px solid var(--border); color: var(--gray-light);
+  padding: 7px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; margin: 2px;
+  transition: all .2s;
+}
+.chip.active { background: var(--red); color: #fff; border-color: var(--red); }
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover { background: var(--red); color: #fff; border-color: var(--red); }
+}
+
+/* ---------------------- NOTICIAS ---------------------- */
+.news-card { padding: 0; overflow: hidden; }
+.news-img { height: 170px; background-size: cover; background-position: center; }
+.news-body { padding: 18px; }
+.news-date { font-size: .78rem; color: var(--gray); margin: 4px 0 10px; }
+.news-text { font-size: .88rem; }
+
+/* ---------------------- MERCADO / DRIVER CARD ---------------------- */
+.driver-card { text-align: center; display: block; }
+.driver-photo {
+  width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 10px;
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; background: var(--bg-alt);
+}
+.driver-num { font-family: var(--font-display); font-weight: 900; font-size: 1.1rem; }
+.driver-card h3 { font-size: 1rem; margin: 2px 0; }
+.driver-team, .driver-country { font-size: .8rem; color: var(--gray); margin: 0 0 6px; }
+.rumor-teams { font-size: .74rem; color: var(--gold); margin-top: 8px; }
+
+/* ---------------------- TABLAS ---------------------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+thead th {
+  text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--gray); padding: 12px 14px; background: var(--bg-alt); border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: .88rem; white-space: nowrap; }
+@media (hover: hover) and (pointer: fine) {
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+}
+tbody tr:last-child td { border-bottom: none; }
+.pos { font-family: var(--font-display); font-weight: 900; color: var(--gray-light); }
+.strong { font-weight: 800; color: var(--white); }
+.driver-cell a { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.num { color: var(--gray); font-weight: 400; }
+
+/* ---------------------- CUOTAS ---------------------- */
+.odds-card { display: flex; flex-direction: column; gap: 10px; }
+.odds-top { display: flex; align-items: center; gap: 8px; font-size: .9rem; }
+.odds-team { margin-left: auto; color: var(--gray); font-size: .78rem; }
+.odds-mid { display: flex; align-items: center; gap: 12px; }
+.odds-value { font-family: var(--font-display); font-weight: 900; font-size: 1.7rem; color: var(--red); }
+.odds-prob { font-size: .78rem; color: var(--gray-light); }
+.odds-spark { width: 100%; }
+.trend { font-size: .78rem; font-weight: 700; }
+.trend.up { color: var(--green); }
+.trend.down { color: var(--red); }
+.trend.flat { color: var(--gray); }
+
+/* ---------------------- POWER RANKING ---------------------- */
+.power-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding: 14px 18px; }
+.power-rank { font-family: var(--font-display); font-weight: 900; font-size: 1.4rem; width: 34px; color: var(--red); }
+.power-name { font-weight: 700; }
+.power-team { margin-left: auto; color: var(--gray); font-size: .8rem; }
+
+/* ---------------------- CALENDARIO ---------------------- */
+.calendar-card { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+.cal-round { font-family: var(--font-display); font-weight: 900; color: var(--gray); width: 42px; }
+.cal-flag { font-size: 1.8rem; }
+.cal-info { flex: 1; }
+.cal-info h3 { margin: 0 0 4px; }
+.cal-info p { margin: 0; font-size: .8rem; }
+.calendar-card.status-finalizado { opacity: .55; }
+.calendar-card.status-proximo { border-color: var(--red); }
+
+/* ---------------------- ESTADÍSTICAS ---------------------- */
+.stat-list li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: .88rem; }
+.stat-list li:last-child { border: none; }
+.stat-list .rank { font-family: var(--font-display); font-weight: 800; color: var(--gray); width: 18px; }
+.stat-val { margin-left: auto; font-weight: 800; color: var(--red); }
+.stat-box { text-align: center; }
+.stat-box span { display: block; font-size: .74rem; color: var(--gray); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.stat-box strong { font-family: var(--font-display); font-size: 1.5rem; }
+.history-card { margin-bottom: 12px; }
+
+/* ---------------------- PERFIL DE PILOTO ---------------------- */
+.profile-hero {
+  display: flex; align-items: center; gap: 22px; padding: 30px 0;
+  border-bottom: 3px solid var(--team-color, var(--red));
+}
+.profile-photo {
+  width: 96px; height: 96px; border-radius: 50%; background: var(--bg-card);
+  border: 2px solid var(--team-color, var(--red)); display: flex; align-items: center; justify-content: center;
+  font-size: 2.4rem; flex-shrink: 0;
+}
+.profile-sub { color: var(--gray); }
+.profile-odds { color: var(--red); font-weight: 700; }
+.profile-bio { margin: 20px 0; font-size: 1rem; }
+.profile-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 30px; }
+@media (max-width: 900px) { .profile-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .profile-grid { grid-template-columns: repeat(2, 1fr); } .profile-hero { flex-direction: column; text-align: center; } }
+#driver-chart { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+
+/* ---------------------- FORMULARIOS / ADMIN ---------------------- */
+.search-bar { margin-bottom: 24px; }
+.search-bar input {
+  width: 100%; max-width: 420px; padding: 12px 16px; border-radius: 30px;
+  border: 1px solid var(--border); background: var(--bg-alt); color: var(--white); font-size: .9rem;
+}
+form.admin-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+form.admin-form.wide { grid-template-columns: 1fr; }
+form.admin-form label { display: flex; flex-direction: column; gap: 4px; font-size: .78rem; color: var(--gray-light); }
+form.admin-form input, form.admin-form select, form.admin-form textarea {
+  padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-alt); color: var(--white); font-family: inherit; font-size: .9rem;
+}
+form.admin-form textarea { resize: vertical; min-height: 80px; }
+.btn {
+  display: inline-block; background: var(--red); color: #fff; border: none; padding: 12px 22px;
+  border-radius: 6px; font-weight: 700; font-size: .88rem; text-transform: uppercase; letter-spacing: .03em;
+  transition: background .2s, transform .2s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { background: var(--red-dark); transform: translateY(-1px); }
+}
+.btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--white); }
+.btn-mini { background: var(--bg-alt); border: 1px solid var(--border); color: var(--white); padding: 5px 10px; border-radius: 5px; font-size: .74rem; margin-left: 6px; }
+.btn-mini.danger { color: var(--red); border-color: var(--red); }
+.admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+.admin-tab-btn { background: var(--bg-alt); border: 1px solid var(--border); color: var(--gray-light); padding: 9px 16px; border-radius: 6px; font-size: .82rem; font-weight: 600; }
+.admin-tab-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+.admin-tab { display: none; }
+.admin-tab.active { display: block; }
+.admin-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: .85rem;
+}
+.inline-label { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--gray); margin-left: auto; }
+.inline-label input { width: 80px; padding: 5px 8px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--white); }
+.order-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: .84rem; }
+.order-row select { flex: 1; padding: 7px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg-alt); color: var(--white); }
+#admin-login { max-width: 380px; margin: 80px auto; text-align: center; }
+.hidden { display: none !important; }
+.empty { color: var(--gray); font-style: italic; padding: 20px 0; }
+
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 30px);
+  background: var(--white); color: #111; padding: 12px 22px; border-radius: 30px;
+  font-weight: 700; font-size: .85rem; opacity: 0; pointer-events: none;
+  transition: all .3s; z-index: 999; box-shadow: var(--shadow);
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------------------- LOADER (carga de la base de datos compartida) ---------------------- */
+#global-loader {
+  position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  transition: opacity .35s ease;
+}
+#global-loader.hide { opacity: 0; pointer-events: none; }
+#global-loader .loader-spinner {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 4px solid var(--border); border-top-color: var(--red);
+  animation: f1spin .8s linear infinite;
+}
+#global-loader span { color: var(--gray); font-size: .85rem; letter-spacing: .04em; }
+@keyframes f1spin { to { transform: rotate(360deg); } }
+
+/* ---------------------- FOOTER ---------------------- */
+.site-footer {
+  border-top: 1px solid var(--border); padding: 34px 0; color: var(--gray); font-size: .82rem;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.site-footer strong { color: var(--white); }
+
+/* ---------------------- UTILIDADES ---------------------- */
+.text-center { text-align: center; }
+.mt-0 { margin-top: 0; }

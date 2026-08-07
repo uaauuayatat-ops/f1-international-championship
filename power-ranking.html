@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clasificación de poder — F1 International Championship</title>
+<meta name="description" content="Power ranking independiente del campeonato, calculado por ritmo, poles y consistencia reciente.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="power">
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="stripe"></span>F1 <small>INTERNATIONAL CHAMPIONSHIP</small></a>
+    <nav class="nav-menu">
+      <a href="index.html" data-nav="home">Inicio</a>
+      <a href="noticias.html" data-nav="news">Noticias</a>
+      <a href="mercado.html" data-nav="market">Mercado de pilotos</a>
+      <a href="pilotos.html" data-nav="drivers">Campeonato de pilotos</a>
+      <a href="constructores.html" data-nav="constructors">Campeonato de constructores</a>
+      <a href="cuotas.html" data-nav="odds">Cuotas simuladas</a>
+      <a href="power-ranking.html" data-nav="power">Clasificación de poder</a>
+      <a href="calendario.html" data-nav="calendar">Calendario</a>
+      <a href="estadisticas.html" data-nav="stats">Estadísticas</a>
+      <a href="admin.html" data-nav="admin">Administración</a>
+    </nav>
+    <div class="nav-extra">
+      <button class="mode-toggle" aria-label="Cambiar tema">🌙</button>
+      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="section container">
+  <h1>Clasificación de poder</h1>
+  <p style="max-width:640px">Ranking independiente del campeonato de puntos. Se calcula con el ritmo de las últimas carreras, poles, consistencia, errores y abandonos.</p>
+  <div id="power-list"></div>
+</main>
+
+<footer class="site-footer container">
+  <div>© <span data-season>26/27</span> F1 International Championship — sitio no oficial, proyecto de fan.</div>
+  <div>Las cuotas son <strong>simuladas</strong>, no constituyen apuestas reales.</div>
+</footer>
+
+<!-- Firebase (base de datos compartida) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

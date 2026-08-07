@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estadísticas — F1 International Championship</title>
+<meta name="description" content="Estadísticas y récords del F1 International Championship: más victorias, poles, podios, vueltas rápidas y más.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="stats">
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="stripe"></span>F1 <small>INTERNATIONAL CHAMPIONSHIP</small></a>
+    <nav class="nav-menu">
+      <a href="index.html" data-nav="home">Inicio</a>
+      <a href="noticias.html" data-nav="news">Noticias</a>
+      <a href="mercado.html" data-nav="market">Mercado de pilotos</a>
+      <a href="pilotos.html" data-nav="drivers">Campeonato de pilotos</a>
+      <a href="constructores.html" data-nav="constructors">Campeonato de constructores</a>
+      <a href="cuotas.html" data-nav="odds">Cuotas simuladas</a>
+      <a href="power-ranking.html" data-nav="power">Clasificación de poder</a>
+      <a href="calendario.html" data-nav="calendar">Calendario</a>
+      <a href="estadisticas.html" data-nav="stats">Estadísticas</a>
+      <a href="admin.html" data-nav="admin">Administración</a>
+    </nav>
+    <div class="nav-extra">
+      <button class="mode-toggle" aria-label="Cambiar tema">🌙</button>
+      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="section container">
+  <h1>Estadísticas</h1>
+  <p style="max-width:640px">Récords acumulados entre la temporada actual y el histórico de carrera de cada piloto.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>Más victorias</h3>
+      <ul class="stat-list" id="stat-wins"></ul>
+    </div>
+    <div class="card">
+      <h3>Más poles</h3>
+      <ul class="stat-list" id="stat-poles"></ul>
+    </div>
+    <div class="card">
+      <h3>Más podios</h3>
+      <ul class="stat-list" id="stat-podiums"></ul>
+    </div>
+    <div class="card">
+      <h3>Más vueltas rápidas</h3>
+      <ul class="stat-list" id="stat-fastlaps"></ul>
+    </div>
+    <div class="card">
+      <h3>Más puntos (temporada)</h3>
+      <ul class="stat-list" id="stat-points"></ul>
+    </div>
+    <div class="card">
+      <h3>Más abandonos</h3>
+      <ul class="stat-list" id="stat-dnf"></ul>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:44px">Historial de campeones</h2>
+  <div id="history-list"></div>
+</main>
+
+<footer class="site-footer container">
+  <div>© <span data-season>26/27</span> F1 International Championship — sitio no oficial, proyecto de fan.</div>
+  <div>Las cuotas son <strong>simuladas</strong>, no constituyen apuestas reales.</div>
+</footer>
+
+<!-- Firebase (base de datos compartida) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

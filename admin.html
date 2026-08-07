@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administración — F1 International Championship</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="stripe"></span>F1 <small>INTERNATIONAL CHAMPIONSHIP</small></a>
+    <nav class="nav-menu">
+      <a href="index.html" data-nav="home">Inicio</a>
+      <a href="noticias.html" data-nav="news">Noticias</a>
+      <a href="mercado.html" data-nav="market">Mercado de pilotos</a>
+      <a href="pilotos.html" data-nav="drivers">Campeonato de pilotos</a>
+      <a href="constructores.html" data-nav="constructors">Campeonato de constructores</a>
+      <a href="cuotas.html" data-nav="odds">Cuotas simuladas</a>
+      <a href="power-ranking.html" data-nav="power">Clasificación de poder</a>
+      <a href="calendario.html" data-nav="calendar">Calendario</a>
+      <a href="estadisticas.html" data-nav="stats">Estadísticas</a>
+      <a href="admin.html" data-nav="admin">Administración</a>
+    </nav>
+    <div class="nav-extra">
+      <button class="mode-toggle" aria-label="Cambiar tema">🌙</button>
+      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="section container">
+
+  <div id="admin-login">
+    <h1>Panel de administración</h1>
+    <p>Acceso restringido. Ingresá la contraseña de administrador.</p>
+    <form id="admin-login-form" class="admin-form wide">
+      <label>Contraseña
+        <input type="password" id="admin-password" required>
+      </label>
+      <button class="btn" type="submit">Ingresar</button>
+      <p id="admin-login-error" style="color:var(--red)"></p>
+    </form>
+    <p style="font-size:.78rem">Contraseña de demo: <code>f1admin2027</code> — cambiala en <code>js/app.js</code> antes de publicar.</p>
+  </div>
+
+  <div id="admin-panel" class="hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <h1 class="mt-0">Panel de administración</h1>
+      <div style="display:flex; gap:10px;">
+        <a href="index.html" class="btn secondary">← Ver sitio</a>
+        <button class="btn secondary" id="admin-logout">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" data-tab="drivers">Pilotos</button>
+      <button class="admin-tab-btn" data-tab="teams">Equipos</button>
+      <button class="admin-tab-btn" data-tab="news">Noticias</button>
+      <button class="admin-tab-btn" data-tab="results">Calendario y resultados</button>
+      <button class="admin-tab-btn" data-tab="odds">Cuotas y Power Ranking</button>
+      <button class="admin-tab-btn" data-tab="season">Temporada</button>
+    </div>
+
+    <!-- PILOTOS -->
+    <section id="tab-drivers" class="admin-tab active">
+      <h2 class="section-title">Agregar / editar piloto</h2>
+      <form id="driver-form" class="admin-form">
+        <label>Piloto existente
+          <select id="driver-edit-select"></select>
+        </label>
+        <label>Nombre
+          <input type="text" id="driver-name" required>
+        </label>
+        <label>Número
+          <input type="number" id="driver-number">
+        </label>
+        <label>País
+          <input type="text" id="driver-country">
+        </label>
+        <label>Bandera (emoji)
+          <input type="text" id="driver-flag" placeholder="🏳️">
+        </label>
+        <label>Equipo
+          <select id="driver-team-select"></select>
+        </label>
+        <label>Estado del fichaje
+          <select id="driver-status">
+            <option value="confirmado">✅ Confirmado</option>
+            <option value="rumor">⏳ Rumor</option>
+            <option value="libre">❓ Asiento disponible</option>
+          </select>
+        </label>
+        <label style="grid-column:1/-1">Biografía / nota
+          <textarea id="driver-bio"></textarea>
+        </label>
+        <div style="grid-column:1/-1"><button class="btn" type="submit">Guardar piloto</button></div>
+      </form>
+      <h2 class="section-title">Listado</h2>
+      <div id="admin-drivers-list"></div>
+    </section>
+
+    <!-- EQUIPOS -->
+    <section id="tab-teams" class="admin-tab">
+      <h2 class="section-title">Equipos (11)</h2>
+      <p style="max-width:600px">Los puntos, victorias, poles y podios de cada equipo se recalculan solos a partir de sus pilotos. Acá podés ajustar manualmente la cuota simulada del equipo.</p>
+      <div id="admin-teams-list"></div>
+    </section>
+
+    <!-- NOTICIAS -->
+    <section id="tab-news" class="admin-tab">
+      <h2 class="section-title">Publicar noticia</h2>
+      <form id="news-form" class="admin-form">
+        <label>Título
+          <input type="text" id="news-title" required>
+        </label>
+        <label>Categoría
+          <input type="text" id="news-category" placeholder="Fichajes, Rumores, Resultados...">
+        </label>
+        <label style="grid-column:1/-1">URL de imagen
+          <input type="url" id="news-image" placeholder="https://...">
+        </label>
+        <label style="grid-column:1/-1">Texto
+          <textarea id="news-text" required></textarea>
+        </label>
+        <div style="grid-column:1/-1"><button class="btn" type="submit">Publicar</button></div>
+      </form>
+      <h2 class="section-title">Noticias publicadas</h2>
+      <div id="admin-news-list"></div>
+    </section>
+
+    <!-- CALENDARIO Y RESULTADOS -->
+    <section id="tab-results" class="admin-tab">
+      <h2 class="section-title">Cargar resultado de una fecha</h2>
+      <p style="max-width:640px">Elegí la fecha y la carrera (sábado o domingo), luego asigná el orden de llegada. Al guardar se recalculan automáticamente el campeonato de pilotos, constructores, power ranking, cuotas y se genera una noticia automática.</p>
+      <form id="result-form" class="admin-form wide">
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <label style="flex:1">Fecha del calendario
+            <select id="result-round-select"></select>
+          </label>
+          <label style="flex:1">Carrera
+            <select id="result-race-key">
+              <option value="r1">Sábado (R1)</option>
+              <option value="r2">Domingo (R2)</option>
+            </select>
+          </label>
+          <label style="flex:1">Pole position
+            <select id="result-pole-select"></select>
+          </label>
+          <label style="flex:1">Vuelta rápida
+            <select id="result-fl-select"></select>
+          </label>
+        </div>
+        <h3>Orden de llegada</h3>
+        <div id="result-order-wrap"></div>
+        <button class="btn" type="submit">Guardar resultado y recalcular</button>
+      </form>
+
+      <h2 class="section-title" style="margin-top:36px">Agregar nuevo circuito</h2>
+      <form id="circuit-form" class="admin-form">
+        <label>Circuito<input type="text" id="circuit-name" required></label>
+        <label>Bandera (emoji)<input type="text" id="circuit-flag"></label>
+        <label>Fecha sábado (R1)<input type="date" id="circuit-r1" required></label>
+        <label>Fecha domingo (R2)<input type="date" id="circuit-r2" required></label>
+        <div style="grid-column:1/-1"><button class="btn" type="submit">Agregar circuito</button></div>
+      </form>
+
+      <h2 class="section-title" style="margin-top:36px">Calendario actual</h2>
+      <div id="admin-calendar-list"></div>
+    </section>
+
+    <!-- CUOTAS Y POWER RANKING MANUAL -->
+    <section id="tab-odds" class="admin-tab">
+      <h2 class="section-title">Ajuste manual</h2>
+      <p style="max-width:640px">Las cuotas y el power ranking se recalculan solos al cargar resultados, pero podés forzar un valor manualmente si querés reflejar algo puntual (una lesión, un cambio de motor, etc).</p>
+      <div id="admin-odds-power-list"></div>
+    </section>
+
+    <!-- TEMPORADA -->
+    <section id="tab-season" class="admin-tab">
+      <h2 class="section-title">Temporada actual: <span id="current-season-label"></span></h2>
+      <p style="max-width:640px">Cerrar la temporada archiva el campeón de pilotos, subcampeón, tercer lugar y campeón de constructores en el historial, pasa las estadísticas de la temporada al histórico de carrera de cada piloto y reinicia los puntos para la próxima temporada.</p>
+      <form id="season-form" class="admin-form">
+        <label>Nombre de la nueva temporada
+          <input type="text" id="new-season-label" placeholder="Ej: Temporada 27/28">
+        </label>
+        <div style="grid-column:1/-1"><button class="btn" type="submit">Cerrar temporada y archivar</button></div>
+      </form>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer container">
+  <div>© <span data-season>26/27</span> F1 International Championship — sitio no oficial, proyecto de fan.</div>
+  <div>Las cuotas son <strong>simuladas</strong>, no constituyen apuestas reales.</div>
+</footer>
+
+<!-- Firebase (base de datos compartida) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
