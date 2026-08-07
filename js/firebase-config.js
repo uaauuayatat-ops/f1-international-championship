@@ -46,12 +46,15 @@
    ============================================================ */
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "TU_APP_ID",
+    apiKey: "AIzaSyAhrc0BgdSy9syE_8YqF8obye4dY4caXdw",
+    authDomain: "f1-fxracer.firebaseapp.com",
+    projectId: "f1-fxracer",
+    storageBucket: "f1-fxracer.firebasestorage.app",
+    messagingSenderId: "90569222878",
+    appId: "1:90569222878:web:f44316819b034e3d3c304f",
+    measurementId: "G-0Z1V31YH3H"
+  };
+  
 };
 
 firebase.initializeApp(firebaseConfig);
