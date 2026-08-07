@@ -175,7 +175,15 @@ function recalcOdds() {
   DB.teams.forEach(t => teamStrength[t.id] = (t.points / maxTeamPts) * 10);
 
   const scores = DB.drivers.map(d => {
-    if (d.status === "libre" && !d.teamId && d.season.points === 0 && d.career.points === 0) return { d, score: 0 };
+    if (
+  d.season.points === 0 &&
+  d.season.wins === 0 &&
+  d.season.podiums === 0 &&
+  d.season.poles === 0 &&
+  d.recentPositions.length === 0
+) {
+  return { d, score: 0 };
+    }
     const recent = d.recentPositions.slice(-5);
     const recentAvg = recent.length ? recent.reduce((a,b)=>a+b,0)/recent.length : 20;
     const consistencyBonus = recent.length ? Math.max(0, 10 - recentAvg) : 0;
