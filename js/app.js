@@ -58,7 +58,22 @@ async function saveDB(db) {
     alert("No se pudo guardar. Revisá tu conexión o la configuración de js/firebase-config.js.");
   }
 }
+/* ----------------------------------------------------------
+   Actualizar Firestore con el contenido de data.js
+   ---------------------------------------------------------- */
+async function syncFromDataJS() {
+  if (!confirm("¿Reemplazar la base de datos de Firebase con el contenido actual de data.js?")) return;
 
+  try {
+    DB = buildSeed();
+    await saveDB(DB);
+    alert("✅ Firebase se actualizó correctamente desde data.js.");
+    renderCurrentPage();
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error al actualizar Firebase.");
+  }
+}
 /* Escucha cambios en vivo (de cualquier visitante) y repinta la
    página actual. Ignora el "eco" de nuestros propios guardados. */
 function subscribeDB() {
