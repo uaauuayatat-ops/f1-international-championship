@@ -281,6 +281,7 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   }
   recalcTeams();
 recalcOdds();
+recalcConstructorOdds();
 recalcPower();
 saveDB(DB);
 }
