@@ -227,9 +227,10 @@ function recalcPower() {
 
 function recalcAll() {
   recalcTeams();
-recalcOdds();
-recalcPower();
-saveDB(DB);
+  // recalcOdds(); // Desactivado para mantener cuotas manuales
+  recalcPower();
+  saveDB(DB);
+}
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
@@ -265,7 +266,10 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
       text: `${winner.name} (${teamName(winner.teamId)}) se quedó con la victoria en el Gran Premio de ${race.circuit}, fecha ${round} de la ${DB.season}.`,
     });
   }
-  recalcAll();
+  recalcTeams();
+recalcOdds();
+recalcPower();
+saveDB(DB);
 }
 
 /* ----------------------------------------------------------
