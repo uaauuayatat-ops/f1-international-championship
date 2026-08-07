@@ -365,7 +365,7 @@ function renderHome() {
     ` : "";
   }
 
-  const nextRace = DB.calendar.find(r => raceStatus(r.r1) !== "finalizado");
+  const nextRace = DB.calendar.find(r => !(r.results.r1 && r.results.r2));
   if (el("home-proximo") && nextRace) {
     el("home-proximo").innerHTML = `
       <div class="next-gp">
