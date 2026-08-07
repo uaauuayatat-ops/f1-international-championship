@@ -209,7 +209,20 @@ function recalcOdds() {
     d.oddsHistory = [...(d.oddsHistory || []), d.odds].slice(-10);
   });
 }
+function recalcConstructorOdds() {
+  const total = DB.teams.reduce((sum, t) => sum + Math.max(1, t.points), 0);
 
+  DB.teams.forEach(t => {
+    const probability = Math.round((Math.max(1, t.points) / total) * 1000) / 10;
+
+    t.oddsPrev = t.odds;
+
+    const rawOdds = Math.max(1.05, Math.round((100 / probability) * 100) / 100);
+
+    t.odds = isFinite(rawOdds) ? rawOdds : 999;
+    t.probability = probability;
+  });
+     }
 /* Power Ranking: clasificación independiente basada en ritmo
    reciente, poles y consistencia (no depende de los puntos). */
 function recalcPower() {
