@@ -217,7 +217,12 @@ function recalcPower() {
   scored.forEach(({d}, i) => { d.powerRank = i + 1; });
 }
 
-function recalcAll() { recalcTeams(); recalcOdds(); recalcPower(); saveDB(DB); }
+function recalcAll() {
+  recalcTeams();
+  // recalcOdds(); // Desactivado para mantener cuotas manuales
+  recalcPower();
+  saveDB(DB);
+}
 
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
