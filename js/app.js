@@ -342,8 +342,9 @@ function powerTrendArrow(rank, prevRank) {
    6) RENDER: INICIO
    ---------------------------------------------------------- */
 function renderHome() {
-  const ds = driverStandings();
-  const leader = ds[0];
+  const leader = [...DB.drivers]
+  .filter(d => d.odds != null)
+  .sort((a, b) => a.odds - b.odds)[0];
   const el = id => document.getElementById(id);
 
   if (el("home-favorito")) {
