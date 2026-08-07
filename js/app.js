@@ -210,19 +210,92 @@ function recalcOdds() {
   });
 }
 function recalcConstructorOdds() {
-  const total = DB.teams.reduce((sum, t) => sum + Math.max(1, t.points), 0);
+  // Máximo de puntos que puede conseguir un piloto en una carrera
+  const maxPointsPerDriver = Math.max(...POINTS_SYSTEM);
 
-  DB.teams.forEach(t => {
-    const probability = Math.round((Math.max(1, t.points) / total) * 1000) / 10;
+  // Carreras que todavía no terminaron
+  let remainingRaces = 0;
 
-    t.oddsPrev = t.odds;
-
-    const rawOdds = Math.max(1.05, Math.round((100 / probability) * 100) / 100);
-
-    t.odds = isFinite(rawOdds) ? rawOdds : 999;
-    t.probability = probability;
+  DB.calendar.forEach(race => {
+    if (!race.results?.r1) remainingRaces++;
+    if (!race.results?.r2) remainingRaces++;
   });
-     }
+
+  // Calculamos los puntos máximos que todavía podría conseguir
+  // cada constructor con sus pilotos actuales.
+  const possibilities = DB.teams.map(team => {
+    const teamDrivers = DB.drivers.filter(d => d.teamId === team.id);
+
+    const maxRemainingPoints =
+      remainingRaces *
+      teamDrivers.length *
+      maxPointsPerDriver;
+
+    return {
+      team,
+      currentPoints: team.points || 0,
+      maxPossiblePoints:
+        (team.points || 0) + maxRemainingPoints
+    };
+  });
+
+  // Constructor actualmente líder
+  const leader = [...possibilities]
+    .sort((a, b) => b.currentPoints - a.currentPoints)[0];
+
+  // Comprobamos si el líder ya es campeón matemáticamente
+  const isChampion = leader &&
+    possibilities
+      .filter(x => x.team.id !== leader.team.id)
+      .every(x => leader.currentPoints > x.maxPossiblePoints);
+
+  // Si ya es campeón matemáticamente
+  if (isChampion) {
+    possibilities.forEach(({ team }) => {
+      team.oddsPrev = team.odds;
+
+      if (team.id === leader.team.id) {
+        team.probability = 100;
+        team.odds = 1.00;
+        team.champion = true;
+      } else {
+        team.probability = 0;
+        team.odds = 999;
+        team.champion = false;
+      }
+    });
+
+    return;
+  }
+
+  // Si todavía no está definido el campeonato,
+  // calculamos las probabilidades normalmente.
+  const total = DB.teams.reduce(
+    (sum, team) => sum + Math.max(1, team.points || 0),
+    0
+  );
+
+  DB.teams.forEach(team => {
+    const probability =
+      Math.round(
+        (Math.max(1, team.points || 0) / total) * 1000
+      ) / 10;
+
+    team.oddsPrev = team.odds;
+
+    // Puede bajar hasta 1.01.
+    // El 1.00 queda reservado exclusivamente
+    // para un campeón matemáticamente confirmado.
+    const rawOdds = Math.max(
+      1.01,
+      Math.round((100 / probability) * 100) / 100
+    );
+
+    team.odds = isFinite(rawOdds) ? rawOdds : 999;
+    team.probability = probability;
+    team.champion = false;
+  });
+}
 /* Power Ranking: clasificación independiente basada en ritmo
    reciente, poles y consistencia (no depende de los puntos). */
 function recalcPower() {
