@@ -227,11 +227,9 @@ function recalcPower() {
 
 function recalcAll() {
   recalcTeams();
-  // recalcOdds(); // Desactivado para mantener cuotas manuales
-  recalcPower();
-  saveDB(DB);
-}
-
+recalcOdds();
+recalcPower();
+saveDB(DB);
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
