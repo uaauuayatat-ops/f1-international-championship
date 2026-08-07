@@ -202,7 +202,7 @@ function recalcOdds() {
   const totalScore = scores.reduce((a,b) => a + b.score, 0);
   scores.forEach(({ d, score }) => {
     const probability = Math.round((score / totalScore) * 1000) / 10; // %
-    const rawOdds = Math.max(1.05, Math.round((100 / probability) * 100) / 100);
+    const rawOdds = Math.max(1.00, Math.round((100 / probability) * 100) / 100);
     d.oddsPrev = d.odds;
     d.odds = isFinite(rawOdds) ? rawOdds : 999;
     d.probability = probability;
