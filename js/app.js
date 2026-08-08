@@ -204,7 +204,7 @@ function recalcOdds() {
     const probability = Math.round((score / totalScore) * 1000) / 10; // %
     const rawOdds = Math.max(1.00, Math.round((100 / probability) * 100) / 100);
     d.oddsPrev = d.odds;
-    d.odds = isFinite(rawOdds) ? Math.min(rawOdds, 500) : 500;
+    d.odds = isFinite(rawOdds) ? Math.min(rawOdds, 200) : 200;
     d.probability = probability;
     d.oddsHistory = [...(d.oddsHistory || []), d.odds].slice(-10);
   });
@@ -260,7 +260,7 @@ function recalcConstructorOdds() {
         team.champion = true;
       } else {
         team.probability = 0;
-        team.odds = 250;
+        team.odds = 150;
         team.champion = false;
       }
     });
@@ -291,7 +291,7 @@ function recalcConstructorOdds() {
       Math.round((100 / probability) * 100) / 100
     );
 
-    team.odds = isFinite(rawOdds) ? Math.min(rawOdds, 250) : 250;
+    team.odds = isFinite(rawOdds) ? Math.min(rawOdds, 150) : 150;
     team.probability = probability;
     team.champion = false;
   });
