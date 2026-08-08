@@ -686,7 +686,7 @@ function renderCalendar() {
   const wrap = document.getElementById("calendar-list");
   if (!wrap) return;
   wrap.innerHTML = DB.calendar.map(r => {
-    const s = raceStatus(r);
+    const s = raceStatus(r.r2);
     return `
     <div class="card calendar-card fade-up status-${s}">
       <div class="cal-round">R${r.round}</div>
