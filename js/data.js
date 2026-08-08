@@ -107,7 +107,7 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "vidal", name: "Santiago Vidal", number: 25, country: "Bolivia", flag: "🇧🇴",
-    teamId: "lotusrenaultracing", status: "confirmado", rumorTeams: [],
+    teamId: "lotusrenault", status: "confirmado", rumorTeams: [],
     age: 24, seasons: 1, bestResult: "6°",
     bio: "piloto confirmado para Lotus Renault Racing en la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 1, dnf: 3, points: 88 },
