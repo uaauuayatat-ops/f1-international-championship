@@ -682,24 +682,48 @@ function renderPowerRanking() {
    13) RENDER: CALENDARIO
    ---------------------------------------------------------- */
 function renderCalendar() {
-  const wrap = document.getElementById("calendar-list");
-  if (!wrap) return;
-  wrap.innerHTML = DB.calendar.map(r => {
-    const s = raceStatus(r.r2);
-    return `
-    <div class="card calendar-card fade-up status-${s}">
-      <div class="cal-round">R${r.round}</div>
-      <div class="cal-flag">${r.flag}</div>
-      <div class="cal-info">
-        <h3>${r.circuit}</h3>
-        <p>Clasificación + Carrera sábado: ${fmtDateShort(r.r1)}</p>
-        <p>Clasificación + Carrera domingo: ${fmtDateShort(r.r2)}</p>
-      </div>
-      <span class="badge badge-${s}">${statusLabel(s)}</span>
-    </div>`;
-  }).join("");
-}
 
+  const wrap = document.getElementById("calendar-list");
+
+  if (!wrap) return;
+
+  wrap.innerHTML = DB.calendar.map(r => {
+
+    let s;
+
+    // Si las dos carreras del GP ya tienen resultados
+    if (r.results?.r1 && r.results?.r2) {
+      s = "finalizado";
+
+    // Si ya terminó una de las dos carreras
+    } else if (r.results?.r1 || r.results?.r2) {
+      s = "proximo";
+
+    // Si todavía no hay resultados, usamos la fecha
+    } else {
+      s = raceStatus(r.r2);
+    }
+
+    return `
+      <div class="card calendar-card fade-up status-${s}">
+        <div class="cal-round">R${r.round}</div>
+        <div class="cal-flag">${r.flag}</div>
+
+        <div class="cal-info">
+          <h3>${r.circuit}</h3>
+          <p>Clasificación + Carrera sábado: ${fmtDateShort(r.r1)}</p>
+          <p>Clasificación + Carrera domingo: ${fmtDateShort(r.r2)}</p>
+        </div>
+
+        <span class="badge badge-${s}">
+          ${statusLabel(s)}
+        </span>
+      </div>
+    `;
+
+  }).join("");
+
+}
 /* ----------------------------------------------------------
    14) RENDER: ESTADÍSTICAS
    ---------------------------------------------------------- */
