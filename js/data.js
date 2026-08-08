@@ -187,9 +187,9 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "camilo", name: "Camilo", number: 43, country: "Argentina", flag: "🇦🇷",
-    teamId: null, status: "libre", rumorTeams: [],
-    age: 22, seasons: 1, bestResult: "14°",
-    bio: "Piloto libre a la espera de equipo para la 26/27.",
+    teamId: "lotusrenault", status: "confirmado", rumorTeams: [],
+    age: 14, seasons: 1, bestResult: "14°",
+    bio: "confirmado para Lotus Renault Racing en temporada 2.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 5, points: 15 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 67, oddsPrev: 67, probability: 0.5, oddsHistory: [67, 67, 67, 67],
