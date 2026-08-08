@@ -342,21 +342,11 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
 
   const race = DB.calendar.find(r => r.round === round);
-  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() };
+  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() }
 
-  // Noticia automática
-  const winner = getDriver(orderIds[0]);
-  if (winner && race) {
-    DB.news.unshift({
-      id: Date.now(),
-      title: `${winner.name} gana la ${raceKey.toUpperCase()} de ${race.circuit}`,
-      date: new Date().toISOString().slice(0,10),
-      category: "Resultados",
-      image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop",
-      text: `${winner.name} (${teamName(winner.teamId)}) se quedó con la victoria en el Gran Premio de ${race.circuit}, fecha ${round} de la ${DB.season}.`,
-    });
-  }
-  recalcTeams();
+// acá NO va nada de noticias
+   
+recalcTeams();
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
