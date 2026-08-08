@@ -124,13 +124,14 @@ function fmtDateShort(iso) {
   const [y,m,d] = iso.split("-").map(Number);
   return `${d} ${MESES[m-1].slice(0,3)}`;
 }
-function raceStatus(iso) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(iso + "T00:00:00");
-  const diffDays = Math.round((d - today) / 86400000);
-  if (diffDays < 0) return "finalizado";
-  if (diffDays <= 30) return "proximo";
+function raceStatus(race) {
+  const r1Finished = !!race.results?.r1;
+  const r2Finished = !!race.results?.r2;
+
+  if (r1Finished && r2Finished) return "finalizado";
+  if (r1Finished || r2Finished) return "proximo";
   return "pendiente";
+}
 }
 function statusLabel(s) {
   return s === "finalizado" ? "Finalizado" : s === "proximo" ? "Próximo" : "Pendiente";
@@ -681,7 +682,7 @@ function renderCalendar() {
   const wrap = document.getElementById("calendar-list");
   if (!wrap) return;
   wrap.innerHTML = DB.calendar.map(r => {
-    const s = raceStatus(r.r2);
+    const s = raceStatus(r);
     return `
     <div class="card calendar-card fade-up status-${s}">
       <div class="cal-round">R${r.round}</div>
