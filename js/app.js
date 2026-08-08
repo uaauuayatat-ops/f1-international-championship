@@ -124,16 +124,7 @@ function fmtDateShort(iso) {
   const [y,m,d] = iso.split("-").map(Number);
   return `${d} ${MESES[m-1].slice(0,3)}`;
 }
-function raceStatus(iso) {
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const d = new Date(iso + "T00:00:00");
-  const diffDays = Math.round((d - today) / 86400000);
-
-  if (diffDays < 0) return "finalizado";
-  if (diffDays <= 30) return "proximo";
-  return "pendiente";
+function raceStatus(iso) { const today = new Date(); today.setHours(0,0,0,0); const d = new Date(iso + "T00:00:00"); const diffDays = Math.round((d - today) / 86400000); if (diffDays < 0) return "finalizado"; if (diffDays <= 30) return "proximo"; return "pendiente";
 }
 }
 }
