@@ -224,6 +224,8 @@ const DEFAULT_DRIVERS = [
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 105, oddsPrev: 105, probability: 0.3, oddsHistory: [105, 105, 105, 105],
     powerRank: 18, powerRankPrev: 18,
+  },
+  {
   /* 6 asientos libres reservados para futuras incorporaciones */
   { id: "libre1", name: "Piloto libre 1", number: 2, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 18, powerRankPrev: 18 },
   { id: "libre2", name: "Piloto libre 2", number: 3, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 19, powerRankPrev: 19 },
