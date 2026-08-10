@@ -216,14 +216,24 @@ const DEFAULT_DRIVERS = [
     powerRank: 17, powerRankPrev: 17,
   },
   {
-   id: "tapara", name: "Tapara", number: 47, country: "Perú", flag: "🇵🇪",
-    teamId: "mclaren", status: "confirmado", rumorTeams: [],
-    age: 14, seasons: 1, bestResult: "16°",
-    bio: "Confirmado en McLaren para la nueva temporada.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    id: "luca", name: "Luca", number: 46, country: "Argentina", flag: "🇦🇷",
+    teamId: null, status: "libre", rumorTeams: [],
+    age: 14, seasons: 1, bestResult: "12°",
+    bio: "Piloto para confrimar la temporada siguiente.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 105, oddsPrev: 105, probability: 0.3, oddsHistory: [105, 105, 105, 105],
+    odds: 115, oddsPrev: 115, probability: 0.2, oddsHistory: [115, 1|5, 115, 115],
     powerRank: 18, powerRankPrev: 18,
+  },
+  {
+    id: "luca", name: "Luca", number: 46, country: "Argentina", flag: "🇨🇴",
+    teamId: null, status: "libre", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto para confrimar la temporada siguiente.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 107, oddsPrev: 107, probability: 0.2, oddsHistory: [107, 107, 107, 107],
+    powerRank: 19, powerRankPrev: 19,
   },
   /* 5 asientos libres reservados para futuras incorporaciones */
   { id: "libre1", name: "Piloto libre 1", number: 2, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 18, powerRankPrev: 18 },
@@ -231,7 +241,6 @@ const DEFAULT_DRIVERS = [
   { id: "libre3", name: "Piloto libre 3", number: 4, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 20, powerRankPrev: 20 },
   { id: "libre4", name: "Piloto libre 4", number: 5, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 21, powerRankPrev: 21 },
   { id: "libre5", name: "Piloto libre 5", number: 6, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 22, powerRankPrev: 22 },
-  { id: "libre6", name: "Piloto libre 6", number: 7, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 23, powerRankPrev: 23 },
 ];
 
 /* ---------------------- CALENDARIO (24 fechas) ----------------------
