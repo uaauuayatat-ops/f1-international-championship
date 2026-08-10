@@ -46,7 +46,7 @@ const DEFAULT_TEAMS = [
 ------------------------------------------------------------- */
 const DEFAULT_DRIVERS = [
   {
-    id: "pujalski", name: "Alexander Pujalski", number: 1, country: "Argentina", flag: "🇦🇷",
+    id: "alexander", name: "Alexander", number: 1, country: "Argentina", flag: "🇦🇷",
     teamId: "williams", status: "confirmado", rumorTeams: [],
     age: 20, seasons: 1, bestResult: "1° (Campeón vigente)",
     bio: "Campeón vigente del torneo. Pasó de Red Bull, el mejor auto del grid, a Williams en busca de un nuevo desafío que podría cambiar su rendimiento.",
