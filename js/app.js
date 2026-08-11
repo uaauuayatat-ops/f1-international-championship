@@ -321,6 +321,47 @@ function recalcAll() {
   recalcPower();
   saveDB(DB);
 }
+function checkMathematicalChampion() {
+  const drivers = DB.drivers || [];
+  if (!drivers.length || !DB.calendar) return null;
+
+  // Cada R1 y R2 cuenta como una carrera independiente
+  let remainingRaces = 0;
+
+  DB.calendar.forEach(race => {
+    if (!race.results?.r1?.orderIds?.length) {
+      remainingRaces++;
+    }
+
+    if (!race.results?.r2?.orderIds?.length) {
+      remainingRaces++;
+    }
+  });
+
+  if (remainingRaces <= 0) return null;
+
+  const maxPointsRemaining =
+    remainingRaces * Math.max(...POINTS_SYSTEM);
+
+  const sorted = [...drivers].sort(
+    (a, b) => b.season.points - a.season.points
+  );
+
+  const leader = sorted[0];
+
+  // Si algún rival todavía puede superar al líder,
+  // todavía no hay campeón matemático.
+  const canStillCatch = sorted.slice(1).some(d => {
+    return d.season.points + maxPointsRemaining > leader.season.points;
+  });
+
+  if (!canStillCatch) {
+    return leader;
+  }
+
+  return null;
+}
+
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
@@ -350,8 +391,14 @@ recalcTeams();
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
-saveDB(DB);
+
+const mathematicalChampion = checkMathematicalChampion();
+
+if (mathematicalChampion) {
+  DB.mathematicalChampion = mathematicalChampion.id;
 }
+
+saveDB(DB);
 
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
