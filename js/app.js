@@ -125,10 +125,10 @@ function fmtDateShort(iso) {
   return `${d} ${MESES[m-1].slice(0,3)}`;
 }
 function raceStatus(iso) {
-  function raceStatus(iso) {
   const today = new Date();
-  const d = new Date(iso + "T00:00:00");
+  today.setHours(0, 0, 0, 0);
 
+  const d = new Date(iso + "T00:00:00");
   const diffDays = Math.round((d - today) / 86400000);
 
   if (diffDays < 0) return "finalizado";
@@ -321,47 +321,6 @@ function recalcAll() {
   recalcPower();
   saveDB(DB);
 }
-function checkMathematicalChampion() {
-  const drivers = DB.drivers || [];
-  if (!drivers.length || !DB.calendar) return null;
-
-  // Cada R1 y R2 cuenta como una carrera independiente
-  let remainingRaces = 0;
-
-  DB.calendar.forEach(race => {
-    if (!race.results?.r1?.orderIds?.length) {
-      remainingRaces++;
-    }
-
-    if (!race.results?.r2?.orderIds?.length) {
-      remainingRaces++;
-    }
-  });
-
-  if (remainingRaces <= 0) return null;
-
-  const maxPointsRemaining =
-    remainingRaces * Math.max(...POINTS_SYSTEM);
-
-  const sorted = [...drivers].sort(
-    (a, b) => b.season.points - a.season.points
-  );
-
-  const leader = sorted[0];
-
-  // Si algún rival todavía puede superar al líder,
-  // todavía no hay campeón matemático.
-  const canStillCatch = sorted.slice(1).some(d => {
-    return d.season.points + maxPointsRemaining > leader.season.points;
-  });
-
-  if (!canStillCatch) {
-    return leader;
-  }
-
-  return null;
-}
-
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
@@ -383,6 +342,21 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
 
   const race = DB.calendar.find(r => r.round === round);
+  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() };
+
+  // Noticia automática
+  const winner = getDriver(orderIds[0]);
+  if (winner && race) {
+    DB.news.unshift({
+      id: Date.now(),
+      title: `${winner.name} gana la ${raceKey.toUpperCase()} de ${race.circuit}`,
+      date: new Date().toISOString().slice(0,10),
+      category: "Resultados",
+      image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop",
+      text: `${winner.name} (${teamName(winner.teamId)}) se quedó con la victoria en el Gran Premio de ${race.circuit}, fecha ${round} de la ${DB.season}.`,
+    });
+  }
+  recalcTeams();
   if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() }
 
 // acá NO va nada de noticias
@@ -391,14 +365,8 @@ recalcTeams();
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
-
-const mathematicalChampion = checkMathematicalChampion();
-
-if (mathematicalChampion) {
-  DB.mathematicalChampion = mathematicalChampion.id;
-}
-
 saveDB(DB);
+}
 
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
@@ -485,24 +453,6 @@ function powerTrendArrow(rank, prevRank) {
    6) RENDER: INICIO
    ---------------------------------------------------------- */
 function renderHome() {
-     const championEl = document.getElementById("mathematical-champion");
-
-  if (championEl) {
-    const champion = DB.mathematicalChampion
-      ? getDriver(DB.mathematicalChampion)
-      : null;
-  }
-    championEl.innerHTML = champion ? `
-      <div class="card mathematical-champion">
-        <div class="champion-icon">🏆</div>
-        <div>
-          <span class="badge badge-ok">CAMPEÓN MATEMÁTICO</span>
-          <h2>${champion.name}</h2>
-          <p>${teamName(champion.teamId)} · ${champion.season.points} puntos</p>
-        </div>
-      </div>
-    ` : "";
-  }
   const leader = [...DB.drivers]
   .filter(d => d.odds != null)
   .sort((a, b) => a.odds - b.odds)[0];
