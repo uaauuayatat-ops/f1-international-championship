@@ -348,7 +348,7 @@ if (race) race.results[raceKey] = {
   poleId,
   fastLapId,
   loadedAt: new Date().toISOString()
-};
+}
 
 // acá NO va nada de noticias
 
