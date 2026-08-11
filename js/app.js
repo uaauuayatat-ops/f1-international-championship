@@ -485,6 +485,24 @@ function powerTrendArrow(rank, prevRank) {
    6) RENDER: INICIO
    ---------------------------------------------------------- */
 function renderHome() {
+     const championEl = document.getElementById("mathematical-champion");
+
+  if (championEl) {
+    const champion = DB.mathematicalChampion
+      ? getDriver(DB.mathematicalChampion)
+      : null;
+
+    championEl.innerHTML = champion ? `
+      <div class="card mathematical-champion">
+        <div class="champion-icon">🏆</div>
+        <div>
+          <span class="badge badge-ok">CAMPEÓN MATEMÁTICO</span>
+          <h2>${champion.name}</h2>
+          <p>${teamName(champion.teamId)} · ${champion.season.points} puntos</p>
+        </div>
+      </div>
+    ` : "";
+  }
   const leader = [...DB.drivers]
   .filter(d => d.odds != null)
   .sort((a, b) => a.odds - b.odds)[0];
