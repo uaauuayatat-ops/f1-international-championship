@@ -342,7 +342,6 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
 
   const race = DB.calendar.find(r => r.round === round);
-  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() }
 
 // acá NO va nada de noticias
    
