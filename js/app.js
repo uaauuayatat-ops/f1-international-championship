@@ -321,42 +321,64 @@ function recalcAll() {
   recalcPower();
   saveDB(DB);
 }
+function checkMathematicalChampion() {
+  const drivers = DB.drivers || [];
+  if (!drivers.length || !DB.calendar) return null;
+
+  // Cada R1 y R2 cuenta como una carrera independiente
+  let remainingRaces = 0;
+
+  DB.calendar.forEach(race => {
+    if (!race.results?.r1?.orderIds?.length) {
+      remainingRaces++;
+    }
+
+    if (!race.results?.r2?.orderIds?.length) {
+      remainingRaces++;
+    }
+  });
+
+  if (remainingRaces <= 0) return null;
+
+  const maxPointsRemaining =
+    remainingRaces * Math.max(...POINTS_SYSTEM);
+
+  const sorted = [...drivers].sort(
+    (a, b) => b.season.points - a.season.points
+  );
+
+  const leader = sorted[0];
+
+  // Si algún rival todavía puede superar al líder,
+  // todavía no hay campeón matemático.
+  const canStillCatch = sorted.slice(1).some(d => {
+    return d.season.points + maxPointsRemaining > leader.season.points;
+  });
+
+  if (!canStillCatch) {
+    return leader;
+  }
+
+  return null;
+}
+
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
-    const d = getDriver(id);
-    if (!d) return;
-    const pts = POINTS_SYSTEM[idx] || 0;
-    d.season.points += pts;
-    if (idx === 0) d.season.wins++;
-    if (idx < 3) d.season.podiums++;
-    d.recentPositions = [...(d.recentPositions||[]), idx+1].slice(-8);
-  });
-  dnfIds.forEach(id => {
-    const d = getDriver(id);
-    if (!d) return;
-    d.season.dnf++;
-    d.recentPositions = [...(d.recentPositions||[]), 20].slice(-8);
-  });
-  if (poleId) { const d = getDriver(poleId); if (d) d.season.poles++; }
-  if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
-
-  const race = DB.calendar.find(r => r.round === round);
-if (race) race.results[raceKey] = {
-  orderIds,
-  dnfIds,
-  poleId,
-  fastLapId,
-  loadedAt: new Date().toISOString()
-};
-
-// acá NO va nada de noticias
-
-recalcTeams();
+@@ -350,511 +391,517 @@
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
 saveDB(DB);
+
+const mathematicalChampion = checkMathematicalChampion();
+
+if (mathematicalChampion) {
+  DB.mathematicalChampion = mathematicalChampion.id;
+}
+
+saveDB(DB);
+
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
    ---------------------------------------------------------- */
