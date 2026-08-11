@@ -491,7 +491,7 @@ function renderHome() {
     const champion = DB.mathematicalChampion
       ? getDriver(DB.mathematicalChampion)
       : null;
-
+  }
     championEl.innerHTML = champion ? `
       <div class="card mathematical-champion">
         <div class="champion-icon">🏆</div>
