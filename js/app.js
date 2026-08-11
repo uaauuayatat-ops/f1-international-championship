@@ -348,7 +348,7 @@ if (race) race.results[raceKey] = {
   poleId,
   fastLapId,
   loadedAt: new Date().toISOString()
-}
+};
 
 // acá NO va nada de noticias
 
@@ -357,6 +357,7 @@ recalcOdds();
 recalcConstructorOdds();
 recalcPower();
 saveDB(DB);
+}
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
    ---------------------------------------------------------- */
