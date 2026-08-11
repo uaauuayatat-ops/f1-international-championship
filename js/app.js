@@ -357,7 +357,6 @@ recalcOdds();
 recalcConstructorOdds();
 recalcPower();
 saveDB(DB);
-}
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
    ---------------------------------------------------------- */
