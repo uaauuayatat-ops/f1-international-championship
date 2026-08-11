@@ -342,16 +342,21 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
 
   const race = DB.calendar.find(r => r.round === round);
+if (race) race.results[raceKey] = {
+  orderIds,
+  dnfIds,
+  poleId,
+  fastLapId,
+  loadedAt: new Date().toISOString()
+};
 
 // acá NO va nada de noticias
-   
+
 recalcTeams();
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
 saveDB(DB);
-}
-
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
    ---------------------------------------------------------- */
