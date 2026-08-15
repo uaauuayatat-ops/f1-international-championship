@@ -177,110 +177,113 @@ function recalcOdds() {
   const drivers = DB.drivers || [];
   if (!drivers.length || !DB.calendar) return;
 
-  // Contar carreras restantes: cada R1 y R2 cuenta como una carrera
+  // Cada R1 y R2 cuenta como una carrera independiente
   let remainingRaces = 0;
 
   DB.calendar.forEach(race => {
-    if (!race.results?.r1?.orderIds?.length) {
-      remainingRaces++;
-    }
-
-    if (!race.results?.r2?.orderIds?.length) {
-      remainingRaces++;
-    }
+    if (!race.results?.r1?.orderIds?.length) remainingRaces++;
+    if (!race.results?.r2?.orderIds?.length) remainingRaces++;
   });
 
-  // Si no quedan carreras, no recalculamos cuotas
   if (remainingRaces <= 0) return;
 
   const maxPointsRemaining =
     remainingRaces * Math.max(...POINTS_SYSTEM);
 
-  const maxTeamPts = Math.max(
-    1,
-    ...DB.teams.map(t => t.points)
+  // Ordenar por puntos actuales
+  const sorted = [...drivers].sort(
+    (a, b) => (b.season?.points || 0) - (a.season?.points || 0)
   );
 
-  const teamStrength = {};
+  const leader = sorted[0];
+  const leaderPoints = leader.season?.points || 0;
 
-  DB.teams.forEach(t => {
-    teamStrength[t.id] =
-      (t.points / maxTeamPts) * 10;
-  });
+  // Segundo piloto del campeonato
+  const second = sorted[1];
+  const secondPoints = second?.season?.points || 0;
 
-  const scores = drivers.map(d => {
+  // Ventaja actual del líder
+  const gap = leaderPoints - secondPoints;
+
+  drivers.forEach(d => {
     const points = d.season?.points || 0;
     const wins = d.season?.wins || 0;
     const podiums = d.season?.podiums || 0;
-    const poles = d.season?.poles || 0;
-    const dnf = d.season?.dnf || 0;
-
     const recent = d.recentPositions || [];
 
     const recentAvg = recent.length
       ? recent.reduce((a, b) => a + b, 0) / recent.length
       : 20;
 
-    const consistencyBonus = recent.length
-      ? Math.max(0, 10 - recentAvg)
+    // Rendimiento reciente: cuanto menor el promedio de posición,
+    // mejor el rendimiento.
+    const recentForm = recent.length
+      ? Math.max(0, 20 - recentAvg) / 20
       : 0;
 
-    const strength =
-      teamStrength[d.teamId] || 0;
-
     /*
-     * Puntos actuales + rendimiento.
-     * La diferencia de puntos tiene más importancia
-     * cuando quedan pocas carreras.
+     * Probabilidad base según la posición actual.
+     * No queremos que una ventaja pequeña al principio
+     * produzca una cuota exageradamente baja.
      */
-    const performance =
-      points * 0.8 +
-      wins * 8 +
-      podiums * 3 +
-      poles * 2 +
-      consistencyBonus * 1.5 -
-      dnf * 3 +
-      strength;
+    let probability;
 
-    /*
-     * Potencial futuro:
-     * cuanto más puntos tenga el piloto actualmente,
-     * más posibilidades tiene de terminar campeón.
-     */
-    const championshipPotential =
-      points +
-      maxPointsRemaining * 0.35 +
-      performance * 0.25;
+    if (d === leader) {
+      // Qué porcentaje de los puntos restantes representa
+      // la ventaja actual.
+      const control = Math.min(
+        1,
+        gap / Math.max(1, maxPointsRemaining)
+      );
 
-    return {
-      d,
-      score: Math.max(1, championshipPotential)
-    };
-  });
+      // Base del líder: 20%
+      // + ventaja de campeonato
+      // + rendimiento reciente
+      // + pequeñas bonificaciones por victorias/podios
+      probability =
+        20 +
+        control * 55 +
+        recentForm * 10 +
+        Math.min(wins, 5) * 1.5 +
+        Math.min(podiums, 8) * 0.5;
 
-  const totalScore = scores.reduce(
-    (sum, item) => sum + item.score,
-    0
-  );
+    } else {
+      // Diferencia respecto al líder
+      const deficit = leaderPoints - points;
 
-  scores.forEach(({ d, score }) => {
-    const probability =
-      Math.round((score / totalScore) * 1000) / 10;
+      // Qué tan difícil es recuperar esa diferencia
+      const recoveryRatio =
+        Math.max(
+          0,
+          1 - deficit / Math.max(1, maxPointsRemaining)
+        );
+
+      probability =
+        5 +
+        recoveryRatio * 35 +
+        recentForm * 10 +
+        Math.min(wins, 5) * 1.5 +
+        Math.min(podiums, 8) * 0.5;
+    }
+
+    // Limitar entre 0.5% y 99%
+    probability = Math.max(
+      0.5,
+      Math.min(99, probability)
+    );
 
     const rawOdds =
-      Math.max(
-        1.05,
-        Math.round((100 / probability) * 100) / 100
-      );
+      Math.round((100 / probability) * 100) / 100;
 
     d.oddsPrev = d.odds;
 
     // Máximo de cuota para pilotos: 200
     d.odds = isFinite(rawOdds)
-      ? Math.min(rawOdds, 200)
+      ? Math.min(Math.max(1.05, rawOdds), 200)
       : 200;
 
-    d.probability = probability;
+    d.probability =
+      Math.round(probability * 10) / 10;
 
     d.oddsHistory = [
       ...(d.oddsHistory || []),
@@ -288,8 +291,7 @@ function recalcOdds() {
     ].slice(-10);
   });
 
-  // Si ya existe un campeón matemático,
-  // su cuota pasa a ser exactamente 1.00
+  // Campeón matemático = cuota 1.00
   if (DB.mathematicalChampion) {
     const champion = getDriver(DB.mathematicalChampion);
 
@@ -304,7 +306,7 @@ function recalcOdds() {
       ].slice(-10);
     }
   }
-}  
+}
 function recalcConstructorOdds() {
   // Máximo de puntos que puede conseguir un piloto en una carrera
   const maxPointsPerDriver = Math.max(...POINTS_SYSTEM);
