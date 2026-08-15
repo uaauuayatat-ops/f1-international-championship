@@ -358,6 +358,30 @@ function checkMathematicalChampion() {
 
   return null;
 }
+function renderMathematicalChampion() {
+  const championEl = document.getElementById("mathematical-champion");
+  if (!championEl) return;
+
+  const champion = DB.mathematicalChampion
+    ? getDriver(DB.mathematicalChampion)
+    : null;
+
+  if (!champion) {
+    championEl.innerHTML = "";
+    return;
+  }
+
+  championEl.innerHTML = `
+    <div class="card mathematical-champion">
+      <div class="champion-icon">🏆</div>
+      <div>
+        <span class="badge badge-ok">CAMPEÓN MATEMÁTICO</span>
+        <h2>${champion.name}</h2>
+        <p>${teamName(champion.teamId)} · ${champion.season.points} puntos</p>
+      </div>
+    </div>
+  `;
+}
 /* Cargar resultado de una carrera (R1 o R2 de una fecha) */
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
