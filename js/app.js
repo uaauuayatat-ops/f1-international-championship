@@ -387,6 +387,13 @@ recalcTeams();
 recalcOdds();
 recalcConstructorOdds();
 recalcPower();
+
+const mathematicalChampion = checkMathematicalChampion();
+
+if (mathematicalChampion) {
+  DB.mathematicalChampion = mathematicalChampion.id;
+}
+
 saveDB(DB);
 }
 
