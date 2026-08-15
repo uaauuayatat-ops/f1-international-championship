@@ -510,7 +510,7 @@ function renderHome() {
   .filter(d => d.odds != null)
   .sort((a, b) => a.odds - b.odds)[0];
   const el = id => document.getElementById(id);
-
+  renderMathematicalChampion();
   if (el("home-favorito")) {
     el("home-favorito").innerHTML = leader ? `
       <div class="fav-driver">
