@@ -630,6 +630,42 @@ function recalcOdds() {
       startingOdds *
       performanceMultiplier *
       pointsMultiplier;
+     // =======================================================
+// REGLA: UN PILOTO DETRÁS DEL LÍDER NO PUEDE TENER
+// UNA CUOTA MENOR QUE LA DEL LÍDER SI LA DIFERENCIA
+// DE PUNTOS ES IMPORTANTE.
+// =======================================================
+
+if (d !== leader) {
+
+  const leaderOdds =
+    typeof leader.odds === "number"
+      ? leader.odds
+      : leader.startingOdds || 2.60;
+
+  const pointsGap =
+    leaderPoints - points;
+
+  /*
+   * Si está a más de 10 puntos del líder,
+   * su cuota debe ser mayor que la del líder.
+   */
+
+  if (pointsGap >= 10) {
+
+    const minimumGap =
+      1 + (pointsGap * 0.015);
+
+    const minimumOdds =
+      leaderOdds * minimumGap;
+
+    newOdds =
+      Math.max(
+        newOdds,
+        minimumOdds
+      );
+  }
+}
 
     // =======================================================
     // LIMITAR CAMBIOS BRUSCOS
