@@ -585,47 +585,158 @@ function recalcOdds() {
       1 +
       pointsInfluence * 1.35;
 
-    // =======================================================
-    // LÍDER
-    // =======================================================
+   // =======================================================
+// AJUSTE SEGÚN POSICIÓN Y DIFERENCIA CON EL LÍDER
+// =======================================================
 
-    if (d === leader) {
+if (d === leader) {
 
-      /*
-       * El líder recibe una reducción de cuota
-       * porque está primero en el campeonato.
-       */
+  /*
+   * =====================================================
+   * LÍDER
+   * =====================================================
+   *
+   * La cuota del líder baja progresivamente.
+   *
+   * Cuanto mayor sea su ventaja respecto al segundo,
+   * mayor es la reducción.
+   *
+   * Esto evita que, por ejemplo, una cuota quede clavada
+   * durante varias carreras en 1.69.
+   */
 
-      pointsMultiplier *= 0.78;
+  const second =
+    sorted.length > 1
+      ? sorted[1]
+      : null;
 
-    } else {
+  const secondPoints =
+    second?.season?.points || 0;
 
-      /*
-       * Si está cerca del líder,
-       * todavía es un candidato fuerte.
-       */
+  const gapToSecond =
+    Math.max(
+      0,
+      leaderPoints - secondPoints
+    );
 
-      if (deficitRatio < 0.15) {
-        pointsMultiplier *= 0.92;
-      }
+  /*
+   * Ventaja relativa considerando los puntos que quedan.
+   */
 
-      /*
-       * Si está lejos, aumenta la cuota.
-       */
+  const leaderAdvantageRatio =
+    maxPointsRemaining > 0
+      ? Math.min(
+          1,
+          gapToSecond / maxPointsRemaining
+        )
+      : 1;
 
-      if (deficitRatio > 0.40) {
-        pointsMultiplier *= 1.15;
-      }
+  /*
+   * Reducción base.
+   *
+   * Incluso con una ventaja pequeña,
+   * el líder debe bajar ligeramente.
+   */
 
-      if (deficitRatio > 0.60) {
-        pointsMultiplier *= 1.25;
-      }
+  let leaderReduction = 0.035;
 
-      if (deficitRatio > 0.80) {
-        pointsMultiplier *= 1.35;
-      }
-    }
+  /*
+   * Si la ventaja aumenta, la cuota baja más rápido.
+   */
 
+  leaderReduction +=
+    leaderAdvantageRatio * 0.12;
+
+  /*
+   * A medida que avanza la temporada,
+   * la cuota también se vuelve más sensible.
+   */
+
+  leaderReduction +=
+    seasonProgress * 0.045;
+
+  /*
+   * Límite para evitar movimientos exagerados.
+   */
+
+  leaderReduction =
+    Math.max(
+      0.025,
+      Math.min(
+        0.20,
+        leaderReduction
+      )
+    );
+
+  pointsMultiplier *=
+    1 - leaderReduction;
+
+
+} else {
+
+  // =====================================================
+  // PERSEGUIDORES
+  // =====================================================
+
+  /*
+   * Si está cerca del líder, sigue siendo candidato fuerte.
+   */
+
+  if (deficitRatio < 0.15) {
+
+    pointsMultiplier *= 0.94;
+
+  }
+
+  /*
+   * Diferencia moderada.
+   */
+
+  if (
+    deficitRatio >= 0.15 &&
+    deficitRatio < 0.40
+  ) {
+
+    pointsMultiplier *= 1.05;
+
+  }
+
+  /*
+   * Ya está bastante lejos.
+   */
+
+  if (
+    deficitRatio >= 0.40 &&
+    deficitRatio < 0.60
+  ) {
+
+    pointsMultiplier *= 1.18;
+
+  }
+
+  /*
+   * Muy lejos.
+   */
+
+  if (
+    deficitRatio >= 0.60 &&
+    deficitRatio < 0.80
+  ) {
+
+    pointsMultiplier *= 1.35;
+
+  }
+
+  /*
+   * Extremadamente lejos.
+   */
+
+  if (deficitRatio >= 0.80) {
+
+    pointsMultiplier *= 1.55;
+
+  }
+}
     // =======================================================
     // CUOTA INICIAL
     // =======================================================
