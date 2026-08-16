@@ -174,18 +174,14 @@ function recalcTeams() {
    Pondera puntos, victorias, podios, poles, consistencia reciente,
    penaliza abandonos y suma la fuerza del equipo actual. */
 function recalcOdds() {
-
   const drivers = DB.drivers || [];
-
   if (!drivers.length || !DB.calendar) return;
-
 
   // =========================================================
   // CUOTAS INICIALES DEL CAMPEONATO
   // =========================================================
 
   const startingOddsMap = {
-
     alexander: 3.50,
     coffin: 2.60,
     carreon: 3.90,
@@ -206,16 +202,13 @@ function recalcOdds() {
     tapara: 105.00,
     luca: 107.00,
     hernandez: 110.00
-
   };
-
 
   // =========================================================
   // OBTENER ID DEL PILOTO
   // =========================================================
 
   function getDriverId(d) {
-
     return String(
       d.id ||
       d.driverId ||
@@ -225,27 +218,19 @@ function recalcOdds() {
     )
       .toLowerCase()
       .trim();
-
   }
-
 
   // =========================================================
   // INICIALIZAR CUOTAS
   // =========================================================
 
   drivers.forEach(d => {
-
     const id = getDriverId(d);
 
     if (startingOddsMap[id] !== undefined) {
-
-      d.startingOdds =
-        startingOddsMap[id];
-
+      d.startingOdds = startingOddsMap[id];
     }
-
   });
-
 
   // =========================================================
   // CARRERAS COMPLETADAS / RESTANTES
@@ -262,41 +247,18 @@ function recalcOdds() {
     const r2Done =
       race.results?.r2?.orderIds?.length > 0;
 
-
     if (r1Done) {
-
       completedRaces++;
-
     } else {
-
       remainingRaces++;
-
     }
-
 
     if (r2Done) {
-
       completedRaces++;
-
     } else {
-
       remainingRaces++;
-
     }
-
   });
-
-
-  // =========================================================
-  // SI NO QUEDAN CARRERAS
-  // =========================================================
-
-  if (remainingRaces <= 0) {
-
-    return;
-
-  }
-
 
   // =========================================================
   // PUNTOS MÁXIMOS RESTANTES
@@ -306,164 +268,107 @@ function recalcOdds() {
     Math.max(...POINTS_SYSTEM);
 
   const maxPointsRemaining =
-    remainingRaces *
-    maxPointsPerRace;
-
+    remainingRaces * maxPointsPerRace;
 
   // =========================================================
   // ORDENAR CAMPEONATO
   // =========================================================
 
-  const sorted = [...drivers]
-    .filter(d => {
+  const sorted = [...drivers].sort(
+    (a, b) =>
+      (b.season?.points || 0) -
+      (a.season?.points || 0)
+  );
 
-      const id = getDriverId(d);
-
-      return ![
-        "libre1",
-        "libre2",
-        "libre3",
-        "libre4"
-      ].includes(id);
-
-    })
-    .sort(
-      (a, b) =>
-        (b.season?.points || 0) -
-        (a.season?.points || 0)
-    );
-
-
-  const leader =
-    sorted[0];
-
+  const leader = sorted[0];
 
   if (!leader) return;
-
 
   const leaderPoints =
     leader.season?.points || 0;
 
-
   // =========================================================
-  // DETECTAR QUIÉNES TODAVÍA PUEDEN SER CAMPEONES
+  // DETERMINAR QUIÉNES TODAVÍA PUEDEN SER CAMPEONES
   // =========================================================
 
-  /*
-   * Un piloto sigue teniendo posibilidad de campeonato
-   * mientras pueda terminar por encima del líder actual.
-   *
-   * Ejemplo:
-   *
-   * Piloto: 300 puntos
-   * Líder: 500 puntos
-   * Restantes: 250
-   *
-   * Máximo del piloto = 550
-   *
-   * Todavía puede ser campeón.
-   *
-   * Si su máximo fuera 499:
-   * ya no puede alcanzar al líder.
-   */
+  const championshipContenders = new Set();
 
-  const mathematicallyAlive =
-    new Set();
-
-
-  sorted.forEach(d => {
+  for (const d of sorted) {
 
     const points =
       d.season?.points || 0;
 
     const maximumPossible =
-      points +
-      maxPointsRemaining;
-
+      points + maxPointsRemaining;
 
     /*
-     * Si puede superar al líder actual,
-     * sigue vivo matemáticamente.
-     *
-     * Usamos > para conservar la posibilidad
-     * en caso de empate de puntos.
+     * Si todavía puede llegar al menos a los puntos
+     * actuales del líder, mantiene posibilidades.
      */
 
-    if (
-      maximumPossible >
-      leaderPoints
-    ) {
-
-      mathematicallyAlive.add(d);
-
+    if (maximumPossible >= leaderPoints) {
+      championshipContenders.add(d);
     }
-
-  });
-
+  }
 
   // =========================================================
-  // CAMPEÓN MATEMÁTICO
+  // DETECTAR CAMPEÓN MATEMÁTICO
   // =========================================================
 
   let mathematicalChampion = null;
 
-
   /*
-   * El líder es campeón matemático cuando
-   * ningún otro piloto puede alcanzarlo.
+   * Si no queda ninguna carrera, el líder actual es
+   * automáticamente el campeón.
    */
 
-  const leaderCanBeCaught =
-    sorted.some(d => {
+  if (remainingRaces <= 0) {
 
-      if (d === leader) {
-        return false;
-      }
+    mathematicalChampion = leader;
 
-      const points =
-        d.season?.points || 0;
+  } else {
 
-      const maximumPossible =
-        points +
-        maxPointsRemaining;
+    /*
+     * Buscamos pilotos distintos del líder que todavía
+     * tengan posibilidades de alcanzarlo.
+     */
 
-      return maximumPossible >= leaderPoints;
+    const opponentsStillAlive =
+      sorted
+        .slice(1)
+        .filter(d =>
+          championshipContenders.has(d)
+        );
 
-    });
+    /*
+     * Si ningún otro piloto puede alcanzar al líder,
+     * entonces tenemos campeón matemático.
+     */
 
-
-  if (!leaderCanBeCaught) {
-
-    mathematicalChampion =
-      leader;
-
+    if (opponentsStillAlive.length === 0) {
+      mathematicalChampion = leader;
+    }
   }
-
 
   // =========================================================
   // PROGRESO DEL CAMPEONATO
   // =========================================================
 
   const totalRaces =
-    completedRaces +
-    remainingRaces;
-
+    completedRaces + remainingRaces;
 
   const seasonProgress =
     totalRaces > 0
       ? completedRaces / totalRaces
       : 0;
 
-
   // =========================================================
   // CALCULAR CUOTAS
   // =========================================================
 
-  drivers.forEach(d => {
+  drivers.forEach((d, index) => {
 
-    const id =
-      getDriverId(d);
-
+    const id = getDriverId(d);
 
     // =======================================================
     // PILOTOS LIBRES
@@ -475,63 +380,54 @@ function recalcOdds() {
       id === "libre3" ||
       id === "libre4";
 
-
     if (isFreeDriver) {
 
       d.odds = null;
       d.probability = null;
 
       return;
-
     }
-
 
     // =======================================================
     // CAMPEÓN MATEMÁTICO
     // =======================================================
 
-    if (
-      mathematicalChampion &&
-      d === mathematicalChampion
-    ) {
+    if (d === mathematicalChampion) {
 
       d.oddsPrev =
         typeof d.odds === "number"
           ? d.odds
           : d.startingOdds || 2.00;
 
-
       d.odds = 1.00;
 
       d.probability = 100;
-
 
       d.oddsHistory = [
         ...(d.oddsHistory || []),
         1.00
       ].slice(-10);
 
-
-      /*
-       * Guardamos los puntos actuales
-       * para la próxima actualización.
-       */
-
-      d.oddsPointsReference =
-        d.season?.points || 0;
-
-
       return;
-
     }
 
+    // =======================================================
+    // YA NO PUEDE SER CAMPEÓN
+    // =======================================================
 
-    // =======================================================
-    // PILOTO SIN POSIBILIDAD MATEMÁTICA
-    // =======================================================
+    /*
+     * IMPORTANTE:
+     *
+     * No esperamos a que exista un campeón matemático.
+     *
+     * Si este piloto ya no puede alcanzar al líder con
+     * los puntos restantes, su cuota pasa directamente
+     * a 200.
+     */
 
     if (
-      !mathematicallyAlive.has(d)
+      d !== mathematicalChampion &&
+      !championshipContenders.has(d)
     ) {
 
       d.oddsPrev =
@@ -539,26 +435,17 @@ function recalcOdds() {
           ? d.odds
           : d.startingOdds || 200;
 
-
       d.odds = 200.00;
 
       d.probability = 0;
-
 
       d.oddsHistory = [
         ...(d.oddsHistory || []),
         200.00
       ].slice(-10);
 
-
-      d.oddsPointsReference =
-        d.season?.points || 0;
-
-
       return;
-
     }
-
 
     // =======================================================
     // DATOS DEL PILOTO
@@ -584,34 +471,16 @@ function recalcOdds() {
       d.season?.dnfs ||
       0;
 
-
     const recent =
       Array.isArray(d.recentPositions)
         ? d.recentPositions
         : [];
-
-
-    // =======================================================
-    // PUNTOS OBTENIDOS DESDE LA ÚLTIMA ACTUALIZACIÓN
-    // =======================================================
-
-    const previousPoints =
-      typeof d.oddsPointsReference === "number"
-        ? d.oddsPointsReference
-        : points;
-
-
-    const pointsGained =
-      points -
-      previousPoints;
-
 
     // =======================================================
     // FORMA RECIENTE
     // =======================================================
 
     let recentForm = 0;
-
 
     if (recent.length) {
 
@@ -621,7 +490,6 @@ function recalcOdds() {
           0
         ) / recent.length;
 
-
       recentForm =
         Math.max(
           0,
@@ -630,9 +498,7 @@ function recalcOdds() {
             (20 - recentAvg) / 19
           )
         );
-
     }
-
 
     // =======================================================
     // DIFERENCIA CON EL LÍDER
@@ -641,21 +507,18 @@ function recalcOdds() {
     const deficit =
       Math.max(
         0,
-        leaderPoints -
-        points
+        leaderPoints - points
       );
-
 
     const deficitRatio =
       Math.min(
         1,
         deficit /
-        Math.max(
-          1,
-          maxPointsRemaining
-        )
+          Math.max(
+            1,
+            maxPointsRemaining
+          )
       );
-
 
     // =======================================================
     // RENDIMIENTO
@@ -663,36 +526,23 @@ function recalcOdds() {
 
     let performanceScore = 0;
 
+    performanceScore +=
+      Math.min(wins, 6) * 0.08;
 
     performanceScore +=
-      Math.min(wins, 6) *
-      0.08;
-
+      Math.min(podiums, 10) * 0.035;
 
     performanceScore +=
-      Math.min(podiums, 10) *
-      0.035;
-
+      Math.min(poles, 8) * 0.02;
 
     performanceScore +=
-      Math.min(poles, 8) *
-      0.02;
-
+      Math.min(fastestLaps, 8) * 0.01;
 
     performanceScore +=
-      Math.min(fastestLaps, 8) *
-      0.01;
-
-
-    performanceScore +=
-      recentForm *
-      0.12;
-
+      recentForm * 0.12;
 
     performanceScore -=
-      Math.min(retirements, 5) *
-      0.025;
-
+      Math.min(retirements, 5) * 0.025;
 
     performanceScore =
       Math.max(
@@ -703,28 +553,20 @@ function recalcOdds() {
         )
       );
 
-
     // =======================================================
     // INFLUENCIA DE PUNTOS
     // =======================================================
 
     const pointsInfluence =
       deficitRatio *
-      (
-        0.30 +
-        seasonProgress *
-        0.70
-      );
-
+      (0.30 + seasonProgress * 0.70);
 
     // =======================================================
     // MULTIPLICADOR DE RENDIMIENTO
     // =======================================================
 
     let performanceMultiplier =
-      1 -
-      performanceScore;
-
+      1 - performanceScore;
 
     performanceMultiplier =
       Math.max(
@@ -735,151 +577,54 @@ function recalcOdds() {
         )
       );
 
-
     // =======================================================
     // MULTIPLICADOR DE PUNTOS
     // =======================================================
 
     let pointsMultiplier =
       1 +
-      pointsInfluence *
-      1.35;
-
+      pointsInfluence * 1.35;
 
     // =======================================================
-    // AJUSTE SEGÚN POSICIÓN
+    // LÍDER
     // =======================================================
 
     if (d === leader) {
 
-      // =====================================================
-      // LÍDER
-      // =====================================================
-
-      const second =
-        sorted.length > 1
-          ? sorted[1]
-          : null;
-
-
-      const secondPoints =
-        second?.season?.points || 0;
-
-
-      const gapToSecond =
-        Math.max(
-          0,
-          leaderPoints -
-          secondPoints
-        );
-
-
-      const leaderAdvantageRatio =
-        maxPointsRemaining > 0
-          ? Math.min(
-              1,
-              gapToSecond /
-              maxPointsRemaining
-            )
-          : 1;
-
-
       /*
-       * El líder baja progresivamente.
-       *
-       * Cuanto mayor sea su ventaja,
-       * más fuerte es la reducción.
+       * El líder recibe una reducción de cuota
+       * porque está primero en el campeonato.
        */
 
-      let leaderReduction =
-        0.035;
-
-
-      leaderReduction +=
-        leaderAdvantageRatio *
-        0.12;
-
-
-      leaderReduction +=
-        seasonProgress *
-        0.045;
-
-
-      leaderReduction =
-        Math.max(
-          0.025,
-          Math.min(
-            0.20,
-            leaderReduction
-          )
-        );
-
-
-      pointsMultiplier *=
-        1 -
-        leaderReduction;
-
+      pointsMultiplier *= 0.78;
 
     } else {
 
-      // =====================================================
-      // PERSEGUIDORES
-      // =====================================================
+      /*
+       * Si está cerca del líder,
+       * todavía es un candidato fuerte.
+       */
 
-      if (
-        deficitRatio < 0.15
-      ) {
-
-        pointsMultiplier *=
-          0.94;
-
+      if (deficitRatio < 0.15) {
+        pointsMultiplier *= 0.92;
       }
 
+      /*
+       * Si está lejos, aumenta la cuota.
+       */
 
-      if (
-        deficitRatio >= 0.15 &&
-        deficitRatio < 0.40
-      ) {
-
-        pointsMultiplier *=
-          1.05;
-
+      if (deficitRatio > 0.40) {
+        pointsMultiplier *= 1.15;
       }
 
-
-      if (
-        deficitRatio >= 0.40 &&
-        deficitRatio < 0.60
-      ) {
-
-        pointsMultiplier *=
-          1.18;
-
+      if (deficitRatio > 0.60) {
+        pointsMultiplier *= 1.25;
       }
 
-
-      if (
-        deficitRatio >= 0.60 &&
-        deficitRatio < 0.80
-      ) {
-
-        pointsMultiplier *=
-          1.35;
-
+      if (deficitRatio > 0.80) {
+        pointsMultiplier *= 1.35;
       }
-
-
-      if (
-        deficitRatio >= 0.80
-      ) {
-
-        pointsMultiplier *=
-          1.55;
-
-      }
-
     }
-
 
     // =======================================================
     // CUOTA INICIAL
@@ -887,7 +632,6 @@ function recalcOdds() {
 
     let startingOdds =
       d.startingOdds;
-
 
     if (
       typeof startingOdds !== "number" ||
@@ -899,18 +643,13 @@ function recalcOdds() {
         isFinite(d.odds)
       ) {
 
-        startingOdds =
-          d.odds;
+        startingOdds = d.odds;
 
       } else {
 
-        startingOdds =
-          50;
-
+        startingOdds = 50;
       }
-
     }
-
 
     startingOdds =
       Math.max(
@@ -921,56 +660,43 @@ function recalcOdds() {
         )
       );
 
+    // =======================================================
+    // CUOTA ACTUAL
+    // =======================================================
+
+    /*
+     * CAMBIO IMPORTANTE:
+     *
+     * Antes siempre calculábamos desde startingOdds.
+     *
+     * Ahora usamos la cuota anterior.
+     *
+     * Esto permite:
+     *
+     * 2.13 → 2.08 → 2.01 → 1.94 → 1.85...
+     *
+     * en lugar de recalcular todo desde 3.90.
+     */
+
+    const currentOdds =
+      typeof d.odds === "number" &&
+      isFinite(d.odds)
+        ? d.odds
+        : startingOdds;
 
     // =======================================================
     // NUEVA CUOTA
     // =======================================================
 
     let newOdds =
-      startingOdds *
+      currentOdds *
       performanceMultiplier *
       pointsMultiplier;
 
-
     // =======================================================
-    // AJUSTE POR RESULTADO RECIENTE
-    // =======================================================
-
-    /*
-     * Si no consiguió puntos desde la última actualización,
-     * su cuota NO puede bajar.
-     */
-
-    if (
-      pointsGained <= 0 &&
-      d !== leader
-    ) {
-
-      newOdds *=
-        1.08;
-
-    }
-
-
-    /*
-     * Si consiguió una cantidad importante de puntos,
-     * puede mejorar ligeramente.
-     */
-
-    if (
-      pointsGained >= 18 &&
-      d !== leader
-    ) {
-
-      newOdds *=
-        0.94;
-
-    }
-
-
-    // =======================================================
-    // REGLA: UN PILOTO DETRÁS DEL LÍDER
-    // NO PUEDE TENER UNA CUOTA MENOR
+    // REGLA:
+    // UN PILOTO DETRÁS DEL LÍDER NO PUEDE TENER
+    // UNA CUOTA MENOR QUE LA DEL LÍDER
     // SI LA DIFERENCIA ES IMPORTANTE
     // =======================================================
 
@@ -981,104 +707,71 @@ function recalcOdds() {
           ? leader.odds
           : leader.startingOdds || 2.60;
 
-
       const pointsGap =
-        leaderPoints -
-        points;
+        leaderPoints - points;
 
+      /*
+       * Si está a más de 10 puntos del líder,
+       * su cuota debe ser superior.
+       */
 
       if (pointsGap >= 10) {
 
         const minimumGap =
-          1 +
-          pointsGap *
-          0.015;
-
+          1 + (pointsGap * 0.015);
 
         const minimumOdds =
-          leaderOdds *
-          minimumGap;
-
+          leaderOdds * minimumGap;
 
         newOdds =
           Math.max(
             newOdds,
             minimumOdds
           );
-
       }
-
     }
 
-
     // =======================================================
-    // LIMITAR CAMBIOS BRUSCOS
+    // EVITAR CAMBIOS BRUSCOS AL PRINCIPIO
     // =======================================================
 
     /*
-     * IMPORTANTE:
+     * Esta protección solamente se aplica al comienzo
+     * de la temporada.
      *
-     * Ahora comparamos contra la cuota ANTERIOR,
-     * no contra la cuota inicial.
+     * Después de cierto progreso, la cuota puede alejarse
+     * mucho más de la cuota inicial.
      */
 
-    const previousOdds =
-      typeof d.odds === "number"
-        ? d.odds
-        : startingOdds;
-
-
-    const maxOddsMovement =
+    const maxChange =
       seasonProgress < 0.20
-        ? 0.04
+        ? 0.35
         : seasonProgress < 0.40
-          ? 0.06
-          : seasonProgress < 0.70
-            ? 0.08
-            : 0.12;
+          ? 0.55
+          : 0.85;
 
+    if (seasonProgress < 0.40) {
 
-    const upperLimit =
-      previousOdds *
-      (1 + maxOddsMovement);
+      const minAllowed =
+        startingOdds *
+        (1 - maxChange);
 
-
-    const lowerLimit =
-      previousOdds *
-      (1 - maxOddsMovement);
-
-
-    newOdds =
-      Math.max(
-        lowerLimit,
-        Math.min(
-          upperLimit,
-          newOdds
-        )
-      );
-
-
-    // =======================================================
-    // SI NO SUMÓ PUNTOS, NO PUEDE BAJAR
-    // =======================================================
-
-    if (
-      pointsGained <= 0 &&
-      d !== leader &&
-      typeof previousOdds === "number"
-    ) {
+      const maxAllowed =
+        startingOdds *
+        (1 + maxChange);
 
       newOdds =
         Math.max(
-          newOdds,
-          previousOdds
+          minAllowed,
+          Math.min(
+            maxAllowed,
+            newOdds
+          )
         );
-
     }
 
-
     // =======================================================
-    // LÍMITES ABSOLUTOS
+    // LÍMITES
     // =======================================================
 
     newOdds =
@@ -1090,20 +783,17 @@ function recalcOdds() {
         )
       );
 
-
     // =======================================================
     // REDONDEAR
     // =======================================================
 
     newOdds =
       Math.round(
-        newOdds *
-        100
+        newOdds * 100
       ) / 100;
 
-
     // =======================================================
-    // GUARDAR CUOTA
+    // GUARDAR CUOTA ANTERIOR
     // =======================================================
 
     d.oddsPrev =
@@ -1111,17 +801,21 @@ function recalcOdds() {
         ? d.odds
         : startingOdds;
 
+    // =======================================================
+    // GUARDAR NUEVA CUOTA
+    // =======================================================
 
     d.odds =
       newOdds;
 
+    // =======================================================
+    // PROBABILIDAD
+    // =======================================================
 
     d.probability =
       Math.round(
-        (100 / newOdds) *
-        10
+        (100 / newOdds) * 10
       ) / 10;
-
 
     // =======================================================
     // HISTORIAL
@@ -1131,17 +825,7 @@ function recalcOdds() {
       ...(d.oddsHistory || []),
       newOdds
     ].slice(-10);
-
-
-    // =======================================================
-    // GUARDAR PUNTOS DE REFERENCIA
-    // =======================================================
-
-    d.oddsPointsReference =
-      d.season?.points || 0;
-
   });
-
 
   // =========================================================
   // GUARDAR CAMPEÓN MATEMÁTICO
@@ -1157,15 +841,13 @@ function recalcOdds() {
   } else {
 
     /*
-     * Si todavía no existe campeón matemático,
-     * limpiamos el valor anterior.
+     * Si todavía no hay campeón matemático,
+     * eliminamos el valor anterior para evitar
+     * que quede marcado incorrectamente.
      */
 
-    DB.mathematicalChampion =
-      null;
-
+    DB.mathematicalChampion = null;
   }
-
 }
 function recalcConstructorOdds() {
   // Máximo de puntos que puede conseguir un piloto en una carrera
