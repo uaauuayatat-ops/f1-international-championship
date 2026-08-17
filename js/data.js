@@ -23,18 +23,18 @@ const SEASON_LABEL = "Temporada 26/27";
 /* points/wins/poles/podiums = temporada actual (arranca en 0,
    la temporada todavía no empezó: primera carrera 12/09). */
 const DEFAULT_TEAMS = [
-  { id: "redbull",    name: "Red Bull",      color: "#1E41FF", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.5 },
-  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.2 },
-  { id: "williams",   name: "Williams",      color: "#00A0DE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.6 },
-  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.0 },
-  { id: "mclaren",    name: "McLaren",       color: "#FF8000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 6.5 },
-  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", points: 0, wins: 0, poles: 0, podiums: 0, odds: 9.0 },
-  { id: "porsche",    name: "Porsche",       color: "#D5001C", points: 0, wins: 0, poles: 0, podiums: 0, odds: 11 },
-  { id: "koenigsegg", name: "Koenigsegg",    color: "#FFD700", points: 0, wins: 0, poles: 0, podiums: 0, odds: 15 },
-  { id: "haastgr",    name: "Haas TGR",      color: "#B6BABD", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
+  { id: "redbull",    name: "Red Bull",      color: "#1E41FF", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.7 },
+  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.5 },
+  { id: "williams",   name: "Williams",      color: "#00A0DE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.1 },
+  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0 },
+  { id: "mclaren",    name: "McLaren",       color: "#FF8000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25 },
+  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10 },
+  { id: "porsche",    name: "Porsche",       color: "#D5001C", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14 },
+  { id: "racingbulls", name: "Racing Bulls",    color: "#FFD700", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36 },
+  { id: "lamborghini",    name: "Lamborghini",      color: "#B6BABD", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
   { id: "astonmartin",name: "Aston Martin",  color: "#006F62", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
   { id: "alpine",     name: "Alpine",        color: "#0090FF", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
-  { id: "lotusrenault", name: "Lotus Renault Racing", color: "#FFF000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 26 },
+  { id: "lotusrenault", name: "Lotus Renault Racing", color: "#FFF000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
 ];
 
 /* ---------------------- PILOTOS (24) ----------------------
@@ -137,9 +137,9 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "flores", name: "Eduardo Flores", number: 15, country: "México", flag: "🇲🇽",
-    teamId: null, status: "libre", rumorTeams: [],
+    teamId: "lamborghini", status: "confirmado", rumorTeams: [],
     age: 22, seasons: 1, bestResult: "9°",
-    bio: "Piloto libre a la espera de equipo para la 26/27.",
+    bio: "nuevo piloto de Lamborghini para la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 4, points: 48 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 29, oddsPrev: 29, probability: 1, oddsHistory: [29, 29, 29, 29],
@@ -197,9 +197,9 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "dave", name: "Dave", number: 56, country: "Chile", flag: "🇨🇱",
-    teamId: null, status: "libre", rumorTeams: [],
+    teamId: "racingbulls", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "15°",
-    bio: "Piloto libre a la espera de equipo para la 26/27.",
+    bio: "Piloto confirmado para Racing Bulls en la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 10 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 81, oddsPrev: 81, probability: 0.4, oddsHistory: [81, 81, 81, 81],
@@ -227,9 +227,9 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "luca", name: "Luca", number: 46, country: "Argentina", flag: "🇦🇷",
-    teamId: null, status: "libre", rumorTeams: [],
+    teamId: "racingbulls", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
-    bio: "Piloto para confrimar la temporada siguiente.",
+    bio: "Piloto confirmado en Racing Bulls para la temporada siguiente.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 107, oddsPrev: 107, probability: 0.2, oddsHistory: [107, 107, 107, 107],
@@ -242,7 +242,7 @@ const DEFAULT_DRIVERS = [
     bio: "Piloto para confrimar la temporada siguiente.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 110, oddsPrev: 110, probability: 0.2, oddsHistory: [110, 110, 110, 110],
+    odds: 55, oddsPrev: 55, probability: 0.9, oddsHistory: [55, 55, 55, 55],
     powerRank: 20, powerRankPrev: 21,
   },
   /* 5 asientos libres reservados para futuras incorporaciones */
