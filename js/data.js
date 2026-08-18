@@ -34,7 +34,7 @@ const DEFAULT_TEAMS = [
   { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", logo: "assets/team/lamborghini.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
   { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
   { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
-  { id: "lotusrenault", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
+  { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
 ];
 
 /* ---------------------- PILOTOS (24) ----------------------
@@ -107,7 +107,7 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "vidal", name: "Santiago Vidal", number: 25, country: "Bolivia", flag: "🇧🇴",
-    teamId: "lotusrenault", status: "confirmado", rumorTeams: [],
+    teamId: "lotus", status: "confirmado", rumorTeams: [],
     age: 24, seasons: 1, bestResult: "6°",
     bio: "piloto confirmado para Lotus Renault Racing en la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 1, dnf: 3, points: 88 },
@@ -187,7 +187,7 @@ const DEFAULT_DRIVERS = [
   },
   {
     id: "camilo", name: "Camilo", number: 43, country: "Argentina", flag: "🇦🇷",
-    teamId: "lotusrenault", status: "confirmado", rumorTeams: [],
+    teamId: "lotus", status: "confirmado", rumorTeams: [],
     age: 14, seasons: 1, bestResult: "14°",
     bio: "confirmado para Lotus Renault Racing en temporada 2.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 5, points: 15 },
