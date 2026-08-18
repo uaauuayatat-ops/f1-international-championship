@@ -1612,7 +1612,7 @@ function renderDriversStandings() {
       <td class="pos">${d.pos}</td>
       <td class="driver-cell">
         <a href="piloto.html?id=${d.id}">
-          <span class="team-dot" style="background:${teamColor(d.teamId)}"></span>
+          <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
           ${d.name} <span class="num">#${d.number ?? "-"}</span>
         </a>
       </td>
