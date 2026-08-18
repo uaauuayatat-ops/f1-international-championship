@@ -1904,3 +1904,42 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   subscribeDB();
 });
+// ============================================================
+// INSTALACIÓN PWA
+// ============================================================
+
+let deferredPrompt;
+
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  if (installBtn) {
+    installBtn.style.display = "block";
+  }
+});
+
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    console.log("Instalación:", outcome);
+
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  });
+}
+
+window.addEventListener("appinstalled", () => {
+  console.log("F1 International Championship instalada ✅");
+
+  if (installBtn) {
+    installBtn.style.display = "none";
+  }
+});
