@@ -1662,8 +1662,8 @@ function renderOdds() {
   wrap.innerHTML = ds.map(d => `
     <div class="card odds-card fade-up">
       <div class="odds-top">
-        <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
-          ${d.name} <span class="num">#${d.number ?? "-"}</span>
+        <img src="${teamLogo()}" class="team-logo" alt="${teamName(d.teamId)}">
+          ${} <span class="num">#${d.number ?? "-"}</span>
         <a href="piloto.html?id=${d.id}"><strong>${d.name}</strong></a>
         <span class="odds-team">${teamName(d.teamId)}</span>
       </div>
