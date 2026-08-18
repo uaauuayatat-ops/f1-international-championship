@@ -23,18 +23,18 @@ const SEASON_LABEL = "Temporada 26/27";
 /* points/wins/poles/podiums = temporada actual (arranca en 0,
    la temporada todavía no empezó: primera carrera 12/09). */
 const DEFAULT_TEAMS = [
-  { id: "redbull",    name: "Red Bull",      color: "#061D42", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.7 },
-  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.5 },
-  { id: "williams",   name: "Williams",      color: "#00A0DE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.1 },
-  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0 },
-  { id: "mclaren",    name: "McLaren",       color: "#FF8000", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25 },
-  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10 },
-  { id: "porsche",    name: "Porsche",       color: "#D5001C", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14 },
-  { id: "racingbulls", name: "Racing Bulls",    color: "#6C98FF", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36 },
-  { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
-  { id: "astonmartin",name: "Aston Martin",  color: "#006F62", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
-  { id: "alpine",     name: "Alpine",        color: "#0090FF", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
-  { id: "lotusrenault", name: "Lotus Renault Racing", color: "#C6F300", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
+  { id: "redbull",    name: "Red Bull",      color: "#061D42", logo: "assets/team/redbull.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.7 },
+  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", logo: "assets/team/ferrari.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.5 },
+  { id: "williams",   name: "Williams",      color: "#00A0DE", logo: "assets/team/williams.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.1 },
+  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", logo: "assets/team/mercedes.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0 },
+  { id: "mclaren",    name: "McLaren",       color: "#FF8000", logo: "assets/team/mclaren.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25 },
+  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", logo: "assets/team/audi.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10 },
+  { id: "porsche",    name: "Porsche",       color: "#D5001C", logo: "assets/team/porsche.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14 },
+  { id: "racingbulls", name: "Racing Bulls",    color: "#6C98FF", logo: "assets/team/racingbulls.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36 },
+  { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", logo: "assets/team/lamborghini.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
+  { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
+  { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
+  { id: "lotusrenault", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
 ];
 
 /* ---------------------- PILOTOS (24) ----------------------
