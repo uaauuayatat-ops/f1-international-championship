@@ -216,7 +216,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 17, powerRankPrev: 18,
   },
   {
-    id: "tapara", name: "Tapara", number: 30, country: "Peru", flag: "🇵🇪",
+    id: "tapara", name: "Tapara", number: 47, country: "Peru", flag: "🇵🇪",
     teamId: "mclaren", status: "confirmado", rumorTeams: [],
     age: 14, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para la temporada siguiente.",
@@ -236,7 +236,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 19, powerRankPrev: 20,
   },
     {
-    id: "hernandez", name: "Juan Hernandez", number: 20, country: "Colombia", flag: "co",
+    id: "hernandez", name: "Juan Hernandez", number: 20, country: "Colombia", flag: "🇨🇴",
     teamId: null, status: "libre", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto para confrimar la temporada siguiente.",
@@ -293,12 +293,6 @@ const DEFAULT_NEWS = [
     text: "Mercedes anunció oficialmente la contratación de Coffin, quien llega tras un cierre de temporada sobresaliente con Audi FXR: segundo lugar en casi todas las últimas fechas y cinco poles consecutivas. El venezolano competirá con el número 99 y llega con el objetivo de pelear el campeonato desde el primer fin de semana.",
   },
   {
-    id: 2, title: "Pujalski deja Red Bull y se pasa a Williams",
-    date: "2026-07-28", category: "Fichajes",
-    image: "https://images.unsplash.com/photo-1552519505-6e00f47927b0?q=80&w=1200&auto=format&fit=crop",
-    text: "El campeón vigente, Alexander Pujalski, sorprendió al mercado al confirmar su salida de Red Bull para vestir los colores de Williams la próxima temporada. El argentino busca un nuevo desafío después de dominar con el mejor auto del grid.",
-  },
-  {
     id: 3, title: "Carreon firma con Red Bull",
     date: "2026-07-25", category: "Fichajes",
     image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop",
@@ -309,12 +303,6 @@ const DEFAULT_NEWS = [
     date: "2026-07-20", category: "Fichajes",
     image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop",
     text: "Ferrari confirmó a Gabriel Moran como su nuevo piloto tras una gran temporada con Audi FXR, cerrada con varios podios. El paraguayo competirá con el número 58 y buscará pelear el título desde Maranello.",
-  },
-  {
-    id: 5, title: "Tres equipos siguen de cerca a Santiago Vidal",
-    date: "2026-07-15", category: "Rumores",
-    image: "https://images.unsplash.com/photo-1531826730801-1a5c5c7e6c7f?q=80&w=1200&auto=format&fit=crop",
-    text: "El boliviano Santiago Vidal, todavía sin equipo confirmado para la nueva temporada, aparece en el radar de Alpine, McLaren y Mercedes. Las tres escuadras evalúan su incorporación en las próximas semanas.",
   },
 ];
 
