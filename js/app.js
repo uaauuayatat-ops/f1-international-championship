@@ -110,10 +110,28 @@ let DB = null;
 /* ----------------------------------------------------------
    2) HELPERS GENERALES
    ---------------------------------------------------------- */
-function getTeam(id) { return DB.teams.find(t => t.id === id) || null; }
-function getDriver(id) { return DB.drivers.find(d => d.id === id) || null; }
-function teamName(id) { const t = getTeam(id); return t ? t.name : "Sin equipo"; }
-function teamColor(id) { const t = getTeam(id); return t ? t.color : "#8a8d93"; }
+function getTeam(id) {
+  return DB.teams.find(t => t.id === id) || null;
+}
+
+function getDriver(id) {
+  return DB.drivers.find(d => d.id === id) || null;
+}
+
+function teamName(id) {
+  const t = getTeam(id);
+  return t ? t.name : "Sin equipo";
+}
+
+function teamColor(id) {
+  const t = getTeam(id);
+  return t ? t.color : "#8a8d93";
+}
+
+function teamLogo(id) {
+  const t = getTeam(id);
+  return t && t.logo ? t.logo : "";
+}
 
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 function fmtDate(iso) {
