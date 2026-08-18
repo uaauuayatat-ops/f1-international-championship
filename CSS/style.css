@@ -397,3 +397,14 @@ form.admin-form textarea { resize: vertical; min-height: 80px; }
 /* ---------------------- UTILIDADES ---------------------- */
 .text-center { text-align: center; }
 .mt-0 { margin-top: 0; }
+/* ============================================================
+   LOGOS DE EQUIPOS
+   ============================================================ */
+
+.team-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 8px;
+}
