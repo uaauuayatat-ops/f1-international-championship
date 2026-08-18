@@ -1662,7 +1662,8 @@ function renderOdds() {
   wrap.innerHTML = ds.map(d => `
     <div class="card odds-card fade-up">
       <div class="odds-top">
-        <span class="team-dot" style="background:${teamColor(d.teamId)}"></span>
+        <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
+          ${d.name} <span class="num">#${d.number ?? "-"}</span>
         <a href="piloto.html?id=${d.id}"><strong>${d.name}</strong></a>
         <span class="odds-team">${teamName(d.teamId)}</span>
       </div>
@@ -1705,7 +1706,8 @@ function renderPowerRanking() {
   wrap.innerHTML = top10.map(d => `
     <div class="card power-row fade-up">
       <div class="power-rank">${d.powerRank}</div>
-      <span class="team-dot" style="background:${teamColor(d.teamId)}"></span>
+       <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
+          ${d.name} <span class="num">#${d.number ?? "-"}</span>
       <a href="piloto.html?id=${d.id}" class="power-name">${d.name}</a>
       <span class="power-team">${teamName(d.teamId)}</span>
       ${powerTrendArrow(d.powerRank, d.powerRankPrev)}
