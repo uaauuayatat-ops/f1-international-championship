@@ -1516,11 +1516,7 @@ function renderHome() {
     const confirmed = DB.drivers.filter(d => d.status === "confirmado" && d.teamId).slice(0,6);
     el("home-fichajes").innerHTML = confirmed.map(d => `
       <div class="mini-driver-card">
-         <tr>
-  <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
-  ${t.name}
-</td>
-    </tr>`).join("");
+         <img src="assets/team/${d.teamId}.png" class="team-logo">
         <span class="mini-name">${d.name}</span>
         <span class="mini-team">${teamName(d.teamId)}</span>
       </div>`).join("");
