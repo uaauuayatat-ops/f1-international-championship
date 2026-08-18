@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="CSS/style.css">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0f19">
+  
 </head>
 <body data-page="home">
 
@@ -81,5 +85,14 @@
 <script src="js/firebase-config.js"></script>
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("F1 Championship: Service Worker registrado"))
+        .catch(error => console.error("Error registrando Service Worker:", error));
+    });
+  }
+</script>
 </body>
 </html>
