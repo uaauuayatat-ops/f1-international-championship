@@ -1694,6 +1694,79 @@ function drawSparkline(canvas, values) {
   ctx.stroke();
 }
 
+function renderRivalries() {
+  const wrap = document.getElementById("rivalry-list");
+  if (!wrap) return;
+
+  const rivalries = DB.teams.map(team => {
+
+    const drivers = DB.drivers.filter(
+      d => d.teamId === team.id
+    );
+
+    if (drivers.length !== 2) return "";
+
+    const driver1 = drivers[0];
+    const driver2 = drivers[1];
+
+    return `
+      <div class="rivalry-card">
+
+        <div class="rivalry-team">
+
+          <img
+            src="${team.logo}"
+            alt="${team.name}"
+          >
+
+          <span>${team.name}</span>
+
+        </div>
+
+        <div class="rivalry-drivers">
+
+          <div class="rivalry-driver">
+
+            <div class="rivalry-driver-name">
+              ${driver1.name}
+            </div>
+
+            <div class="rivalry-odds">
+              2.00
+            </div>
+
+            <div class="rivalry-label">
+              Cuota
+            </div>
+
+          </div>
+
+
+          <div class="rivalry-driver">
+
+            <div class="rivalry-driver-name">
+              ${driver2.name}
+            </div>
+
+            <div class="rivalry-odds">
+              2.00
+            </div>
+
+            <div class="rivalry-label">
+              Cuota
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+
+  wrap.innerHTML = rivalries;
+}
 /* ----------------------------------------------------------
    12) RENDER: POWER RANKING
    ---------------------------------------------------------- */
