@@ -1516,8 +1516,8 @@ function renderHome() {
     const confirmed = DB.drivers.filter(d => d.status === "confirmado" && d.teamId).slice(0,6);
     el("home-fichajes").innerHTML = confirmed.map(d => `
       <div class="mini-driver-card">
-        <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
-          ${d.name} <span class="num">#${d.number ?? "-"}</span>
+         <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
+  ${t.name}
         <span class="mini-name">${d.name}</span>
         <span class="mini-team">${teamName(d.teamId)}</span>
       </div>`).join("");
@@ -1662,8 +1662,8 @@ function renderOdds() {
   wrap.innerHTML = ds.map(d => `
     <div class="card odds-card fade-up">
       <div class="odds-top">
-        <img src="${teamLogo()}" class="team-logo" alt="${teamName(d.teamId)}">
-          ${} <span class="num">#${d.number ?? "-"}</span>
+         <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
+  ${t.name}
         <a href="piloto.html?id=${d.id}"><strong>${d.name}</strong></a>
         <span class="odds-team">${teamName(d.teamId)}</span>
       </div>
@@ -1706,8 +1706,8 @@ function renderPowerRanking() {
   wrap.innerHTML = top10.map(d => `
     <div class="card power-row fade-up">
       <div class="power-rank">${d.powerRank}</div>
-       <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
-          ${d.name} <span class="num">#${d.number ?? "-"}</span>
+        <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
+  ${t.name}
       <a href="piloto.html?id=${d.id}" class="power-name">${d.name}</a>
       <span class="power-team">${teamName(d.teamId)}</span>
       ${powerTrendArrow(d.powerRank, d.powerRankPrev)}
