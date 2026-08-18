@@ -1639,7 +1639,10 @@ function renderConstructorsStandings() {
   tbody.innerHTML = cs.map(t => `
     <tr>
       <td class="pos">${t.pos}</td>
-      <td class="driver-cell"><span class="team-dot" style="background:${t.color}"></span>${t.name}</td>
+     <td class="driver-cell">
+  <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
+  ${t.name}
+</td>
       <td class="strong">${t.points}</td>
       <td>${t.wins}</td>
       <td>${t.poles}</td>
