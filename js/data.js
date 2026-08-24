@@ -35,6 +35,8 @@ const DEFAULT_TEAMS = [
   { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
   { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
   { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
+   { id: "bmw",     name: "BMW",        color: "#0090FF", logo: "assets/team/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
+  { id: "alphatauri", name: "Alpha Tauri", color: "#C6F300", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
 ];
 
 /* ---------------------- PILOTOS (24) ----------------------
@@ -245,6 +247,42 @@ const DEFAULT_DRIVERS = [
     odds: 55, oddsPrev: 55, probability: 0.9, oddsHistory: [55, 55, 55, 55],
     powerRank: 20, powerRankPrev: 21,
   },
+    {
+    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+    teamId: "porsche", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 21, powerRankPrev: 22,
+    {
+    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+    teamId: "porsche", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 21, powerRankPrev: 22,
+    {
+    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+    teamId: "porsche", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 21, powerRankPrev: 22,
+    {
+    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+    teamId: "porsche", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 21, powerRankPrev: 22,
     {
     id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
