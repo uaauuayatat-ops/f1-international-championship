@@ -257,7 +257,7 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
     {
-    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+    id: "catnap", name: "yzaac", number: 6, country: "Mexico", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -354,4 +354,4 @@ const DEFAULT_NEWS = [
 ];
 
 /* Sistema de puntos por carrera (igual para R1 y R2, top 10) */
-const POINTS_SYSTEM = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+const POINTS_SYSTEM = [30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
