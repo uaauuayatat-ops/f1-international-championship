@@ -256,6 +256,7 @@ const DEFAULT_DRIVERS = [
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
+  },
     {
     id: "catnap", name: "yzaac", number: 6, country: "Mexico", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
@@ -265,6 +266,7 @@ const DEFAULT_DRIVERS = [
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
+  },
     {
     id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
@@ -274,6 +276,7 @@ const DEFAULT_DRIVERS = [
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
+  },
     {
     id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
@@ -283,6 +286,7 @@ const DEFAULT_DRIVERS = [
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
+  },
     {
     id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
