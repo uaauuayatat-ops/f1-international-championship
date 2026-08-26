@@ -239,7 +239,7 @@ const DEFAULT_DRIVERS = [
   },
     {
     id: "hernandez", name: "Juanjo Hernandez", number: 20, country: "Colombia", flag: "🇨🇴",
-    teamId: null, status: "libre", rumorTeams: [],
+    teamId: "lamborghini", status: "libre", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto para confrimar la temporada siguiente.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
@@ -305,11 +305,29 @@ const DEFAULT_DRIVERS = [
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
-    powerRank: 25, powerRankPrev: 26,
+    powerRank: 26, powerRankPrev: 27,
+  },
+   {
+    id: "jose", name: "Jose", number: 23, country: "Mexico", flag: "🇲🇽",
+    teamId: "audifxr", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 27, powerRankPrev: 27,
+  },
+   {
+    id: "agustin", name: "Agustin", number: 49, country: "Chile", flag: "🇨🇱",
+    teamId: "audifxr", status: "confirmado", rumorTeams: [],
+    age: 16, seasons: 1, bestResult: "12°",
+    bio: "Piloto confirmado para esta temporada.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    powerRank: 28, powerRankPrev: 28,
   },
   /* 5 asientos libres reservados para futuras incorporaciones */
-  { id: "libre1", name: "Piloto libre 1", number: 2, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 18, powerRankPrev: 18 },
-  { id: "libre2", name: "Piloto libre 2", number: 3, country: "Por confirmar", flag: "🏳️", teamId: null, status: "libre", rumorTeams: [], age: null, seasons: 0, bestResult: "—", bio: "Asiento disponible. Piloto a confirmar próximamente.", career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 }, odds: null, oddsPrev: null, probability: null, oddsHistory: [], powerRank: 19, powerRankPrev: 19 },
 ];
 
 /* ---------------------- CALENDARIO (24 fechas) ----------------------
