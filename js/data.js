@@ -239,7 +239,7 @@ const DEFAULT_DRIVERS = [
   },
     {
     id: "hernandez", name: "Juanjo Hernandez", number: 20, country: "Colombia", flag: "🇨🇴",
-    teamId: "lamborghini", status: "libre", rumorTeams: [],
+    teamId: "lamborghini", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto para confrimar la temporada siguiente.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
