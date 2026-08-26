@@ -3,25 +3,17 @@
    ------------------------------------------------------------
    Lógica compartida por todo el sitio:
    - Base de datos COMPARTIDA en Firebase Firestore (seed = data.js).
-     Ya no es localStorage: todos los que entran ven los mismos
-     datos, y los cambios del panel de admin se ven en vivo para
-     cualquiera que tenga el sitio abierto (ver firebase-config.js).
    - Cálculo automático de puntos, cuotas y power ranking
    - Render de cada página según body[data-page]
    - Menú, modo oscuro, buscadores, animaciones
+   - DUELO INTERNO: cuotas de rivalidad entre compañeros
    ============================================================ */
 
 const AUTH_KEY = "f1_admin_session";
-const ADMIN_PASSWORD = "f1admin2027"; // demo únicamente, ver README
+const ADMIN_PASSWORD = "f1admin2027";
 
 /* ----------------------------------------------------------
    1) BASE DE DATOS COMPARTIDA (Firebase Firestore)
-   ------------------------------------------------------------
-   Un único documento ("f1champ/estado") guarda todo el estado
-   del sitio. loadDB() lo trae (y lo crea con el seed de data.js
-   la primera vez). saveDB(db) lo sobreescribe entero. subscribeDB()
-   escucha cambios en vivo hechos por cualquier visitante/admin y
-   vuelve a pintar la página con los datos nuevos, sin recargar.
    ---------------------------------------------------------- */
 function firestoreDoc() { return firestoreDB.collection("f1champ").doc("estado"); }
 
@@ -32,7 +24,7 @@ function buildSeed() {
     drivers: structuredClone(DEFAULT_DRIVERS).map(d => ({ ...d, recentPositions: d.recentPositions || [] })),
     calendar: structuredClone(DEFAULT_CALENDAR),
     news: structuredClone(DEFAULT_NEWS),
-    history: [], // campeones por temporada (se completa al finalizar una)
+    history: [],
   };
 }
 
@@ -58,24 +50,20 @@ async function saveDB(db) {
     alert("No se pudo guardar. Revisá tu conexión o la configuración de js/firebase-config.js.");
   }
 }
-/* ----------------------------------------------------------
-   Actualizar Firestore con el contenido de data.js
-   ---------------------------------------------------------- */
+
 async function syncFromDataJS() {
   if (!confirm("¿Reemplazar la base de datos de Firebase con el contenido actual de data.js?")) return;
-
   try {
     DB = buildSeed();
     await saveDB(DB);
-    alert("✅ Firebase se actualizó correctamente desde data.js.");
+    alert("Firebase se actualizó correctamente desde data.js.");
     renderCurrentPage();
   } catch (err) {
     console.error(err);
-    alert("❌ Error al actualizar Firebase.");
+    alert("Error al actualizar Firebase.");
   }
 }
-/* Escucha cambios en vivo (de cualquier visitante) y repinta la
-   página actual. Ignora el "eco" de nuestros propios guardados. */
+
 function subscribeDB() {
   if (typeof firestoreDB === "undefined") return;
   firestoreDoc().onSnapshot({ includeMetadataChanges: true }, (snap) => {
@@ -88,7 +76,7 @@ function subscribeDB() {
 function showDbError() {
   const el = document.createElement("div");
   el.style.cssText = "position:fixed;bottom:16px;left:16px;right:16px;max-width:480px;background:#a80500;color:#fff;padding:12px 16px;border-radius:8px;font-size:.8rem;z-index:3000;";
-  el.textContent = "No se pudo conectar con la base de datos compartida. Revisá js/firebase-config.js (ver README) — mientras tanto se muestran datos de fábrica sin guardar.";
+  el.textContent = "No se pudo conectar con la base de datos compartida. Revisá js/firebase-config.js — mientras tanto se muestran datos de fábrica sin guardar.";
   document.body.appendChild(el);
 }
 
@@ -145,10 +133,8 @@ function fmtDateShort(iso) {
 function raceStatus(iso) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
   const d = new Date(iso + "T00:00:00");
   const diffDays = Math.round((d - today) / 86400000);
-
   if (diffDays < 0) return "finalizado";
   if (diffDays <= 30) return "proximo";
   return "pendiente";
@@ -162,7 +148,7 @@ function statusLabel(s) {
    3) STANDINGS (pilotos / constructores)
    ---------------------------------------------------------- */
 function driverStandings() {
-  const arr = DB.drivers.filter(d => d.teamId || d.status !== "libre" || true); // se listan todos
+  const arr = DB.drivers.filter(d => d.teamId || d.status !== "libre" || true);
   const sorted = [...arr].sort((a,b) => b.season.points - a.season.points);
   const leaderPoints = sorted[0] ? sorted[0].season.points : 0;
   return sorted.map((d, i) => ({ ...d, pos: i+1, gap: leaderPoints - d.season.points }));
@@ -173,7 +159,7 @@ function constructorStandings() {
 }
 
 /* ----------------------------------------------------------
-   4) RECÁLCULO AUTOMÁTICO (se dispara desde el panel admin)
+   4) RECÁLCULO AUTOMÁTICO
    ---------------------------------------------------------- */
 function recalcTeams() {
   DB.teams.forEach(t => { t.points = 0; t.wins = 0; t.poles = 0; t.podiums = 0; });
@@ -188,1092 +174,218 @@ function recalcTeams() {
   });
 }
 
-/* Cuotas: fórmula de simulación deportiva (NO apuestas reales).
-   Pondera puntos, victorias, podios, poles, consistencia reciente,
-   penaliza abandonos y suma la fuerza del equipo actual. */
 function recalcOdds() {
-
   const drivers = DB.drivers || [];
-
   if (!drivers.length || !DB.calendar) return;
 
-
-  // =========================================================
-  // CUOTAS INICIALES DEL CAMPEONATO
-  // =========================================================
-
   const startingOddsMap = {
-
-    alexander: 3.50,
-    coffin: 2.60,
-    carreon: 3.90,
-    moran: 4.60,
-    acosta: 8.50,
-    mauricio: 12.00,
-    vidal: 19.00,
-    pichardo: 23.00,
-    osorio: 26.00,
-    flores: 29.00,
-    maximo: 31.00,
-    caceres: 34.00,
-    jeanfranco: 41.00,
-    raneri: 51.00,
-    camilo: 67.00,
-    dave: 81.00,
-    chichar: 101.00,
-    tapara: 105.00,
-    luca: 107.00,
-    hernandez: 110.00
-
+    alexander: 3.50, coffin: 2.60, carreon: 3.90, moran: 4.60,
+    acosta: 8.50, mauricio: 12.00, vidal: 19.00, pichardo: 23.00,
+    osorio: 26.00, flores: 29.00, maximo: 31.00, caceres: 34.00,
+    jeanfranco: 41.00, raneri: 51.00, camilo: 67.00, dave: 81.00,
+    chichar: 101.00, tapara: 105.00, luca: 107.00, hernandez: 110.00
   };
 
-
-  // =========================================================
-  // OBTENER ID DEL PILOTO
-  // =========================================================
-
   function getDriverId(d) {
-
-    return String(
-      d.id ||
-      d.driverId ||
-      d.slug ||
-      d.key ||
-      ""
-    )
-      .toLowerCase()
-      .trim();
-
+    return String(d.id || d.driverId || d.slug || d.key || "").toLowerCase().trim();
   }
 
-
-  // =========================================================
-  // INICIALIZAR CUOTAS
-  // =========================================================
-
   drivers.forEach(d => {
-
     const id = getDriverId(d);
-
-    if (startingOddsMap[id] !== undefined) {
-
-      d.startingOdds =
-        startingOddsMap[id];
-
-    }
-
+    if (startingOddsMap[id] !== undefined) d.startingOdds = startingOddsMap[id];
   });
-
-
-  // =========================================================
-  // CARRERAS COMPLETADAS / RESTANTES
-  // =========================================================
 
   let completedRaces = 0;
   let remainingRaces = 0;
-
   DB.calendar.forEach(race => {
-
-    const r1Done =
-      race.results?.r1?.orderIds?.length > 0;
-
-    const r2Done =
-      race.results?.r2?.orderIds?.length > 0;
-
-
-    if (r1Done) {
-
-      completedRaces++;
-
-    } else {
-
-      remainingRaces++;
-
-    }
-
-
-    if (r2Done) {
-
-      completedRaces++;
-
-    } else {
-
-      remainingRaces++;
-
-    }
-
+    const r1Done = race.results?.r1?.orderIds?.length > 0;
+    const r2Done = race.results?.r2?.orderIds?.length > 0;
+    if (r1Done) completedRaces++; else remainingRaces++;
+    if (r2Done) completedRaces++; else remainingRaces++;
   });
 
+  if (remainingRaces <= 0) return;
 
-  // =========================================================
-  // SI NO QUEDAN CARRERAS
-  // =========================================================
-
-  if (remainingRaces <= 0) {
-
-    return;
-
-  }
-
-
-  // =========================================================
-  // PUNTOS MÁXIMOS RESTANTES
-  // =========================================================
-
-  const maxPointsPerRace =
-    Math.max(...POINTS_SYSTEM);
-
-  const maxPointsRemaining =
-    remainingRaces *
-    maxPointsPerRace;
-
-
-  // =========================================================
-  // ORDENAR CAMPEONATO
-  // =========================================================
+  const maxPointsPerRace = Math.max(...POINTS_SYSTEM);
+  const maxPointsRemaining = remainingRaces * maxPointsPerRace;
 
   const sorted = [...drivers]
-    .filter(d => {
+    .filter(d => !["libre1","libre2","libre3","libre4"].includes(getDriverId(d)))
+    .sort((a, b) => (b.season?.points || 0) - (a.season?.points || 0));
 
-      const id = getDriverId(d);
-
-      return ![
-        "libre1",
-        "libre2",
-        "libre3",
-        "libre4"
-      ].includes(id);
-
-    })
-    .sort(
-      (a, b) =>
-        (b.season?.points || 0) -
-        (a.season?.points || 0)
-    );
-
-
-  const leader =
-    sorted[0];
-
-
+  const leader = sorted[0];
   if (!leader) return;
+  const leaderPoints = leader.season?.points || 0;
 
-
-  const leaderPoints =
-    leader.season?.points || 0;
-
-
-  // =========================================================
-  // DETECTAR QUIÉNES TODAVÍA PUEDEN SER CAMPEONES
-  // =========================================================
-
-  /*
-   * Un piloto sigue teniendo posibilidad de campeonato
-   * mientras pueda terminar por encima del líder actual.
-   *
-   * Ejemplo:
-   *
-   * Piloto: 300 puntos
-   * Líder: 500 puntos
-   * Restantes: 250
-   *
-   * Máximo del piloto = 550
-   *
-   * Todavía puede ser campeón.
-   *
-   * Si su máximo fuera 499:
-   * ya no puede alcanzar al líder.
-   */
-
-  const mathematicallyAlive =
-    new Set();
-
-
+  const mathematicallyAlive = new Set();
   sorted.forEach(d => {
-
-    const points =
-      d.season?.points || 0;
-
-    const maximumPossible =
-      points +
-      maxPointsRemaining;
-
-
-    /*
-     * Si puede superar al líder actual,
-     * sigue vivo matemáticamente.
-     *
-     * Usamos > para conservar la posibilidad
-     * en caso de empate de puntos.
-     */
-
-    if (
-      maximumPossible >
-      leaderPoints
-    ) {
-
-      mathematicallyAlive.add(d);
-
-    }
-
+    const points = d.season?.points || 0;
+    if (points + maxPointsRemaining > leaderPoints) mathematicallyAlive.add(d);
   });
-
-
-  // =========================================================
-  // CAMPEÓN MATEMÁTICO
-  // =========================================================
 
   let mathematicalChampion = null;
+  const leaderCanBeCaught = sorted.some(d => {
+    if (d === leader) return false;
+    return (d.season?.points || 0) + maxPointsRemaining >= leaderPoints;
+  });
+  if (!leaderCanBeCaught) mathematicalChampion = leader;
 
-
-  /*
-   * El líder es campeón matemático cuando
-   * ningún otro piloto puede alcanzarlo.
-   */
-
-  const leaderCanBeCaught =
-    sorted.some(d => {
-
-      if (d === leader) {
-        return false;
-      }
-
-      const points =
-        d.season?.points || 0;
-
-      const maximumPossible =
-        points +
-        maxPointsRemaining;
-
-      return maximumPossible >= leaderPoints;
-
-    });
-
-
-  if (!leaderCanBeCaught) {
-
-    mathematicalChampion =
-      leader;
-
-  }
-
-
-  // =========================================================
-  // PROGRESO DEL CAMPEONATO
-  // =========================================================
-
-  const totalRaces =
-    completedRaces +
-    remainingRaces;
-
-
-  const seasonProgress =
-    totalRaces > 0
-      ? completedRaces / totalRaces
-      : 0;
-
-
-  // =========================================================
-  // CALCULAR CUOTAS
-  // =========================================================
+  const totalRaces = completedRaces + remainingRaces;
+  const seasonProgress = totalRaces > 0 ? completedRaces / totalRaces : 0;
 
   drivers.forEach(d => {
+    const id = getDriverId(d);
+    const isFreeDriver = ["libre1","libre2","libre3","libre4"].includes(id);
+    if (isFreeDriver) { d.odds = null; d.probability = null; return; }
 
-    const id =
-      getDriverId(d);
-
-
-    // =======================================================
-    // PILOTOS LIBRES
-    // =======================================================
-
-    const isFreeDriver =
-      id === "libre1" ||
-      id === "libre2" ||
-      id === "libre3" ||
-      id === "libre4";
-
-
-    if (isFreeDriver) {
-
-      d.odds = null;
-      d.probability = null;
-
+    if (mathematicalChampion && d === mathematicalChampion) {
+      d.oddsPrev = typeof d.odds === "number" ? d.odds : d.startingOdds || 2.00;
+      d.odds = 1.00; d.probability = 100;
+      d.oddsHistory = [...(d.oddsHistory || []), 1.00].slice(-10);
+      d.oddsPointsReference = d.season?.points || 0;
       return;
-
     }
 
-
-    // =======================================================
-    // CAMPEÓN MATEMÁTICO
-    // =======================================================
-
-    if (
-      mathematicalChampion &&
-      d === mathematicalChampion
-    ) {
-
-      d.oddsPrev =
-        typeof d.odds === "number"
-          ? d.odds
-          : d.startingOdds || 2.00;
-
-
-      d.odds = 1.00;
-
-      d.probability = 100;
-
-
-      d.oddsHistory = [
-        ...(d.oddsHistory || []),
-        1.00
-      ].slice(-10);
-
-
-      /*
-       * Guardamos los puntos actuales
-       * para la próxima actualización.
-       */
-
-      d.oddsPointsReference =
-        d.season?.points || 0;
-
-
+    if (!mathematicallyAlive.has(d)) {
+      d.oddsPrev = typeof d.odds === "number" ? d.odds : d.startingOdds || 200;
+      d.odds = 200.00; d.probability = 0;
+      d.oddsHistory = [...(d.oddsHistory || []), 200.00].slice(-10);
+      d.oddsPointsReference = d.season?.points || 0;
       return;
-
     }
 
+    const points = d.season?.points || 0;
+    const wins = d.season?.wins || 0;
+    const podiums = d.season?.podiums || 0;
+    const poles = d.season?.poles || 0;
+    const fastestLaps = d.season?.fastestLaps || 0;
+    const retirements = d.season?.retirements || d.season?.dnfs || 0;
+    const recent = Array.isArray(d.recentPositions) ? d.recentPositions : [];
 
-    // =======================================================
-    // PILOTO SIN POSIBILIDAD MATEMÁTICA
-    // =======================================================
-
-    if (
-      !mathematicallyAlive.has(d)
-    ) {
-
-      d.oddsPrev =
-        typeof d.odds === "number"
-          ? d.odds
-          : d.startingOdds || 200;
-
-
-      d.odds = 200.00;
-
-      d.probability = 0;
-
-
-      d.oddsHistory = [
-        ...(d.oddsHistory || []),
-        200.00
-      ].slice(-10);
-
-
-      d.oddsPointsReference =
-        d.season?.points || 0;
-
-
-      return;
-
-    }
-
-
-    // =======================================================
-    // DATOS DEL PILOTO
-    // =======================================================
-
-    const points =
-      d.season?.points || 0;
-
-    const wins =
-      d.season?.wins || 0;
-
-    const podiums =
-      d.season?.podiums || 0;
-
-    const poles =
-      d.season?.poles || 0;
-
-    const fastestLaps =
-      d.season?.fastestLaps || 0;
-
-    const retirements =
-      d.season?.retirements ||
-      d.season?.dnfs ||
-      0;
-
-
-    const recent =
-      Array.isArray(d.recentPositions)
-        ? d.recentPositions
-        : [];
-
-
-    // =======================================================
-    // PUNTOS OBTENIDOS DESDE LA ÚLTIMA ACTUALIZACIÓN
-    // =======================================================
-
-    const previousPoints =
-      typeof d.oddsPointsReference === "number"
-        ? d.oddsPointsReference
-        : points;
-
-
-    const pointsGained =
-      points -
-      previousPoints;
-
-
-    // =======================================================
-    // FORMA RECIENTE
-    // =======================================================
+    const previousPoints = typeof d.oddsPointsReference === "number" ? d.oddsPointsReference : points;
+    const pointsGained = points - previousPoints;
 
     let recentForm = 0;
-
-
     if (recent.length) {
-
-      const recentAvg =
-        recent.reduce(
-          (sum, pos) => sum + pos,
-          0
-        ) / recent.length;
-
-
-      recentForm =
-        Math.max(
-          0,
-          Math.min(
-            1,
-            (20 - recentAvg) / 19
-          )
-        );
-
+      const recentAvg = recent.reduce((sum, pos) => sum + pos, 0) / recent.length;
+      recentForm = Math.max(0, Math.min(1, (20 - recentAvg) / 19));
     }
 
-
-    // =======================================================
-    // DIFERENCIA CON EL LÍDER
-    // =======================================================
-
-    const deficit =
-      Math.max(
-        0,
-        leaderPoints -
-        points
-      );
-
-
-    const deficitRatio =
-      Math.min(
-        1,
-        deficit /
-        Math.max(
-          1,
-          maxPointsRemaining
-        )
-      );
-
-
-    // =======================================================
-    // RENDIMIENTO
-    // =======================================================
+    const deficit = Math.max(0, leaderPoints - points);
+    const deficitRatio = Math.min(1, deficit / Math.max(1, maxPointsRemaining));
 
     let performanceScore = 0;
+    performanceScore += Math.min(wins, 6) * 0.08;
+    performanceScore += Math.min(podiums, 10) * 0.035;
+    performanceScore += Math.min(poles, 8) * 0.02;
+    performanceScore += Math.min(fastestLaps, 8) * 0.01;
+    performanceScore += recentForm * 0.12;
+    performanceScore -= Math.min(retirements, 5) * 0.025;
+    performanceScore = Math.max(-0.20, Math.min(0.50, performanceScore));
 
+    const pointsInfluence = deficitRatio * (0.30 + seasonProgress * 0.70);
 
-    performanceScore +=
-      Math.min(wins, 6) *
-      0.08;
+    let performanceMultiplier = 1 - performanceScore;
+    performanceMultiplier = Math.max(0.70, Math.min(1.30, performanceMultiplier));
 
-
-    performanceScore +=
-      Math.min(podiums, 10) *
-      0.035;
-
-
-    performanceScore +=
-      Math.min(poles, 8) *
-      0.02;
-
-
-    performanceScore +=
-      Math.min(fastestLaps, 8) *
-      0.01;
-
-
-    performanceScore +=
-      recentForm *
-      0.12;
-
-
-    performanceScore -=
-      Math.min(retirements, 5) *
-      0.025;
-
-
-    performanceScore =
-      Math.max(
-        -0.20,
-        Math.min(
-          0.50,
-          performanceScore
-        )
-      );
-
-
-    // =======================================================
-    // INFLUENCIA DE PUNTOS
-    // =======================================================
-
-    const pointsInfluence =
-      deficitRatio *
-      (
-        0.30 +
-        seasonProgress *
-        0.70
-      );
-
-
-    // =======================================================
-    // MULTIPLICADOR DE RENDIMIENTO
-    // =======================================================
-
-    let performanceMultiplier =
-      1 -
-      performanceScore;
-
-
-    performanceMultiplier =
-      Math.max(
-        0.70,
-        Math.min(
-          1.30,
-          performanceMultiplier
-        )
-      );
-
-
-    // =======================================================
-    // MULTIPLICADOR DE PUNTOS
-    // =======================================================
-
-    let pointsMultiplier =
-      1 +
-      pointsInfluence *
-      1.35;
-
-
-    // =======================================================
-    // AJUSTE SEGÚN POSICIÓN
-    // =======================================================
+    let pointsMultiplier = 1 + pointsInfluence * 1.35;
 
     if (d === leader) {
-
-      // =====================================================
-      // LÍDER
-      // =====================================================
-
-      const second =
-        sorted.length > 1
-          ? sorted[1]
-          : null;
-
-
-      const secondPoints =
-        second?.season?.points || 0;
-
-
-      const gapToSecond =
-        Math.max(
-          0,
-          leaderPoints -
-          secondPoints
-        );
-
-
-      const leaderAdvantageRatio =
-        maxPointsRemaining > 0
-          ? Math.min(
-              1,
-              gapToSecond /
-              maxPointsRemaining
-            )
-          : 1;
-
-
-      /*
-       * El líder baja progresivamente.
-       *
-       * Cuanto mayor sea su ventaja,
-       * más fuerte es la reducción.
-       */
-
-      let leaderReduction =
-        0.035;
-
-
-      leaderReduction +=
-        leaderAdvantageRatio *
-        0.12;
-
-
-      leaderReduction +=
-        seasonProgress *
-        0.045;
-
-
-      leaderReduction =
-        Math.max(
-          0.025,
-          Math.min(
-            0.20,
-            leaderReduction
-          )
-        );
-
-
-      pointsMultiplier *=
-        1 -
-        leaderReduction;
-
-
+      const second = sorted.length > 1 ? sorted[1] : null;
+      const secondPoints = second?.season?.points || 0;
+      const gapToSecond = Math.max(0, leaderPoints - secondPoints);
+      const leaderAdvantageRatio = maxPointsRemaining > 0 ? Math.min(1, gapToSecond / maxPointsRemaining) : 1;
+      let leaderReduction = 0.035;
+      leaderReduction += leaderAdvantageRatio * 0.12;
+      leaderReduction += seasonProgress * 0.045;
+      leaderReduction = Math.max(0.025, Math.min(0.20, leaderReduction));
+      pointsMultiplier *= 1 - leaderReduction;
     } else {
-
-      // =====================================================
-      // PERSEGUIDORES
-      // =====================================================
-
-      if (
-        deficitRatio < 0.15
-      ) {
-
-        pointsMultiplier *=
-          0.94;
-
-      }
-
-
-      if (
-        deficitRatio >= 0.15 &&
-        deficitRatio < 0.40
-      ) {
-
-        pointsMultiplier *=
-          1.05;
-
-      }
-
-
-      if (
-        deficitRatio >= 0.40 &&
-        deficitRatio < 0.60
-      ) {
-
-        pointsMultiplier *=
-          1.18;
-
-      }
-
-
-      if (
-        deficitRatio >= 0.60 &&
-        deficitRatio < 0.80
-      ) {
-
-        pointsMultiplier *=
-          1.35;
-
-      }
-
-
-      if (
-        deficitRatio >= 0.80
-      ) {
-
-        pointsMultiplier *=
-          1.55;
-
-      }
-
+      if (deficitRatio < 0.15) pointsMultiplier *= 0.94;
+      else if (deficitRatio < 0.40) pointsMultiplier *= 1.05;
+      else if (deficitRatio < 0.60) pointsMultiplier *= 1.18;
+      else if (deficitRatio < 0.80) pointsMultiplier *= 1.35;
+      else pointsMultiplier *= 1.55;
     }
 
-
-    // =======================================================
-    // CUOTA INICIAL
-    // =======================================================
-
-    let startingOdds =
-      d.startingOdds;
-
-
-    if (
-      typeof startingOdds !== "number" ||
-      !isFinite(startingOdds)
-    ) {
-
-      if (
-        typeof d.odds === "number" &&
-        isFinite(d.odds)
-      ) {
-
-        startingOdds =
-          d.odds;
-
-      } else {
-
-        startingOdds =
-          50;
-
-      }
-
+    let startingOdds = d.startingOdds;
+    if (typeof startingOdds !== "number" || !isFinite(startingOdds)) {
+      startingOdds = (typeof d.odds === "number" && isFinite(d.odds)) ? d.odds : 50;
     }
+    startingOdds = Math.max(1.05, Math.min(200, startingOdds));
 
+    let newOdds = startingOdds * performanceMultiplier * pointsMultiplier;
 
-    startingOdds =
-      Math.max(
-        1.05,
-        Math.min(
-          200,
-          startingOdds
-        )
-      );
-
-
-    // =======================================================
-    // NUEVA CUOTA
-    // =======================================================
-
-    let newOdds =
-      startingOdds *
-      performanceMultiplier *
-      pointsMultiplier;
-
-
-    // =======================================================
-    // AJUSTE POR RESULTADO RECIENTE
-    // =======================================================
-
-    /*
-     * Si no consiguió puntos desde la última actualización,
-     * su cuota NO puede bajar.
-     */
-
-    if (
-      pointsGained <= 0 &&
-      d !== leader
-    ) {
-
-      newOdds *=
-        1.08;
-
-    }
-
-
-    /*
-     * Si consiguió una cantidad importante de puntos,
-     * puede mejorar ligeramente.
-     */
-
-    if (
-      pointsGained >= 18 &&
-      d !== leader
-    ) {
-
-      newOdds *=
-        0.94;
-
-    }
-
-
-    // =======================================================
-    // REGLA: UN PILOTO DETRÁS DEL LÍDER
-    // NO PUEDE TENER UNA CUOTA MENOR
-    // SI LA DIFERENCIA ES IMPORTANTE
-    // =======================================================
+    if (pointsGained <= 0 && d !== leader) newOdds *= 1.08;
+    if (pointsGained >= 18 && d !== leader) newOdds *= 0.94;
 
     if (d !== leader) {
-
-      const leaderOdds =
-        typeof leader.odds === "number"
-          ? leader.odds
-          : leader.startingOdds || 2.60;
-
-
-      const pointsGap =
-        leaderPoints -
-        points;
-
-
+      const leaderOdds = typeof leader.odds === "number" ? leader.odds : leader.startingOdds || 2.60;
+      const pointsGap = leaderPoints - points;
       if (pointsGap >= 10) {
-
-        const minimumGap =
-          1 +
-          pointsGap *
-          0.015;
-
-
-        const minimumOdds =
-          leaderOdds *
-          minimumGap;
-
-
-        newOdds =
-          Math.max(
-            newOdds,
-            minimumOdds
-          );
-
+        const minimumOdds = leaderOdds * (1 + pointsGap * 0.015);
+        newOdds = Math.max(newOdds, minimumOdds);
       }
-
     }
 
+    const previousOdds = typeof d.odds === "number" ? d.odds : startingOdds;
+    const maxOddsMovement = seasonProgress < 0.20 ? 0.04 : seasonProgress < 0.40 ? 0.06 : seasonProgress < 0.70 ? 0.08 : 0.12;
+    newOdds = Math.max(previousOdds * (1 - maxOddsMovement), Math.min(previousOdds * (1 + maxOddsMovement), newOdds));
+    if (pointsGained <= 0 && d !== leader && typeof previousOdds === "number") newOdds = Math.max(newOdds, previousOdds);
+    newOdds = Math.max(1.05, Math.min(200, newOdds));
+    newOdds = Math.round(newOdds * 100) / 100;
 
-    // =======================================================
-    // LIMITAR CAMBIOS BRUSCOS
-    // =======================================================
-
-    /*
-     * IMPORTANTE:
-     *
-     * Ahora comparamos contra la cuota ANTERIOR,
-     * no contra la cuota inicial.
-     */
-
-    const previousOdds =
-      typeof d.odds === "number"
-        ? d.odds
-        : startingOdds;
-
-
-    const maxOddsMovement =
-      seasonProgress < 0.20
-        ? 0.04
-        : seasonProgress < 0.40
-          ? 0.06
-          : seasonProgress < 0.70
-            ? 0.08
-            : 0.12;
-
-
-    const upperLimit =
-      previousOdds *
-      (1 + maxOddsMovement);
-
-
-    const lowerLimit =
-      previousOdds *
-      (1 - maxOddsMovement);
-
-
-    newOdds =
-      Math.max(
-        lowerLimit,
-        Math.min(
-          upperLimit,
-          newOdds
-        )
-      );
-
-
-    // =======================================================
-    // SI NO SUMÓ PUNTOS, NO PUEDE BAJAR
-    // =======================================================
-
-    if (
-      pointsGained <= 0 &&
-      d !== leader &&
-      typeof previousOdds === "number"
-    ) {
-
-      newOdds =
-        Math.max(
-          newOdds,
-          previousOdds
-        );
-
-    }
-
-
-    // =======================================================
-    // LÍMITES ABSOLUTOS
-    // =======================================================
-
-    newOdds =
-      Math.max(
-        1.05,
-        Math.min(
-          200,
-          newOdds
-        )
-      );
-
-
-    // =======================================================
-    // REDONDEAR
-    // =======================================================
-
-    newOdds =
-      Math.round(
-        newOdds *
-        100
-      ) / 100;
-
-
-    // =======================================================
-    // GUARDAR CUOTA
-    // =======================================================
-
-    d.oddsPrev =
-      typeof d.odds === "number"
-        ? d.odds
-        : startingOdds;
-
-
-    d.odds =
-      newOdds;
-
-
-    d.probability =
-      Math.round(
-        (100 / newOdds) *
-        10
-      ) / 10;
-
-
-    // =======================================================
-    // HISTORIAL
-    // =======================================================
-
-    d.oddsHistory = [
-      ...(d.oddsHistory || []),
-      newOdds
-    ].slice(-10);
-
-
-    // =======================================================
-    // GUARDAR PUNTOS DE REFERENCIA
-    // =======================================================
-
-    d.oddsPointsReference =
-      d.season?.points || 0;
-
+    d.oddsPrev = typeof d.odds === "number" ? d.odds : startingOdds;
+    d.odds = newOdds;
+    d.probability = Math.round((100 / newOdds) * 10) / 10;
+    d.oddsHistory = [...(d.oddsHistory || []), newOdds].slice(-10);
+    d.oddsPointsReference = d.season?.points || 0;
   });
 
-
-  // =========================================================
-  // GUARDAR CAMPEÓN MATEMÁTICO
-  // =========================================================
-
   if (mathematicalChampion) {
-
-    DB.mathematicalChampion =
-      mathematicalChampion.id ||
-      mathematicalChampion.driverId ||
-      mathematicalChampion.slug;
-
+    DB.mathematicalChampion = mathematicalChampion.id || mathematicalChampion.driverId || mathematicalChampion.slug;
   } else {
-
-    /*
-     * Si todavía no existe campeón matemático,
-     * limpiamos el valor anterior.
-     */
-
-    DB.mathematicalChampion =
-      null;
-
+    DB.mathematicalChampion = null;
   }
-
 }
+
 function recalcConstructorOdds() {
-  // Máximo de puntos que puede conseguir un piloto en una carrera
   const maxPointsPerDriver = Math.max(...POINTS_SYSTEM);
-
-  // Carreras que todavía no terminaron
   let remainingRaces = 0;
-
   DB.calendar.forEach(race => {
     if (!race.results?.r1) remainingRaces++;
     if (!race.results?.r2) remainingRaces++;
   });
 
-  // Calculamos los puntos máximos que todavía podría conseguir
-  // cada constructor con sus pilotos actuales.
   const possibilities = DB.teams.map(team => {
     const teamDrivers = DB.drivers.filter(d => d.teamId === team.id);
-
-    const maxRemainingPoints =
-      remainingRaces *
-      teamDrivers.length *
-      maxPointsPerDriver;
-
-    return {
-      team,
-      currentPoints: team.points || 0,
-      maxPossiblePoints:
-        (team.points || 0) + maxRemainingPoints
-    };
+    const maxRemainingPoints = remainingRaces * teamDrivers.length * maxPointsPerDriver;
+    return { team, currentPoints: team.points || 0, maxPossiblePoints: (team.points || 0) + maxRemainingPoints };
   });
 
-  // Constructor actualmente líder
-  const leader = [...possibilities]
-    .sort((a, b) => b.currentPoints - a.currentPoints)[0];
+  const leader = [...possibilities].sort((a, b) => b.currentPoints - a.currentPoints)[0];
+  const isChampion = leader && possibilities.filter(x => x.team.id !== leader.team.id).every(x => leader.currentPoints > x.maxPossiblePoints);
 
-  // Comprobamos si el líder ya es campeón matemáticamente
-  const isChampion = leader &&
-    possibilities
-      .filter(x => x.team.id !== leader.team.id)
-      .every(x => leader.currentPoints > x.maxPossiblePoints);
-
-  // Si ya es campeón matemáticamente
   if (isChampion) {
     possibilities.forEach(({ team }) => {
       team.oddsPrev = team.odds;
-
-      if (team.id === leader.team.id) {
-        team.probability = 100;
-        team.odds = 1.00;
-        team.champion = true;
-      } else {
-        team.probability = 0;
-        team.odds = 150;
-        team.champion = false;
-      }
+      if (team.id === leader.team.id) { team.probability = 100; team.odds = 1.00; team.champion = true; }
+      else { team.probability = 0; team.odds = 150; team.champion = false; }
     });
-
     return;
   }
 
-  // Si todavía no está definido el campeonato,
-  // calculamos las probabilidades normalmente.
-  const total = DB.teams.reduce(
-    (sum, team) => sum + Math.max(1, team.points || 0),
-    0
-  );
-
+  const total = DB.teams.reduce((sum, team) => sum + Math.max(1, team.points || 0), 0);
   DB.teams.forEach(team => {
-    const probability =
-      Math.round(
-        (Math.max(1, team.points || 0) / total) * 1000
-      ) / 10;
-
+    const probability = Math.round((Math.max(1, team.points || 0) / total) * 1000) / 10;
     team.oddsPrev = team.odds;
-
-    // Puede bajar hasta 1.01.
-    // El 1.00 queda reservado exclusivamente
-    // para un campeón matemáticamente confirmado.
-    const rawOdds = Math.max(
-      1.01,
-      Math.round((100 / probability) * 100) / 100
-    );
-
+    const rawOdds = Math.max(1.01, Math.round((100 / probability) * 100) / 100);
     team.odds = isFinite(rawOdds) ? Math.min(rawOdds, 150) : 150;
     team.probability = probability;
     team.champion = false;
   });
 }
-/* Power Ranking: clasificación independiente basada en ritmo
-   reciente, poles y consistencia (no depende de los puntos). */
+
 function recalcPower() {
   DB.drivers.forEach(d => { d.powerRankPrev = d.powerRank; });
   const scored = DB.drivers.map(d => {
@@ -1281,7 +393,7 @@ function recalcPower() {
     const recentAvg = recent.length ? recent.reduce((a,b)=>a+b,0)/recent.length : 99;
     const errorPenalty = d.season.dnf * 2;
     const poleBonus = d.season.poles * 1.5;
-    const score = recentAvg - poleBonus + errorPenalty; // menor = mejor
+    const score = recentAvg - poleBonus + errorPenalty;
     return { d, score };
   }).sort((a,b) => a.score - b.score);
   scored.forEach(({d}, i) => { d.powerRank = i + 1; });
@@ -1289,60 +401,32 @@ function recalcPower() {
 
 function recalcAll() {
   recalcTeams();
-  // recalcOdds(); // Desactivado para mantener cuotas manuales
   recalcPower();
   saveDB(DB);
 }
+
 function checkMathematicalChampion() {
   const drivers = DB.drivers || [];
   if (!drivers.length || !DB.calendar) return null;
-
   let remainingRaces = 0;
-
   DB.calendar.forEach(race => {
-    if (!race.results?.r1?.orderIds?.length) {
-      remainingRaces++;
-    }
-
-    if (!race.results?.r2?.orderIds?.length) {
-      remainingRaces++;
-    }
+    if (!race.results?.r1?.orderIds?.length) remainingRaces++;
+    if (!race.results?.r2?.orderIds?.length) remainingRaces++;
   });
-
   if (remainingRaces <= 0) return null;
-
-  const maxPointsRemaining =
-    remainingRaces * Math.max(...POINTS_SYSTEM);
-
-  const sorted = [...drivers].sort(
-    (a, b) => b.season.points - a.season.points
-  );
-
+  const maxPointsRemaining = remainingRaces * Math.max(...POINTS_SYSTEM);
+  const sorted = [...drivers].sort((a, b) => b.season.points - a.season.points);
   const leader = sorted[0];
-
-  const canStillCatch = sorted.slice(1).some(d => {
-    return d.season.points + maxPointsRemaining > leader.season.points;
-  });
-
-  if (!canStillCatch) {
-    return leader;
-  }
-
+  const canStillCatch = sorted.slice(1).some(d => d.season.points + maxPointsRemaining > leader.season.points);
+  if (!canStillCatch) return leader;
   return null;
 }
+
 function renderMathematicalChampion() {
   const championEl = document.getElementById("mathematical-champion");
   if (!championEl) return;
-
-  const champion = DB.mathematicalChampion
-    ? getDriver(DB.mathematicalChampion)
-    : null;
-
-  if (!champion) {
-    championEl.innerHTML = "";
-    return;
-  }
-
+  const champion = DB.mathematicalChampion ? getDriver(DB.mathematicalChampion) : null;
+  if (!champion) { championEl.innerHTML = ""; return; }
   championEl.innerHTML = `
     <div class="card mathematical-champion">
       <div class="champion-icon">🏆</div>
@@ -1351,10 +435,9 @@ function renderMathematicalChampion() {
         <h2>${champion.name}</h2>
         <p>${teamName(champion.teamId)} · ${champion.season.points} puntos</p>
       </div>
-    </div>
-  `;
+    </div>`;
 }
-/* Cargar resultado de una carrera (R1 o R2 de una fecha) */
+
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
     const d = getDriver(id);
@@ -1374,33 +457,26 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   if (poleId) { const d = getDriver(poleId); if (d) d.season.poles++; }
   if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
 
-  const race = DB.calendar.find(r => r.round === round); 
-  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() }
+  const race = DB.calendar.find(r => r.round === round);
+  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() };
 
-// acá NO va nada de noticias
-   
-recalcTeams();
-recalcOdds();
-recalcConstructorOdds();
-recalcPower();
+  recalcTeams();
+  recalcOdds();
+  recalcConstructorOdds();
+  recalcPower();
 
-const mathematicalChampion = checkMathematicalChampion();
+  const mathematicalChampion = checkMathematicalChampion();
+  if (mathematicalChampion) DB.mathematicalChampion = mathematicalChampion.id;
 
-if (mathematicalChampion) {
-  DB.mathematicalChampion = mathematicalChampion.id;
-}
-
-saveDB(DB);
+  saveDB(DB);
 }
 
 /* ----------------------------------------------------------
    5) UI: menú, modo oscuro, año, header scroll
    ---------------------------------------------------------- */
 function initChrome() {
-  // Año dinámico si hace falta en footer
   document.querySelectorAll("[data-season]").forEach(el => el.textContent = DB.season);
 
-  // Menú móvil
   const toggle = document.querySelector(".nav-toggle");
   const menu = document.querySelector(".nav-menu");
   if (toggle && menu) {
@@ -1413,7 +489,6 @@ function initChrome() {
     }));
   }
 
-  // Modo oscuro (el sitio ya es oscuro por defecto; esto permite un modo "claro" opcional)
   const modeBtn = document.querySelector(".mode-toggle");
   const savedMode = localStorage.getItem("f1_theme") || "dark";
   document.documentElement.setAttribute("data-theme", savedMode);
@@ -1428,7 +503,6 @@ function initChrome() {
     });
   }
 
-  // Sombra de header al hacer scroll
   const header = document.querySelector(".site-header");
   if (header) {
     window.addEventListener("scroll", () => {
@@ -1436,14 +510,12 @@ function initChrome() {
     });
   }
 
-  // Marcar link activo
   const page = document.body.dataset.page;
   document.querySelectorAll(".nav-menu a[data-nav]").forEach(a => {
     if (a.dataset.nav === page) a.classList.add("active");
   });
 }
 
-/* Contadores animados (para Inicio / Estadísticas) */
 function animateCounters() {
   document.querySelectorAll("[data-counter]").forEach(el => {
     const target = parseFloat(el.dataset.counter);
@@ -1460,10 +532,9 @@ function animateCounters() {
   });
 }
 
-/* Flecha de tendencia de cuota */
 function trendArrow(current, prev) {
   if (prev == null || current == null) return `<span class="trend flat">—</span>`;
-  if (current < prev) return `<span class="trend up">▼ baja</span>`; // cuota baja = más favorito
+  if (current < prev) return `<span class="trend up">▼ baja</span>`;
   if (current > prev) return `<span class="trend down">▲ sube</span>`;
   return `<span class="trend flat">— sin cambios</span>`;
 }
@@ -1639,10 +710,10 @@ function renderConstructorsStandings() {
   tbody.innerHTML = cs.map(t => `
     <tr>
       <td class="pos">${t.pos}</td>
-     <td class="driver-cell">
-  <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
-  ${t.name}
-</td>
+      <td class="driver-cell">
+        <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
+        ${t.name}
+      </td>
       <td class="strong">${t.points}</td>
       <td>${t.wins}</td>
       <td>${t.poles}</td>
@@ -1672,7 +743,6 @@ function renderOdds() {
       </div>
       <canvas class="odds-spark" data-history='${JSON.stringify(d.oddsHistory||[])}' height="40"></canvas>
     </div>`).join("");
-  // mini sparklines
   wrap.querySelectorAll(".odds-spark").forEach(c => drawSparkline(c, JSON.parse(c.dataset.history)));
 }
 function drawSparkline(canvas, values) {
@@ -1694,79 +764,198 @@ function drawSparkline(canvas, values) {
   ctx.stroke();
 }
 
+/* ----------------------------------------------------------
+   11-B) DUELO INTERNO — Cuotas de rivalidad entre compañeros
+   ---------------------------------------------------------- */
+
+/**
+ * Calcula un "score" de fortaleza para un piloto dentro de su equipo.
+ * Se usa para determinar quién es favorito en un duelo contra su compañero.
+ *
+ * Factores ponderados:
+ *  - Cuota de campeonato (40%) → menor cuota = mejor piloto
+ *  - Power ranking (25%) → mejor posición = mejor piloto
+ *  - Puntos de temporada (15%) → más puntos = mejor rendimiento
+ *  - Forma reciente (15%) → posición promedio reciente
+ *  - Consistencia (5%) → menos DNFs = más confiable
+ */
+function calcRivalryScore(driver) {
+  if (!driver) return 0;
+
+  let score = 0;
+
+  /* --- CUOTA DE CAMPEONATO (40%) ---
+     Cuota menor = mejor piloto = score mayor.
+     Si la cuota es null o muy alta, le damos un score base bajo. */
+  const odds = driver.odds;
+  if (odds != null && odds > 0 && odds < 200) {
+    /* Invertimos: cuota de 1.05 → casi 1.0, cuota de 100 → casi 0 */
+    const oddsScore = Math.max(0, 1 - (odds - 1) / 99);
+    score += oddsScore * 40;
+  } else {
+    score += 0.5 * 40;
+  }
+
+  /* --- POWER RANKING (25%) ---
+     rank 1 = mejor, rank 21+ = peor.
+     Normalizamos contra el total de pilotos activos. */
+  const totalDrivers = DB.drivers.filter(d => d.teamId && d.status !== "libre").length || 24;
+  const rank = driver.powerRank || totalDrivers;
+  const rankScore = Math.max(0, 1 - (rank - 1) / (totalDrivers - 1));
+  score += rankScore * 25;
+
+  /* --- PUNTOS DE TEMPORADA (15%) ---
+     Más puntos = mejor rendimiento actual. */
+  const maxPoints = Math.max(...DB.drivers.map(d => d.season?.points || 0), 1);
+  const ptsScore = (driver.season?.points || 0) / maxPoints;
+  score += ptsScore * 15;
+
+  /* --- FORMA RECIENTE (15%) ---
+     Posiciones recientes: menor promedio = mejor.
+     Sin datos recientes = score medio. */
+  const recent = Array.isArray(driver.recentPositions) ? driver.recentPositions.slice(-5) : [];
+  if (recent.length > 0) {
+    const avgPos = recent.reduce((a, b) => a + b, 0) / recent.length;
+    /* P1 = 20 puntos, P20 = 0 puntos */
+    const formScore = Math.max(0, Math.min(1, (21 - avgPos) / 20));
+    score += formScore * 15;
+  } else {
+    score += 7.5;
+  }
+
+  /* --- CONSISTENCIA / DNFs (5%) ---
+     Menos abandonos = más confiable. */
+  const totalDnfs = driver.season?.dnf || 0;
+  const careerDnfs = driver.career?.dnf || 0;
+  const allDnfs = totalDnfs + careerDnfs;
+  const dnfScore = Math.max(0, 1 - allDnfs / 20);
+  score += dnfScore * 5;
+
+  return score;
+}
+
+/**
+ * Calcula cuotas de rivalidad justas entre dos compañeros de equipo.
+ * Devuelve { oddsA, oddsB, favorite } donde favorite = id del favorito.
+ *
+ * La cuota de cada piloto refleja la probabilidad de terminar
+ * por delante de su compañero en una carrera cualquiera.
+ */
+function calcRivalryOdds(driverA, driverB) {
+  const scoreA = calcRivalryScore(driverA);
+  const scoreB = calcRivalryScore(driverB);
+  const total = scoreA + scoreB;
+
+  if (total === 0) return { oddsA: 2.00, oddsB: 2.00, favorite: null };
+
+  /* Probabilidad base de cada uno */
+  const probA = scoreA / total;
+  const probB = scoreB / total;
+
+  /* House edge del 8% (simulado, no real) para que las cuotas
+     no sean exactamente justas (como en una casa de apuestas) */
+  const margin = 0.92;
+
+  /* Cuota justa = 1 / probabilidad, ajustada por margen */
+  let oddsA = Math.round((1 / probA) * margin * 100) / 100;
+  let oddsB = Math.round((1 / probB) * margin * 100) / 100;
+
+  /* Límites razonables */
+  oddsA = Math.max(1.05, Math.min(50, oddsA));
+  oddsB = Math.max(1.05, Math.min(50, oddsB));
+
+  const favorite = scoreA >= scoreB ? driverA.id : driverB.id;
+
+  return { oddsA, oddsB, favorite };
+}
+
+/**
+ * Genera el HTML de una tarjeta de rivalidad entre dos compañeros.
+ */
+function rivalryCardHTML(team, driverA, driverB) {
+  const { oddsA, oddsB, favorite } = calcRivalryOdds(driverA, driverB);
+
+  const isFavA = favorite === driverA.id;
+  const isFavB = favorite === driverB.id;
+
+  /* Clase "favorite" para el que tiene menor cuota */
+  const classA = isFavA ? "rivalry-favorite" : "";
+  const classB = isFavB ? "rivalry-favorite" : "";
+
+  /* Color del equipo para el borde/acentos */
+  const tc = team.color || "#e10600";
+
+  /* Calcular porcentaje de barras */
+  const total = oddsA + oddsB;
+  const pctA = Math.round((1 / oddsA) / ((1 / oddsA) + (1 / oddsB)) * 100);
+  const pctB = 100 - pctA;
+
+  return `
+    <div class="rivalry-card" style="--team-color:${tc}">
+      <div class="rivalry-header">
+        <img src="${team.logo}" alt="${team.name}" class="rivalry-team-logo">
+        <span class="rivalry-team-name">${team.name}</span>
+      </div>
+      <div class="rivalry-body">
+        <div class="rivalry-driver rivalry-left ${classA}">
+          <div class="rivalry-flag">${driverA.flag || "🏁"}</div>
+          <div class="rivalry-driver-info">
+            <span class="rivalry-number" style="color:${tc}">#${driverA.number ?? "-"}</span>
+            <span class="rivalry-name">${driverA.name}</span>
+          </div>
+          <div class="rivalry-odds-value">${oddsA.toFixed(2)}</div>
+        </div>
+
+        <div class="rivalry-vs">
+          <div class="rivalry-vs-circle" style="border-color:${tc}">
+            <span>VS</span>
+          </div>
+          <div class="rivalry-bar">
+            <div class="rivalry-bar-a" style="width:${pctA}%;background:${tc}"></div>
+            <div class="rivalry-bar-b" style="width:${pctB}%;background:${tc};opacity:0.4"></div>
+          </div>
+          <div class="rivalry-bar-labels">
+            <span>${pctA}%</span>
+            <span>${pctB}%</span>
+          </div>
+        </div>
+
+        <div class="rivalry-driver rivalry-right ${classB}">
+          <div class="rivalry-flag">${driverB.flag || "🏁"}</div>
+          <div class="rivalry-driver-info">
+            <span class="rivalry-number" style="color:${tc}">#${driverB.number ?? "-"}</span>
+            <span class="rivalry-name">${driverB.name}</span>
+          </div>
+          <div class="rivalry-odds-value">${oddsB.toFixed(2)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/**
+ * Renderiza todas las rivalidades (un duelo por cada equipo con 2 pilotos).
+ */
 function renderRivalries() {
   const wrap = document.getElementById("rivalry-list");
   if (!wrap) return;
 
-  const rivalries = DB.teams.map(team => {
+  const html = DB.teams.map(team => {
+    const drivers = DB.drivers.filter(d => d.teamId === team.id && d.status === "confirmado");
 
-    const drivers = DB.drivers.filter(
-      d => d.teamId === team.id
-    );
+    if (drivers.length < 2) return "";
 
-    if (drivers.length !== 2) return "";
+    /* Si hay más de 2 pilotos confirmados en un equipo,
+       tomamos los 2 mejores según power ranking */
+    const sorted = [...drivers].sort((a, b) => (a.powerRank || 99) - (b.powerRank || 99));
+    const driverA = sorted[0];
+    const driverB = sorted[1];
 
-    const driver1 = drivers[0];
-    const driver2 = drivers[1];
-
-    return `
-      <div class="rivalry-card">
-
-        <div class="rivalry-team">
-
-          <img
-            src="${team.logo}"
-            alt="${team.name}"
-          >
-
-          <span>${team.name}</span>
-
-        </div>
-
-        <div class="rivalry-drivers">
-
-          <div class="rivalry-driver">
-
-            <div class="rivalry-driver-name">
-              ${driver1.name}
-            </div>
-
-            <div class="rivalry-odds">
-              2.00
-            </div>
-
-            <div class="rivalry-label">
-              Cuota
-            </div>
-
-          </div>
-
-
-          <div class="rivalry-driver">
-
-            <div class="rivalry-driver-name">
-              ${driver2.name}
-            </div>
-
-            <div class="rivalry-odds">
-              2.00
-            </div>
-
-            <div class="rivalry-label">
-              Cuota
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-
+    return rivalryCardHTML(team, driverA, driverB);
   }).join("");
 
-  wrap.innerHTML = rivalries;
+  wrap.innerHTML = html || `<p class="empty">No hay equipos con dos pilotos confirmados para generar duelos.</p>`;
 }
+
 /* ----------------------------------------------------------
    12) RENDER: POWER RANKING
    ---------------------------------------------------------- */
@@ -1788,48 +977,29 @@ function renderPowerRanking() {
    13) RENDER: CALENDARIO
    ---------------------------------------------------------- */
 function renderCalendar() {
-
   const wrap = document.getElementById("calendar-list");
-
   if (!wrap) return;
 
   wrap.innerHTML = DB.calendar.map(r => {
-
     let s;
-
-    // Si las dos carreras del GP ya tienen resultados
-    if (r.results?.r1 && r.results?.r2) {
-      s = "finalizado";
-
-    // Si ya terminó una de las dos carreras
-    } else if (r.results?.r1 || r.results?.r2) {
-      s = "proximo";
-
-    // Si todavía no hay resultados, usamos la fecha
-    } else {
-      s = raceStatus(r.r2);
-    }
+    if (r.results?.r1 && r.results?.r2) s = "finalizado";
+    else if (r.results?.r1 || r.results?.r2) s = "proximo";
+    else s = raceStatus(r.r2);
 
     return `
       <div class="card calendar-card fade-up status-${s}">
         <div class="cal-round">R${r.round}</div>
         <div class="cal-flag">${r.flag}</div>
-
         <div class="cal-info">
           <h3>${r.circuit}</h3>
           <p>Clasificación + Carrera sábado: ${fmtDateShort(r.r1)}</p>
           <p>Clasificación + Carrera domingo: ${fmtDateShort(r.r2)}</p>
         </div>
-
-        <span class="badge badge-${s}">
-          ${statusLabel(s)}
-        </span>
-      </div>
-    `;
-
+        <span class="badge badge-${s}">${statusLabel(s)}</span>
+      </div>`;
   }).join("");
-
 }
+
 /* ----------------------------------------------------------
    14) RENDER: ESTADÍSTICAS
    ---------------------------------------------------------- */
@@ -1874,7 +1044,7 @@ function renderStats() {
           <p>🥉 Tercer lugar: ${h.driverThird}</p>
           <p>🏗️ Campeón de constructores: <strong>${h.teamChampion}</strong></p>
         </div>`).join("")
-      : `<p class="empty">Todavía no hay temporadas finalizadas. El historial se completa automáticamente al cerrar una temporada desde el panel de administración.</p>`;
+      : `<p class="empty">Todavía no hay temporadas finalizadas.</p>`;
   }
 }
 
@@ -1927,7 +1097,7 @@ function renderDriverProfile() {
 }
 
 /* ----------------------------------------------------------
-   16) BUSCADORES (pilotos / equipos)
+   16) BUSCADORES
    ---------------------------------------------------------- */
 function initSearch(inputId, cardsSelector, containerSelector) {
   const input = document.getElementById(inputId);
@@ -1952,11 +1122,12 @@ function renderCurrentPage() {
   if (page === "drivers") renderDriversStandings();
   if (page === "constructors") renderConstructorsStandings();
   if (page === "odds") renderOdds();
+  if (page === "duel") renderRivalries();
   if (page === "power") renderPowerRanking();
   if (page === "calendar") renderCalendar();
   if (page === "stats") renderStats();
   if (page === "driver") renderDriverProfile();
-  if (page === "admin" && isAdminLogged()) renderAdminAll(); // en admin, la primera carga la hace initAdmin()
+  if (page === "admin" && isAdminLogged()) renderAdminAll();
   animateCounters();
 }
 
@@ -1967,49 +1138,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   initChrome();
   const page = document.body.dataset.page;
   if (page === "admin") {
-    initAdmin(); // maneja login + primer render del panel
+    initAdmin();
     animateCounters();
   } else {
-    renderCurrentPage(); // ya incluye animateCounters()
+    renderCurrentPage();
   }
   subscribeDB();
 });
-// ============================================================
-// INSTALACIÓN PWA
-// ============================================================
 
+/* ----------------------------------------------------------
+   INSTALACIÓN PWA
+   ---------------------------------------------------------- */
 let deferredPrompt;
-
 const installBtn = document.getElementById("installBtn");
 
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-
-  if (installBtn) {
-    installBtn.style.display = "block";
-  }
+  if (installBtn) installBtn.style.display = "block";
 });
 
 if (installBtn) {
   installBtn.addEventListener("click", async () => {
     if (!deferredPrompt) return;
-
     deferredPrompt.prompt();
-
     const { outcome } = await deferredPrompt.userChoice;
-
-    console.log("Instalación:", outcome);
-
     deferredPrompt = null;
     installBtn.style.display = "none";
   });
 }
 
 window.addEventListener("appinstalled", () => {
-  console.log("F1 International Championship instalada ✅");
-
-  if (installBtn) {
-    installBtn.style.display = "none";
-  }
+  if (installBtn) installBtn.style.display = "none";
 });
