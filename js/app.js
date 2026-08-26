@@ -151,11 +151,14 @@ function driverStandings() {
   const arr = DB.drivers.filter(d => d.teamId || d.status !== "libre" || true);
   const sorted = [...arr].sort((a,b) => b.season.points - a.season.points);
   const leaderPoints = sorted[0] ? sorted[0].season.points : 0;
-  return sorted.map((d, i) => ({ ...d, pos: i+1, gap: leaderPoints - d.season.points }));
+  return sorted.map((d, i) => ({
+    ...d, pos: i+1, gap: leaderPoints - d.season.points,
+    champion: DB.mathematicalChampion && d.id === DB.mathematicalChampion
+  }));
 }
 function constructorStandings() {
   const sorted = [...DB.teams].sort((a,b) => b.points - a.points);
-  return sorted.map((t, i) => ({ ...t, pos: i+1 }));
+  return sorted.map((t, i) => ({ ...t, pos: i+1, champion: t.champion === true }));
 }
 
 /* ----------------------------------------------------------
@@ -553,6 +556,22 @@ function renderMathematicalChampion() {
     </div>`;
 }
 
+function renderConstructorChampion() {
+  const el = document.getElementById("constructor-champion");
+  if (!el) return;
+  const champTeam = DB.teams.find(t => t.champion === true);
+  if (!champTeam) { el.innerHTML = ""; return; }
+  el.innerHTML = `
+    <div class="card mathematical-champion">
+      <div class="champion-icon">🏭</div>
+      <div>
+        <span class="badge badge-ok">CONSTRUCTOR CAMPEÓN</span>
+        <h2>${champTeam.name}</h2>
+        <p>${champTeam.points} puntos</p>
+      </div>
+    </div>`;
+}
+
 function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
   orderIds.forEach((id, idx) => {
     const d = getDriver(id);
@@ -669,6 +688,7 @@ function renderHome() {
   .sort((a, b) => a.odds - b.odds)[0];
   const el = id => document.getElementById(id);
   renderMathematicalChampion();
+  renderConstructorChampion();
   if (el("home-favorito")) {
     el("home-favorito").innerHTML = leader ? `
       <div class="fav-driver">
@@ -794,12 +814,13 @@ function renderDriversStandings() {
   if (!tbody) return;
   const ds = driverStandings();
   tbody.innerHTML = ds.map(d => `
-    <tr>
+    <tr class="${d.champion ? 'champion-row' : ''}">
       <td class="pos">${d.pos}</td>
       <td class="driver-cell">
         <a href="piloto.html?id=${d.id}">
           <img src="${teamLogo(d.teamId)}" class="team-logo" alt="${teamName(d.teamId)}">
           ${d.name} <span class="num">#${d.number ?? "-"}</span>
+          ${d.champion ? '<span class="champion-badge">🏆 Campeón</span>' : ''}
         </a>
       </td>
       <td>${teamName(d.teamId)}</td>
@@ -823,11 +844,12 @@ function renderConstructorsStandings() {
   if (!tbody) return;
   const cs = constructorStandings();
   tbody.innerHTML = cs.map(t => `
-    <tr>
+    <tr class="${t.champion ? 'champion-row' : ''}">
       <td class="pos">${t.pos}</td>
       <td class="driver-cell">
         <img src="${t.logo || ''}" class="team-logo" alt="${t.name}">
         ${t.name}
+        ${t.champion ? '<span class="champion-badge">🏆 Campeón</span>' : ''}
       </td>
       <td class="strong">${t.points}</td>
       <td>${t.wins}</td>
