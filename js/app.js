@@ -1249,6 +1249,10 @@ function initSearch(inputId, cardsSelector, containerSelector) {
    ---------------------------------------------------------- */
 function renderCurrentPage() {
   const page = document.body.dataset.page;
+  recalcTeams();
+  recalcOdds();
+  recalcConstructorOdds();
+  recalcPower();
   if (page === "home") renderHome();
   if (page === "news") renderNews();
   if (page === "market") { renderMarket(); initSearch("market-search", ".driver-card", "#market-groups"); }
