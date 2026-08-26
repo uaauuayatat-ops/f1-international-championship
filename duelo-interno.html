@@ -3,70 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Duelo interno | F1 International Championship</title>
-
   <link rel="stylesheet" href="CSS/style.css">
 </head>
-
-<body>
+<body data-page="duel">
 
   <header class="site-header">
-  <div class="nav-inner">
-    <a href="index.html" class="brand"><span class="stripe"></span>F1 <small>INTERNATIONAL CHAMPIONSHIP</small></a>
-    <nav class="nav-menu">
-      <a href="index.html" data-nav="home">Inicio</a>
-      <a href="noticias.html" data-nav="news">Noticias</a>
-      <a href="mercado.html" data-nav="market">Mercado de pilotos</a>
-      <a href="pilotos.html" data-nav="drivers">Campeonato de pilotos</a>
-      <a href="constructores.html" data-nav="constructors">Campeonato de constructores</a>
-      <a href="cuotas.html" data-nav="odds">Cuotas simuladas</a>
-      <a href="duelo-interno.html" data-nav="duel">Duelo interno</a>
-      <a href="power-ranking.html" data-nav="power">Clasificación de poder</a>
-      <a href="calendario.html" data-nav="calendar">Calendario</a>
-      <a href="estadisticas.html" data-nav="stats">Estadísticas</a>
-      <a href="admin.html" data-nav="admin">Administración</a>
-    </nav>
-    <div class="nav-extra">
-      <button class="mode-toggle" aria-label="Cambiar tema">🌙</button>
-      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    <div class="nav-inner">
+      <a href="index.html" class="brand"><span class="stripe"></span>F1 <small>INTERNATIONAL CHAMPIONSHIP</small></a>
+      <nav class="nav-menu">
+        <a href="index.html" data-nav="home">Inicio</a>
+        <a href="noticias.html" data-nav="news">Noticias</a>
+        <a href="mercado.html" data-nav="market">Mercado de pilotos</a>
+        <a href="pilotos.html" data-nav="drivers">Campeonato de pilotos</a>
+        <a href="constructores.html" data-nav="constructors">Campeonato de constructores</a>
+        <a href="cuotas.html" data-nav="odds">Cuotas simuladas</a>
+        <a href="duelo-interno.html" data-nav="duel">Duelo interno</a>
+        <a href="power-ranking.html" data-nav="power">Clasificación de poder</a>
+        <a href="calendario.html" data-nav="calendar">Calendario</a>
+        <a href="estadisticas.html" data-nav="stats">Estadísticas</a>
+        <a href="admin.html" data-nav="admin">Administración</a>
+      </nav>
+      <div class="nav-extra">
+        <button class="mode-toggle" aria-label="Cambiar tema">🌙</button>
+        <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      </div>
     </div>
-  </div>
-</header>
-
-
-  <!-- ============================================================
-       CONTENIDO
-       ============================================================ -->
+  </header>
 
   <main class="container">
-
     <section class="section">
-
       <h1>⚔️ Duelo interno</h1>
-
       <p class="section-subtitle">
-        Cuotas simuladas sobre quién terminará por delante
-        de su compañero de equipo.
+        Cuotas simuladas sobre quién terminará por delante de su compañero de equipo.
       </p>
-
-      <div id="rivalry-list" class="rivalry-grid">
-
-        <!-- Las rivalidades se generan automáticamente con app.js -->
-
-      </div>
-
+      <div id="rivalry-list" class="rivalry-grid"></div>
     </section>
-
   </main>
 
-
-  <!-- ============================================================
-       SCRIPTS
-       ============================================================ -->
-
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
