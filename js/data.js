@@ -35,8 +35,8 @@ const DEFAULT_TEAMS = [
   { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/teams/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
   { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/teams/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
   { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/teams/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
-  { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/teams/bmw.png.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37 },
-  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/teams/alphatauri.png.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32 },
+  { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/teams/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37 },
+  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/teams/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32 },
 ];
 
 /* ---------------------- PILOTOS (28) ----------------------
