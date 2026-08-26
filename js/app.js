@@ -784,52 +784,44 @@ function calcRivalryScore(driver) {
 
   let score = 0;
 
-  /* --- CUOTA DE CAMPEONATO (40%) ---
-     Cuota menor = mejor piloto = score mayor.
-     Si la cuota es null o muy alta, le damos un score base bajo. */
+  /* --- CUOTA DE CAMPEONATO (50%) ---
+     Usamos escala LOGARÍTMICA para separar mejor:
+     cuota 2.0 → 100 pts, cuota 5.0 → 61 pts,
+     cuota 10.0 → 43 pts, cuota 50.0 → 21 pts */
   const odds = driver.odds;
   if (odds != null && odds > 0 && odds < 200) {
-    /* Invertimos: cuota de 1.05 → casi 1.0, cuota de 100 → casi 0 */
-    const oddsScore = Math.max(0, 1 - (odds - 1) / 99);
-    score += oddsScore * 40;
+    const oddsScore = Math.max(0, Math.min(100, (Math.log(100 / odds) / Math.log(100)) * 100));
+    score += oddsScore * 0.50;
   } else {
-    score += 0.5 * 40;
+    score += 5 * 0.50;
   }
 
-  /* --- POWER RANKING (25%) ---
-     rank 1 = mejor, rank 21+ = peor.
-     Normalizamos contra el total de pilotos activos. */
+  /* --- POWER RANKING (30%) ---
+     Escala EXPONENCIAL: rank 1 = 100, rank 5 = 50, rank 10 = 20, rank 20+ ≈ 0 */
   const totalDrivers = DB.drivers.filter(d => d.teamId && d.status !== "libre").length || 24;
   const rank = driver.powerRank || totalDrivers;
-  const rankScore = Math.max(0, 1 - (rank - 1) / (totalDrivers - 1));
-  score += rankScore * 25;
+  const rankScore = Math.max(0, 100 * Math.exp(-0.18 * (rank - 1)));
+  score += rankScore * 0.30;
 
-  /* --- PUNTOS DE TEMPORADA (15%) ---
-     Más puntos = mejor rendimiento actual. */
+  /* --- PUNTOS DE TEMPORADA (10%) --- */
   const maxPoints = Math.max(...DB.drivers.map(d => d.season?.points || 0), 1);
   const ptsScore = (driver.season?.points || 0) / maxPoints;
-  score += ptsScore * 15;
+  score += ptsScore * 10;
 
-  /* --- FORMA RECIENTE (15%) ---
-     Posiciones recientes: menor promedio = mejor.
-     Sin datos recientes = score medio. */
+  /* --- FORMA RECIENTE (8%) --- */
   const recent = Array.isArray(driver.recentPositions) ? driver.recentPositions.slice(-5) : [];
   if (recent.length > 0) {
     const avgPos = recent.reduce((a, b) => a + b, 0) / recent.length;
-    /* P1 = 20 puntos, P20 = 0 puntos */
     const formScore = Math.max(0, Math.min(1, (21 - avgPos) / 20));
-    score += formScore * 15;
+    score += formScore * 8;
   } else {
-    score += 7.5;
+    score += 4;
   }
 
-  /* --- CONSISTENCIA / DNFs (5%) ---
-     Menos abandonos = más confiable. */
-  const totalDnfs = driver.season?.dnf || 0;
-  const careerDnfs = driver.career?.dnf || 0;
-  const allDnfs = totalDnfs + careerDnfs;
+  /* --- CONSISTENCIA / DNFs (2%) --- */
+  const allDnfs = (driver.season?.dnf || 0) + (driver.career?.dnf || 0);
   const dnfScore = Math.max(0, 1 - allDnfs / 20);
-  score += dnfScore * 5;
+  score += dnfScore * 2;
 
   return score;
 }
@@ -852,17 +844,32 @@ function calcRivalryOdds(driverA, driverB) {
   const probA = scoreA / total;
   const probB = scoreB / total;
 
-  /* House edge del 8% (simulado, no real) para que las cuotas
-     no sean exactamente justas (como en una casa de apuestas) */
-  const margin = 0.92;
+  /* House edge del 5% */
+  const margin = 0.95;
 
   /* Cuota justa = 1 / probabilidad, ajustada por margen */
   let oddsA = Math.round((1 / probA) * margin * 100) / 100;
   let oddsB = Math.round((1 / probB) * margin * 100) / 100;
 
+  /* --- AMPLIFICADOR DE DOMINANCIA ---
+     Si un piloto es mucho mejor, las cuotas se separan más.
+     Ej: si probA = 70% y probB = 30%, el amplificador
+     empuja las cuotas más lejos (1.36 → 1.20, 3.17 → 3.80). */
+  const diff = Math.abs(probA - probB);
+  if (diff > 0.15) {
+    const amplify = 1 + diff * 0.4;
+    if (probA > probB) {
+      oddsA = Math.round((oddsA / amplify) * 100) / 100;
+      oddsB = Math.round((oddsB * (1 + diff * 0.25)) * 100) / 100;
+    } else {
+      oddsB = Math.round((oddsB / amplify) * 100) / 100;
+      oddsA = Math.round((oddsA * (1 + diff * 0.25)) * 100) / 100;
+    }
+  }
+
   /* Límites razonables */
-  oddsA = Math.max(1.05, Math.min(50, oddsA));
-  oddsB = Math.max(1.05, Math.min(50, oddsB));
+  oddsA = Math.max(1.05, Math.min(40, oddsA));
+  oddsB = Math.max(1.05, Math.min(40, oddsB));
 
   const favorite = scoreA >= scoreB ? driverA.id : driverB.id;
 
