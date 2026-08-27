@@ -23,32 +23,26 @@ const SEASON_LABEL = "Temporada 26/27";
 /* points/wins/poles/podiums = temporada actual (arranca en 0,
    la temporada todavía no empezó: primera carrera 12/09). */
 const DEFAULT_TEAMS = [
-  { id: "redbull",    name: "Red Bull",      color: "#061D42", logo: "assets/team/redbull.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.7 },
-  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", logo: "assets/team/ferrari.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.5 },
-  { id: "williams",   name: "Williams",      color: "#00A0DE", logo: "assets/team/williams.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.1 },
-  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", logo: "assets/team/mercedes.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0 },
-  { id: "mclaren",    name: "McLaren",       color: "#FF8000", logo: "assets/team/mclaren.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25 },
-  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", logo: "assets/team/audi.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10 },
-  { id: "porsche",    name: "Porsche",       color: "#D5001C", logo: "assets/team/porsche.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14 },
-  { id: "racingbulls", name: "Racing Bulls",    color: "#6C98FF", logo: "assets/team/racingbulls.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36 },
-  { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", logo: "assets/team/lamborghini.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21 },
-  { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13 },
-  { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17 },
-  { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23 },
-  { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/team/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37 },
-  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32 },
+  { id: "redbull",    name: "Red Bull",      color: "#061D42", logo: "assets/team/redbull.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 2.7, rivalryA: 1.55, rivalryB: 2.40 },
+  { id: "ferrari",    name: "Ferrari",       color: "#DC0000", logo: "assets/team/ferrari.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.5, rivalryA: 1.65, rivalryB: 2.25 },
+  { id: "williams",   name: "Williams",      color: "#00A0DE", logo: "assets/team/williams.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 4.1, rivalryA: 1.30, rivalryB: 3.50 },
+  { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", logo: "assets/team/mercedes.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0, rivalryA: 1.25, rivalryB: 3.90 },
+  { id: "mclaren",    name: "McLaren",       color: "#FF8000", logo: "assets/team/mclaren.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25, rivalryA: 1.90, rivalryB: 1.95 },
+  { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", logo: "assets/team/audi.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10, rivalryA: 1.95, rivalryB: 1.90 },
+  { id: "porsche",    name: "Porsche",       color: "#D5001C", logo: "assets/team/porsche.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14, rivalryA: 1.50, rivalryB: 2.60 },
+  { id: "racingbulls", name: "Racing Bulls",    color: "#6C98FF", logo: "assets/team/racingbulls.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36, rivalryA: 1.75, rivalryB: 2.10 },
+  { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", logo: "assets/team/lamborghini.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21, rivalryA: 1.60, rivalryB: 2.35 },
+  { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13, rivalryA: 1.65, rivalryB: 2.25 },
+  { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17, rivalryA: 1.60, rivalryB: 2.35 },
+  { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23, rivalryA: 1.40, rivalryB: 2.90 },
+  { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/team/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37, rivalryA: 1.95, rivalryB: 1.90 },
+  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32, rivalryA: 1.95, rivalryB: 1.90 },
 ];
 
-/* ---------------------- PILOTOS (28) ----------------------
-   status: "confirmado" | "rumor" | "libre"
-   teamId: null si no tiene equipo
-   career = estadísticas de temporadas anteriores (histórico)
-   season = estadísticas de la temporada actual (26/27), arranca en 0
-   oddsHistory = para el gráfico de evolución de cuotas
-------------------------------------------------------------- */
+/* ---------------------- PILOTOS (28) ---------------------- */
 const DEFAULT_DRIVERS = [
   {
-    id: "alexander", name: "Alexander", number: 1, country: "Argentina", flag: "🇦🇷",
+    id: "alexander", name: "Alexander", number: 1, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "williams", status: "confirmado", rumorTeams: [],
     age: 20, seasons: 1, bestResult: "1° (Campeón vigente)",
     bio: "Campeón vigente del torneo. Pasó de Red Bull, el mejor auto del grid, a Williams en busca de un nuevo desafío que podría cambiar su rendimiento en esta temporada.",
@@ -58,27 +52,27 @@ const DEFAULT_DRIVERS = [
     powerRank: 1, powerRankPrev: 1,
   },
   {
-    id: "coffin", name: "Coffin", number: 99, country: "Venezuela", flag: "🇻🇪",
+    id: "coffin", name: "Coffin", number: 99, country: "Venezuela", flag: "\u{1F1FB}\u{1F1EA}",
     teamId: "mercedes", status: "confirmado", rumorTeams: [],
     age: 35, seasons: 1, bestResult: "1°",
-    bio: "Cerró la temporada anterior a un gran nivel con Audi FXR: ganando una carreraen en austin, segundo en casi todas las últimas carreras y 5 poles consecutivas. Ahora firma con Mercedes.",
+    bio: "Cerró la temporada anterior a un gran nivel con Audi FXR: ganando una carrera en Austin, segundo en casi todas las últimas carreras y 5 poles consecutivas. Ahora firma con Mercedes.",
     career: { wins: 1, podiums: 8, poles: 9, fastLaps: 4, dnf: 2, points: 378 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 2.60, oddsPrev: 2.90, probability: 34, oddsHistory: [3.10, 2.95, 2.75, 2.60],
     powerRank: 2, powerRankPrev: 3,
   },
   {
-    id: "carreon", name: "Manuel Carreon", number: 21, country: "México", flag: "🇲🇽",
+    id: "carreon", name: "Manuel Carreon", number: 21, country: "México", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "redbull", status: "confirmado", rumorTeams: [],
     age: 44, seasons: 1, bestResult: "1°",
-    bio: "Ganó dos carrera durante la temporada passada, Ahora da el salto al mejor auto de la grid: Red Bull.",
+    bio: "Ganó dos carreras durante la temporada pasada. Ahora da el salto al mejor auto de la grid: Red Bull.",
     career: { wins: 2, podiums: 12, poles: 3, fastLaps: 2, dnf: 4, points: 210 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 3.90, oddsPrev: 4.10, probability: 19, oddsHistory: [4.50, 4.10, 4.00, 3.90],
     powerRank: 3, powerRankPrev: 5,
   },
   {
-    id: "moran", name: "Gabriel Moran", number: 58, country: "Paraguay", flag: "🇵🇾",
+    id: "moran", name: "Gabriel Moran", number: 58, country: "Paraguay", flag: "\u{1F1F5}\u{1F1FE}",
     teamId: "ferrari", status: "confirmado", rumorTeams: [],
     age: 20, seasons: 1, bestResult: "2°",
     bio: "Excelente temporada con varios podios y un gran cierre de año con Audi FXR. Firma con Ferrari para pelear el título.",
@@ -88,7 +82,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 4, powerRankPrev: 4,
   },
   {
-    id: "acosta", name: "Hernán Acosta", number: 40, country: "Argentina", flag: "🇦🇷",
+    id: "acosta", name: "Hernán Acosta", number: 40, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "redbull", status: "confirmado", rumorTeams: [],
     age: 28, seasons: 5, bestResult: "4°",
     bio: "Grandes actuaciones al mando de un Alpine que solo daba para P4 o P5. Ahora estrena asiento en Red Bull.",
@@ -98,57 +92,57 @@ const DEFAULT_DRIVERS = [
     powerRank: 5, powerRankPrev: 7,
   },
   {
-    id: "mauricio", name: "Mauricio", number: 75, country: "México", flag: "🇲🇽",
+    id: "mauricio", name: "Mauricio", number: 75, country: "México", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "ferrari", status: "confirmado", rumorTeams: [],
     age: 15, seasons: 1, bestResult: "4°",
-    bio: "Hizo una impresionante temporadara. Da el salto a Ferrari para la 26/27.",
+    bio: "Hizo una impresionante temporada. Da el salto a Ferrari para la 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 5, points: 95 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 12, oddsPrev: 13, probability: 4, oddsHistory: [14, 13.5, 12.8, 12],
     powerRank: 6, powerRankPrev: 6,
   },
   {
-    id: "vidal", name: "Santiago Vidal", number: 25, country: "Bolivia", flag: "🇧🇴",
+    id: "vidal", name: "Santiago Vidal", number: 25, country: "Bolivia", flag: "\u{1F1E7}\u{1F1F4}",
     teamId: "lotus", status: "confirmado", rumorTeams: [],
     age: 24, seasons: 1, bestResult: "6°",
-    bio: "piloto confirmado para Lotus Renault Racing en la Temporada 26/27.",
+    bio: "Piloto confirmado para Lotus Renault Racing en la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 1, dnf: 3, points: 88 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 19, oddsPrev: 19, probability: 3, oddsHistory: [19, 19, 19, 19],
     powerRank: 7, powerRankPrev: 8,
   },
   {
-    id: "pichardo", name: "Pichardo", number: 22, country: "México", flag: "🇲🇽",
+    id: "pichardo", name: "Pichardo", number: 22, country: "México", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "williams", status: "confirmado", rumorTeams: [],
     age: 24, seasons: 3, bestResult: "5°",
-    bio: "nuevo piloto de Williams para la temporada 2.",
+    bio: "Nuevo piloto de Williams para la temporada 2.",
     career: { wins: 0, podiums: 0, poles: 3, fastLaps: 0, dnf: 4, points: 70 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 23, oddsPrev: 23, probability: 2, oddsHistory: [23, 23, 23, 23],
     powerRank: 8, powerRankPrev: 9,
   },
   {
-    id: "osorio", name: "Osmany Osorio", number: 67, country: "Cuba", flag: "🇨🇺",
+    id: "osorio", name: "Osmany Osorio", number: 67, country: "Cuba", flag: "\u{1F1E8}\u{1F1FA}",
     teamId: "mercedes", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "3°",
-    bio: "nuevo piloto de mercedes para la temporada 26/27.",
+    bio: "Nuevo piloto de Mercedes para la temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 5, points: 140 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 26, oddsPrev: 26, probability: 2, oddsHistory: [26, 26, 26, 26],
     powerRank: 9, powerRankPrev: 10,
   },
   {
-    id: "flores", name: "Eduardo Flores", number: 15, country: "México", flag: "🇲🇽",
+    id: "flores", name: "Eduardo Flores", number: 15, country: "México", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "lamborghini", status: "confirmado", rumorTeams: [],
     age: 22, seasons: 1, bestResult: "9°",
-    bio: "nuevo piloto de Lamborghini para la Temporada 26/27.",
+    bio: "Nuevo piloto de Lamborghini para la Temporada 26/27.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 4, points: 48 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 29, oddsPrev: 29, probability: 1, oddsHistory: [29, 29, 29, 29],
     powerRank: 10, powerRankPrev: 11,
   },
   {
-    id: "maximo", name: "Máximo", number: 33, country: "Mexico", flag: "🇲🇽",
+    id: "maximo", name: "Máximo", number: 33, country: "Mexico", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "alpine", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "7°",
     bio: "Piloto confirmado para la temporada 2.",
@@ -158,7 +152,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 11, powerRankPrev: 12,
   },
   {
-    id: "caceres", name: "Santino Cáceres", number: 12, country: "Argentina", flag: "🇦🇷",
+    id: "caceres", name: "Santino Cáceres", number: 12, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
     age: 23, seasons: 2, bestResult: "11°",
     bio: "Confirmado en Porsche para esta temporada.",
@@ -168,7 +162,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 12, powerRankPrev: 13,
   },
   {
-    id: "jeanfranco", name: "Jeanfranco", number: 96, country: "Venezuela", flag: "🇻🇪",
+    id: "jeanfranco", name: "Jeanfranco", number: 96, country: "Venezuela", flag: "\u{1F1FB}\u{1F1EA}",
     teamId: "astonmartin", status: "confirmado", rumorTeams: [],
     age: 24, seasons: 2, bestResult: "12°",
     bio: "Confirmado en Aston Martin para esta temporada.",
@@ -178,7 +172,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 13, powerRankPrev: 14,
   },
   {
-    id: "raneri", name: "Nehemias Raneri", number: 10, country: "Argentina", flag: "🇦🇷",
+    id: "raneri", name: "Nehemias Raneri", number: 10, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "alpine", status: "confirmado", rumorTeams: [],
     age: 21, seasons: 1, bestResult: "13°",
     bio: "Confirmado en Alpine para esta temporada.",
@@ -188,17 +182,17 @@ const DEFAULT_DRIVERS = [
     powerRank: 14, powerRankPrev: 15,
   },
   {
-    id: "camilo", name: "Camilo", number: 43, country: "Argentina", flag: "🇦🇷",
+    id: "camilo", name: "Camilo", number: 43, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "lotus", status: "confirmado", rumorTeams: [],
     age: 14, seasons: 1, bestResult: "14°",
-    bio: "confirmado para Lotus Renault Racing en temporada 2.",
+    bio: "Confirmado para Lotus Renault Racing en temporada 2.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 5, points: 15 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 67, oddsPrev: 67, probability: 0.5, oddsHistory: [67, 67, 67, 67],
     powerRank: 15, powerRankPrev: 16,
   },
   {
-    id: "dave", name: "Dave", number: 56, country: "Chile", flag: "🇨🇱",
+    id: "dave", name: "Dave", number: 56, country: "Chile", flag: "\u{1F1E8}\u{1F1F1}",
     teamId: "racingbulls", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "15°",
     bio: "Piloto confirmado para Racing Bulls en la Temporada 26/27.",
@@ -208,7 +202,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 16, powerRankPrev: 17,
   },
   {
-    id: "chichar", name: "Chichar", number: 30, country: "Perú", flag: "🇵🇪",
+    id: "chichar", name: "Chichar", number: 30, country: "Perú", flag: "\u{1F1F5}\u{1F1EA}",
     teamId: "mclaren", status: "confirmado", rumorTeams: [],
     age: 14, seasons: 1, bestResult: "16°",
     bio: "Confirmado en McLaren para esta temporada.",
@@ -218,7 +212,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 17, powerRankPrev: 18,
   },
   {
-    id: "tapara", name: "Tapara", number: 47, country: "Peru", flag: "🇵🇪",
+    id: "tapara", name: "Tapara", number: 47, country: "Peru", flag: "\u{1F1F5}\u{1F1EA}",
     teamId: "mclaren", status: "confirmado", rumorTeams: [],
     age: 14, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -228,7 +222,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 18, powerRankPrev: 19,
   },
   {
-    id: "luca", name: "Luca", number: 46, country: "Argentina", flag: "🇦🇷",
+    id: "luca", name: "Luca", number: 46, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "racingbulls", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado en Racing Bulls para esta temporada.",
@@ -237,18 +231,18 @@ const DEFAULT_DRIVERS = [
     odds: 107, oddsPrev: 107, probability: 0.2, oddsHistory: [107, 107, 107, 107],
     powerRank: 19, powerRankPrev: 20,
   },
-    {
-    id: "hernandez", name: "Juanjo Hernandez", number: 20, country: "Colombia", flag: "🇨🇴",
+  {
+    id: "hernandez", name: "Juanjo Hernandez", number: 20, country: "Colombia", flag: "\u{1F1E8}\u{1F1F4}",
     teamId: "lamborghini", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
-    bio: "Piloto para confrimar la temporada siguiente.",
+    bio: "Piloto confirmado para esta temporada.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 55, oddsPrev: 55, probability: 0.9, oddsHistory: [55, 55, 55, 55],
     powerRank: 20, powerRankPrev: 21,
   },
-    {
-    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "🇦🇷",
+  {
+    id: "catnap", name: "N:Catnap", number: 6, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -257,18 +251,18 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 21, powerRankPrev: 22,
   },
-    {
-    id: "yzaac", name: "Yzaac", number: 13, country: "Mexico", flag: "🇲🇽",
+  {
+    id: "yzaac", name: "Yzaac", number: 13, country: "Mexico", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "bmw", status: "confirmado", rumorTeams: [],
-    age: 25, seasons: 1, bestResult: "null",
+    age: 25, seasons: 1, bestResult: "\u2014",
     bio: "Piloto confirmado para esta temporada.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 110, oddsPrev: 110, probability: 0.2, oddsHistory: [110, 110, 110, 110],
     powerRank: 22, powerRankPrev: 23,
   },
-    {
-    id: "ianfalla", name: "Ian Falla", number: 45, country: "Colombia", flag: "🇨🇴",
+  {
+    id: "ianfalla", name: "Ian Falla", number: 45, country: "Colombia", flag: "\u{1F1E8}\u{1F1F4}",
     teamId: "astonmartin", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "7°",
     bio: "Piloto confirmado para esta temporada.",
@@ -277,8 +271,8 @@ const DEFAULT_DRIVERS = [
     odds: 63, oddsPrev: 63, probability: 0.6, oddsHistory: [63, 63, 63, 63],
     powerRank: 23, powerRankPrev: 24,
   },
-    {
-    id: "ventura", name: "Alexander ventura", number: 33, country: "Bolivia", flag: "🇧🇴",
+  {
+    id: "ventura", name: "Alexander Ventura", number: 33, country: "Bolivia", flag: "\u{1F1E7}\u{1F1F4}",
     teamId: "bmw", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -287,8 +281,8 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 24, powerRankPrev: 25,
   },
-    {
-    id: "santiago", name: "Santiago Leclerc", number: 16, country: "Colombia", flag: "🇨🇴",
+  {
+    id: "santiago", name: "Santiago Leclerc", number: 16, country: "Colombia", flag: "\u{1F1E8}\u{1F1F4}",
     teamId: "alphatauri", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -297,8 +291,8 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 25, powerRankPrev: 26,
   },
-    {
-    id: "hitan", name: "Hitan", number: 39, country: "Mexico", flag: "🇲🇽",
+  {
+    id: "hitan", name: "Hitan", number: 39, country: "Mexico", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "alphatauri", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -307,8 +301,8 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 26, powerRankPrev: 27,
   },
-   {
-    id: "jose", name: "Jose", number: 23, country: "Mexico", flag: "🇲🇽",
+  {
+    id: "jose", name: "Jose", number: 23, country: "Mexico", flag: "\u{1F1F2}\u{1F1FD}",
     teamId: "audifxr", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -317,8 +311,8 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 27, powerRankPrev: 27,
   },
-   {
-    id: "agustin", name: "Agustin", number: 49, country: "Chile", flag: "🇨🇱",
+  {
+    id: "agustin", name: "Agustin", number: 49, country: "Chile", flag: "\u{1F1E8}\u{1F1F1}",
     teamId: "audifxr", status: "confirmado", rumorTeams: [],
     age: 16, seasons: 1, bestResult: "12°",
     bio: "Piloto confirmado para esta temporada.",
@@ -327,40 +321,35 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 28, powerRankPrev: 28,
   },
-  /* 5 asientos libres reservados para futuras incorporaciones */
 ];
 
-/* ---------------------- CALENDARIO (24 fechas) ----------------------
-   status se recalcula solo en app.js comparando con la fecha de hoy,
-   pero dejamos un valor por defecto acá también.
-   Formato de fecha: "YYYY-MM-DD" (el campeonato arranca en 2026 y
-   cruza a 2027 en enero-febrero). */
+/* ---------------------- CALENDARIO (24 fechas) ---------------------- */
 const DEFAULT_CALENDAR = [
-  { round: 1,  circuit: "Bahréin",        flag: "🇧🇭", r1: "2026-09-12", r2: "2026-09-13" },
-  { round: 2,  circuit: "Qatar",          flag: "🇶🇦", r1: "2026-09-19", r2: "2026-09-20" },
-  { round: 3,  circuit: "China",          flag: "🇨🇳", r1: "2026-09-26", r2: "2026-09-27" },
-  { round: 4,  circuit: "Malasia",        flag: "🇲🇾", r1: "2026-10-03", r2: "2026-10-04" },
-  { round: 5,  circuit: "Australia",      flag: "🇦🇺", r1: "2026-10-10", r2: "2026-10-11" },
-  { round: 6,  circuit: "Mount Panorama", flag: "🇦🇺", r1: "2026-10-17", r2: "2026-10-18" },
-  { round: 7,  circuit: "Canadá",         flag: "🇨🇦", r1: "2026-10-24", r2: "2026-10-25" },
-  { round: 8,  circuit: "Miami",          flag: "🇺🇸", r1: "2026-10-31", r2: "2026-11-01" },
-  { round: 9,  circuit: "South Carolina", flag: "🇺🇸", r1: "2026-11-07", r2: "2026-11-08" },
-  { round: 10, circuit: "Barcelona",      flag: "🇪🇸", r1: "2026-11-14", r2: "2026-11-15" },
-  { round: 11, circuit: "Mónaco",         flag: "🇲🇨", r1: "2026-11-21", r2: "2026-11-22" },
-  { round: 12, circuit: "Austria",        flag: "🇦🇹", r1: "2026-11-28", r2: "2026-11-29" },
-  { round: 13, circuit: "Hungría",        flag: "🇭🇺", r1: "2026-12-05", r2: "2026-12-06" },
-  { round: 14, circuit: "Bélgica",        flag: "🇧🇪", r1: "2026-12-12", r2: "2026-12-13" },
-  { round: 15, circuit: "Reino Unido",    flag: "🇬🇧", r1: "2026-12-19", r2: "2026-12-20" },
-  { round: 16, circuit: "Georgia",        flag: "🇬🇪", r1: "2026-12-26", r2: "2026-12-27" },
-  { round: 17, circuit: "Italia",         flag: "🇮🇹", r1: "2027-01-02", r2: "2027-01-03" },
-  { round: 18, circuit: "Singapur",       flag: "🇸🇬", r1: "2027-01-09", r2: "2027-01-10" },
-  { round: 19, circuit: "EE.UU.",         flag: "🇺🇸", r1: "2027-01-16", r2: "2027-01-17" },
-  { round: 20, circuit: "México",         flag: "🇲🇽", r1: "2027-01-23", r2: "2027-01-24" },
-  { round: 21, circuit: "Las Vegas",      flag: "🇺🇸", r1: "2027-01-30", r2: "2027-01-31" },
-  { round: 22, circuit: "Brasil",         flag: "🇧🇷", r1: "2027-02-06", r2: "2027-02-07" },
-  { round: 23, circuit: "Arabia Saudita", flag: "🇸🇦", r1: "2027-02-13", r2: "2027-02-14" },
-  { round: 24, circuit: "Abu Dabi",       flag: "🇦🇪", r1: "2027-02-20", r2: "2027-02-21" },
-].map(r => ({ ...r, results: { r1: null, r2: null } })); // results se completan desde el panel de admin
+  { round: 1,  circuit: "Bahréin",        flag: "\u{1F1E7}\u{1F1ED}", r1: "2026-09-12", r2: "2026-09-13" },
+  { round: 2,  circuit: "Qatar",          flag: "\u{1F1F6}\u{1F1E6}", r1: "2026-09-19", r2: "2026-09-20" },
+  { round: 3,  circuit: "China",          flag: "\u{1F1E8}\u{1F1F3}", r1: "2026-09-26", r2: "2026-09-27" },
+  { round: 4,  circuit: "Malasia",        flag: "\u{1F1F2}\u{1F1FE}", r1: "2026-10-03", r2: "2026-10-04" },
+  { round: 5,  circuit: "Australia",      flag: "\u{1F1E6}\u{1F1FA}", r1: "2026-10-10", r2: "2026-10-11" },
+  { round: 6,  circuit: "Mount Panorama", flag: "\u{1F1E6}\u{1F1FA}", r1: "2026-10-17", r2: "2026-10-18" },
+  { round: 7,  circuit: "Canadá",         flag: "\u{1F1E8}\u{1F1E6}", r1: "2026-10-24", r2: "2026-10-25" },
+  { round: 8,  circuit: "Miami",          flag: "\u{1F1FA}\u{1F1F8}", r1: "2026-10-31", r2: "2026-11-01" },
+  { round: 9,  circuit: "South Carolina", flag: "\u{1F1FA}\u{1F1F8}", r1: "2026-11-07", r2: "2026-11-08" },
+  { round: 10, circuit: "Barcelona",      flag: "\u{1F1EA}\u{1F1F8}", r1: "2026-11-14", r2: "2026-11-15" },
+  { round: 11, circuit: "Mónaco",         flag: "\u{1F1F2}\u{1F1E8}", r1: "2026-11-21", r2: "2026-11-22" },
+  { round: 12, circuit: "Austria",        flag: "\u{1F1E6}\u{1F1F9}", r1: "2026-11-28", r2: "2026-11-29" },
+  { round: 13, circuit: "Hungría",        flag: "\u{1F1ED}\u{1F1FA}", r1: "2026-12-05", r2: "2026-12-06" },
+  { round: 14, circuit: "Bélgica",        flag: "\u{1F1E7}\u{1F1EA}", r1: "2026-12-12", r2: "2026-12-13" },
+  { round: 15, circuit: "Reino Unido",    flag: "\u{1F1EC}\u{1F1E7}", r1: "2026-12-19", r2: "2026-12-20" },
+  { round: 16, circuit: "Georgia",        flag: "\u{1F1EC}\u{1F1EA}", r1: "2026-12-26", r2: "2026-12-27" },
+  { round: 17, circuit: "Italia",         flag: "\u{1F1EE}\u{1F1F9}", r1: "2027-01-02", r2: "2027-01-03" },
+  { round: 18, circuit: "Singapur",       flag: "\u{1F1F8}\u{1F1EC}", r1: "2027-01-09", r2: "2027-01-10" },
+  { round: 19, circuit: "EE.UU.",         flag: "\u{1F1FA}\u{1F1F8}", r1: "2027-01-16", r2: "2027-01-17" },
+  { round: 20, circuit: "México",         flag: "\u{1F1F2}\u{1F1FD}", r1: "2027-01-23", r2: "2027-01-24" },
+  { round: 21, circuit: "Las Vegas",      flag: "\u{1F1FA}\u{1F1F8}", r1: "2027-01-30", r2: "2027-01-31" },
+  { round: 22, circuit: "Brasil",         flag: "\u{1F1E7}\u{1F1F7}", r1: "2027-02-06", r2: "2027-02-07" },
+  { round: 23, circuit: "Arabia Saudita", flag: "\u{1F1F8}\u{1F1E6}", r1: "2027-02-13", r2: "2027-02-14" },
+  { round: 24, circuit: "Abu Dabi",       flag: "\u{1F1E6}\u{1F1E7}", r1: "2027-02-20", r2: "2027-02-21" },
+].map(r => ({ ...r, results: { r1: null, r2: null } }));
 
 /* ---------------------- NOTICIAS ---------------------- */
 const DEFAULT_NEWS = [
@@ -374,7 +363,7 @@ const DEFAULT_NEWS = [
     id: 3, title: "Carreon firma con Red Bull",
     date: "2026-07-25", category: "Fichajes",
     image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop",
-    text: "Manuel Carreon, ganador de una carrera la temporada pasada con McLaren, ocupará el asiento que deja Pujalski en Red Bull. Pese a un cierre de año irregular, el mexicano convenció al equipo con destellos de gran nivel.",
+    text: "Manuel Carreon, ganador de dos carreras la temporada pasada con McLaren, ocupará el asiento que deja Pujalski en Red Bull. Pese a un cierre de año irregular, el mexicano convenció al equipo con destellos de gran nivel.",
   },
   {
     id: 4, title: "Gabriel Moran, nuevo piloto de Ferrari",
@@ -384,5 +373,5 @@ const DEFAULT_NEWS = [
   },
 ];
 
-/* Sistema de puntos por carrera (igual para R1 y R2, top 10) */
+/* Sistema de puntos por carrera (top 14) */
 const POINTS_SYSTEM = [30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];

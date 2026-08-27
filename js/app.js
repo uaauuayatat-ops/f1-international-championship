@@ -215,6 +215,22 @@ function recalcOdds() {
   const maxPointsPerRace = Math.max(...POINTS_SYSTEM);
   const maxPointsRemaining = remainingRaces * maxPointsPerRace;
 
+  /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
+  if (completedRaces === 0) {
+    drivers.forEach(d => {
+      const id = getDriverId(d);
+      if (["libre1","libre2","libre3","libre4"].includes(id)) { d.odds = null; d.probability = null; return; }
+      const startOdds = startingOddsMap[id] ?? d.startingOdds ?? d.odds ?? 50;
+      d.oddsPrev = startOdds;
+      d.odds = startOdds;
+      d.probability = Math.round((100 / startOdds) * 10) / 10;
+      d.oddsHistory = [startOdds];
+      d.oddsPointsReference = 0;
+    });
+    DB.mathematicalChampion = null;
+    return;
+  }
+
   const sorted = [...drivers]
     .filter(d => !["libre1","libre2","libre3","libre4"].includes(getDriverId(d)))
     .sort((a, b) => (b.season?.points || 0) - (a.season?.points || 0));
@@ -403,6 +419,18 @@ function recalcConstructorOdds() {
   const seasonProgress = totalRaces > 0 ? completedRaces / totalRaces : 0;
 
   const maxPointsRemaining = remainingRaces * 2 * maxPointsPerDriver;
+
+  /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
+  if (completedRaces === 0) {
+    DB.teams.forEach(team => {
+      const startOdds = team.odds || 50;
+      team.oddsPrev = startOdds;
+      team.odds = startOdds;
+      team.probability = Math.round((100 / startOdds) * 10) / 10;
+      team.champion = false;
+    });
+    return;
+  }
 
   const possibilities = DB.teams.map(team => {
     const teamDrivers = DB.drivers.filter(d => d.teamId === team.id);
@@ -965,7 +993,22 @@ function calcRivalryScore(driver) {
  * La cuota de cada piloto refleja la probabilidad de terminar
  * por delante de su compañero en una carrera cualquiera.
  */
-function calcRivalryOdds(driverA, driverB) {
+function calcRivalryOdds(driverA, driverB, team) {
+  /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
+  if (team && typeof team.rivalryA === "number" && typeof team.rivalryB === "number") {
+    let completedRaces = 0;
+    if (DB.calendar) {
+      DB.calendar.forEach(race => {
+        if (race.results?.r1?.orderIds?.length > 0) completedRaces++;
+        if (race.results?.r2?.orderIds?.length > 0) completedRaces++;
+      });
+    }
+    if (completedRaces === 0) {
+      const favorite = team.rivalryA <= team.rivalryB ? driverA.id : driverB.id;
+      return { oddsA: team.rivalryA, oddsB: team.rivalryB, favorite };
+    }
+  }
+
   const scoreA = calcRivalryScore(driverA);
   const scoreB = calcRivalryScore(driverB);
   const total = scoreA + scoreB;
@@ -1006,7 +1049,7 @@ function calcRivalryOdds(driverA, driverB) {
  * Genera el HTML de una tarjeta de rivalidad entre dos compañeros.
  */
 function rivalryCardHTML(team, driverA, driverB) {
-  const { oddsA, oddsB, favorite } = calcRivalryOdds(driverA, driverB);
+  const { oddsA, oddsB, favorite } = calcRivalryOdds(driverA, driverB, team);
 
   const isFavA = favorite === driverA.id;
   const isFavB = favorite === driverB.id;
