@@ -625,3 +625,40 @@ form.admin-form textarea { resize: vertical; min-height: 80px; }
   from { box-shadow: 0 0 4px rgba(255, 215, 0, 0.3); }
   to { box-shadow: 0 0 12px rgba(255, 215, 0, 0.6); }
 }
+
+/* ----------------------------------------------------------
+   BOTTOM NAVIGATION (solo móvil) — barra inferior fija
+   ---------------------------------------------------------- */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 120;
+  background: rgba(14,14,16,.96);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+[data-theme="light"] .bottom-nav { background: rgba(255,255,255,.97); }
+.bottom-nav-inner {
+  display: flex; align-items: stretch; justify-content: space-around;
+  max-width: 640px; margin: 0 auto;
+}
+.bottom-nav a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 9px 2px 8px; font-size: .58rem; font-weight: 700;
+  color: var(--gray); text-transform: uppercase; letter-spacing: .02em;
+  text-decoration: none; touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(225,6,0,.25);
+}
+.bottom-nav a .bn-icon { font-size: 1.25rem; line-height: 1; }
+.bottom-nav a.active { color: var(--red); }
+.bottom-nav a.active::after {
+  content: ""; display: block; width: 5px; height: 5px;
+  background: var(--red); border-radius: 50%; margin-top: 2px;
+}
+
+/* Solo mostrar en pantallas pequeñas */
+@media (max-width: 768px) {
+  .bottom-nav { display: block; }
+  main { padding-bottom: 74px; }
+  .site-footer { margin-bottom: 60px; }
+}
