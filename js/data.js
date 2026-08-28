@@ -242,7 +242,7 @@ const DEFAULT_DRIVERS = [
     powerRank: 20, powerRankPrev: 21,
   },
   {
-    id: "fabian", name: "Fabian Jimenez", number: 33, country: "Honduras", flag: "\u{1F1ED}\u{1F1F3}",
+    id: "fabian", name: "Fabian Jimenez", number: 3, country: "Honduras", flag: "\u{1F1ED}\u{1F1F3}",
     teamId: "porsche", status: "confirmado", rumorTeams: [],
     age: 20, seasons: 1, bestResult: "\u2014",
     bio: "Piloto confirmado para esta temporada. Debutante en la categoría.",
@@ -370,6 +370,12 @@ const DEFAULT_NEWS = [
     date: "2026-07-20", category: "Fichajes",
     image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop",
     text: "Ferrari confirmó a Gabriel Moran como su nuevo piloto tras una gran temporada con Audi FXR, cerrada con varios podios. El paraguayo competirá con el número 58 y buscará pelear el título desde Maranello.",
+  },
+  {
+    id: 5, title: "!se viene los test en Arabia Saudita¡",
+    date: "2026-08-28", category: "carrera",
+    image: "https://images.daznservices.com/di/library/DAZN_News/70/68/2021-12-04-verstappen-saudi-arabia-jeddah-corniche-circuit-jeddah-circuit-f1-formula-1_p6lwn6pketac1jua906yj3fq4.jpg?t=-2015600851",
+    text: "el 29 y 30 de agosto se hara los test de pretemporada, donde vamos a ver el rendimiento de cada piloto y cual es el coche a batir. seran 2 dias donde los pilotos tendran la oportunidad de adaptarse mas al coche y al nuevo cambio.",
   },
 ];
 
