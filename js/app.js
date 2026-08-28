@@ -676,6 +676,20 @@ function initChrome() {
   document.querySelectorAll("[data-nav]").forEach(a => {
     if (a.dataset.nav === page) a.classList.add("active");
   });
+
+  /* Panel "Más" de la barra inferior (móvil) */
+  const moreBtn = document.querySelector("[data-bnmore]");
+  const panel = document.querySelector("[data-bnpanel]");
+  const overlay = document.querySelector("[data-bnoverlay]");
+  if (moreBtn && panel && overlay) {
+    const close = () => { panel.classList.remove("open"); overlay.classList.remove("open"); };
+    moreBtn.addEventListener("click", () => {
+      const open = panel.classList.toggle("open");
+      overlay.classList.toggle("open", open);
+    });
+    overlay.addEventListener("click", close);
+    panel.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+  }
 }
 
 function animateCounters() {
