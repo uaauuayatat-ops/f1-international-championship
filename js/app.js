@@ -673,7 +673,7 @@ function initChrome() {
   }
 
   const page = document.body.dataset.page;
-  document.querySelectorAll(".nav-menu a[data-nav]").forEach(a => {
+  document.querySelectorAll("[data-nav]").forEach(a => {
     if (a.dataset.nav === page) a.classList.add("active");
   });
 }
