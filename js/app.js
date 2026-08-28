@@ -24,7 +24,7 @@ function buildSeed() {
     drivers: structuredClone(DEFAULT_DRIVERS).map(d => ({ ...d, recentPositions: d.recentPositions || [] })),
     calendar: structuredClone(DEFAULT_CALENDAR),
     news: structuredClone(DEFAULT_NEWS),
-    history: [],
+    history: structuredClone(DEFAULT_HISTORY),
   };
 }
 
@@ -1219,6 +1219,7 @@ function renderStats() {
           <p>🥈 Subcampeón: ${h.driverSecond}</p>
           <p>🥉 Tercer lugar: ${h.driverThird}</p>
           <p>🏗️ Campeón de constructores: <strong>${h.teamChampion}</strong></p>
+          ${h.bestRookie ? `<p>🌟 Mejor rookie: <strong>${h.bestRookie}</strong></p>` : ''}
         </div>`).join("")
       : `<p class="empty">Todavía no hay temporadas finalizadas.</p>`;
   }

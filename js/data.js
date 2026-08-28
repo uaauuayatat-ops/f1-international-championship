@@ -375,3 +375,15 @@ const DEFAULT_NEWS = [
 
 /* Sistema de puntos por carrera (top 14) */
 const POINTS_SYSTEM = [30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
+
+/* ---------------------- HISTORIAL DE CAMPEONES ---------------------- */
+const DEFAULT_HISTORY = [
+  {
+    season: "T1",
+    driverChampion: "Alexander",
+    driverSecond: "Manuel Carreon",
+    driverThird: "Gabriel Moran",
+    teamChampion: "Red Bull",
+    bestRookie: "Camilo",
+  },
+];
