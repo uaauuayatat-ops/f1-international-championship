@@ -1,4 +1,4 @@
-const CACHE_NAME = "f1-championship-v7";
+const CACHE_NAME = "f1-championship-v9";
 
 const FILES_TO_CACHE = [
   "./",
