@@ -642,23 +642,55 @@ form.admin-form textarea { resize: vertical; min-height: 80px; }
   display: flex; align-items: stretch; justify-content: space-around;
   max-width: 640px; margin: 0 auto;
 }
-.bottom-nav a {
+.bottom-nav a, .bottom-nav .bn-more {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  padding: 9px 2px 8px; font-size: .58rem; font-weight: 700;
+  padding: 9px 2px 8px; font-size: .52rem; font-weight: 700;
   color: var(--gray); text-transform: uppercase; letter-spacing: .02em;
-  text-decoration: none; touch-action: manipulation;
+  text-decoration: none; background: none; border: none; cursor: pointer;
+  font-family: var(--font-body); touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(225,6,0,.25);
 }
-.bottom-nav a .bn-icon { font-size: 1.25rem; line-height: 1; }
+.bottom-nav a .bn-icon, .bottom-nav .bn-more .bn-icon { font-size: 1.2rem; line-height: 1; }
 .bottom-nav a.active { color: var(--red); }
 .bottom-nav a.active::after {
   content: ""; display: block; width: 5px; height: 5px;
   background: var(--red); border-radius: 50%; margin-top: 2px;
 }
 
+/* Overlay oscuro */
+.bn-overlay {
+  display: none; position: fixed; inset: 0; z-index: 130;
+  background: rgba(0,0,0,.5); opacity: 0; transition: opacity .25s;
+}
+.bn-overlay.open { display: block; opacity: 1; }
+
+/* Panel deslizable (Más) */
+.bn-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 140;
+  background: var(--bg-card); border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform .3s ease;
+}
+.bn-panel.open { transform: translateY(0); }
+.bn-panel-header {
+  font-family: var(--font-display); font-weight: 700; color: var(--white);
+  padding: 6px 20px 12px; font-size: .95rem; text-align: center;
+}
+.bn-panel a {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px; font-size: .95rem; font-weight: 600;
+  color: var(--gray-light); text-decoration: none; border-top: 1px solid var(--border);
+}
+.bn-panel a .bn-icon { font-size: 1.3rem; }
+.bn-panel a.active { color: var(--red); }
+
 /* Solo mostrar en pantallas pequeñas */
 @media (max-width: 768px) {
   .bottom-nav { display: block; }
-  main { padding-bottom: 74px; }
-  .site-footer { margin-bottom: 60px; }
+  main { padding-bottom: 84px; }
+  .site-footer { margin-bottom: 64px; }
+
+  /* Ocultamos el menú hamburguesa de arriba en móvil */
+  .nav-toggle { display: none !important; }
+  .nav-menu { display: none !important; }
 }
