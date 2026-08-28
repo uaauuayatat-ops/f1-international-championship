@@ -1170,11 +1170,27 @@ function renderCalendar() {
   const wrap = document.getElementById("calendar-list");
   if (!wrap) return;
 
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  /* El próximo circuito pendiente = el primero (sin resultados) cuya
+     fecha de R1 sea hoy o futura. Solo ESO marca "próximo". */
+  let nextRound = null;
+  DB.calendar.forEach(r => {
+    if (r.results?.r1?.orderIds?.length > 0) return;
+    if (r.results?.r2?.orderIds?.length > 0) return;
+    const d = new Date(r.r1 + "T00:00:00");
+    if (d >= now && (!nextRound || d < nextRound)) nextRound = r;
+  });
+
   wrap.innerHTML = DB.calendar.map(r => {
     let s;
-    if (r.results?.r1 && r.results?.r2) s = "finalizado";
-    else if (r.results?.r1 || r.results?.r2) s = "proximo";
-    else s = raceStatus(r.r2);
+    const r1Done = r.results?.r1?.orderIds?.length > 0;
+    const r2Done = r.results?.r2?.orderIds?.length > 0;
+
+    if (r1Done && r2Done) s = "finalizado";
+    else if (nextRound && r.round === nextRound.round) s = "proximo";
+    else s = "pendiente";
 
     return `
       <div class="card calendar-card fade-up status-${s}">
