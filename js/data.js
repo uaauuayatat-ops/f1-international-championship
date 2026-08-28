@@ -372,8 +372,8 @@ const DEFAULT_NEWS = [
     text: "Ferrari confirmó a Gabriel Moran como su nuevo piloto tras una gran temporada con Audi FXR, cerrada con varios podios. El paraguayo competirá con el número 58 y buscará pelear el título desde Maranello.",
   },
   {
-    id: 5, title: "!se viene los test en Arabia Saudita¡",
-    date: "2026-08-28", category: "carrera",
+    id: 5, title: "se viene los test en Arabia Saudita",
+    date: "2026-08-28", category: "Test",
     image: "https://images.daznservices.com/di/library/DAZN_News/70/68/2021-12-04-verstappen-saudi-arabia-jeddah-corniche-circuit-jeddah-circuit-f1-formula-1_p6lwn6pketac1jua906yj3fq4.jpg?t=-2015600851",
     text: "el 29 y 30 de agosto se hara los test de pretemporada, donde vamos a ver el rendimiento de cada piloto y cual es el coche a batir. seran 2 dias donde los pilotos tendran la oportunidad de adaptarse mas al coche y al nuevo cambio.",
   },
