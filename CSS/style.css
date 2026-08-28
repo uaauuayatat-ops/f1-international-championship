@@ -396,20 +396,6 @@ form.admin-form textarea { resize: vertical; min-height: 80px; }
   vertical-align: middle;
   margin-right: 8px;
 }
-.install-btn {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  background: #ffffff;
-  color: #111111;
-  transition: 0.2s;
-}
-.install-btn:hover {
-  transform: scale(1.05);
-}
 
 /* ============================================================
    DUELO INTERNO — Tarjetas de rivalidad entre compañeros
