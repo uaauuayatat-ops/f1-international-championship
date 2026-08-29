@@ -421,8 +421,8 @@ const DEFAULT_NEWS = [
   },
 ];
 
-/* Sistema de puntos por carrera (top 14) */
-const POINTS_SYSTEM = [30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
+/* Sistema de puntos por carrera (top 16) */
+const POINTS_SYSTEM = [35, 32, 29, 26, 23, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1];
 
 /* ---------------------- HISTORIAL DE CAMPEONES ---------------------- */
 const DEFAULT_HISTORY = [
