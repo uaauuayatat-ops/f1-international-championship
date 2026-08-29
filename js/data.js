@@ -19,7 +19,7 @@
 
 const SEASON_LABEL = "Temporada 26/27";
 
-/* ---------------------- EQUIPOS (14) ---------------------- */
+/* ---------------------- EQUIPOS (16) ---------------------- */
 /* points/wins/poles/podiums = temporada actual (arranca en 0,
    la temporada todavía no empezó: primera carrera 12/09). */
 const DEFAULT_TEAMS = [
@@ -323,6 +323,46 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 28, powerRankPrev: 28,
   },
+  {
+    id: "fede", name: "Fede Cabrera", number: 68, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
+    teamId: "toyota", status: "confirmado", rumorTeams: [],
+    age: 20, seasons: 1, bestResult: "\u2014",
+    bio: "Piloto confirmado para Toyota en la Temporada 26/27.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 120, oddsPrev: 120, probability: 0.2, oddsHistory: [120, 120, 120, 120],
+    powerRank: 29, powerRankPrev: 29,
+  },
+  {
+    id: "guardia", name: "Guardia", number: 77, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
+    teamId: "toyota", status: "confirmado", rumorTeams: [],
+    age: 22, seasons: 1, bestResult: "\u2014",
+    bio: "Piloto confirmado para Toyota en la Temporada 26/27.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 122, oddsPrev: 122, probability: 0.2, oddsHistory: [122, 122, 122, 122],
+    powerRank: 30, powerRankPrev: 30,
+  },
+  {
+    id: "nasri", name: "Nasri", number: 17, country: "Venezuela", flag: "\u{1F1FB}\u{1F1EA}",
+    teamId: "chevrolet", status: "confirmado", rumorTeams: [],
+    age: 21, seasons: 1, bestResult: "\u2014",
+    bio: "Piloto confirmado para Chevrolet en la Temporada 26/27.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 115, oddsPrev: 115, probability: 0.2, oddsHistory: [115, 115, 115, 115],
+    powerRank: 31, powerRankPrev: 31,
+  },
+  {
+    id: "edwin", name: "Edwin", number: 44, country: "República Dominicana", flag: "\u{1F1E9}\u{1F1F4}",
+    teamId: "chevrolet", status: "confirmado", rumorTeams: [],
+    age: 23, seasons: 1, bestResult: "\u2014",
+    bio: "Piloto confirmado para Chevrolet en la Temporada 26/27.",
+    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
+    odds: 118, oddsPrev: 118, probability: 0.2, oddsHistory: [118, 118, 118, 118],
+    powerRank: 32, powerRankPrev: 32,
+  },
 ];
 
 /* ---------------------- CALENDARIO (24 fechas) ---------------------- */
@@ -374,10 +414,10 @@ const DEFAULT_NEWS = [
     text: "Ferrari confirmó a Gabriel Moran como su nuevo piloto tras una gran temporada con Audi FXR, cerrada con varios podios. El paraguayo competirá con el número 58 y buscará pelear el título desde Maranello.",
   },
   {
-    id: 5, title: "se viene los test en Arabia Saudita",
+    id: 5, title: "Se vienen los test en Arabia Saudita",
     date: "2026-08-28", category: "Test",
     image: "https://images.daznservices.com/di/library/DAZN_News/70/68/2021-12-04-verstappen-saudi-arabia-jeddah-corniche-circuit-jeddah-circuit-f1-formula-1_p6lwn6pketac1jua906yj3fq4.jpg?t=-2015600851",
-    text: "el 29 y 30 de agosto se hara los test de pretemporada, donde vamos a ver el rendimiento de cada piloto y cual es el coche a batir. seran 2 dias donde los pilotos tendran la oportunidad de adaptarse mas al coche y al nuevo cambio.",
+    text: "El 29 y 30 de agosto se hará los test de pretemporada, donde vamos a ver el rendimiento de cada piloto y cuál es el coche a batir. Serán 2 días donde los pilotos tendrán la oportunidad de adaptarse más al coche y al nuevo cambio.",
   },
 ];
 
