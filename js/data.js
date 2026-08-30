@@ -19,7 +19,7 @@
 
 const SEASON_LABEL = "Temporada 26/27";
 
-/* ---------------------- EQUIPOS (16) ---------------------- */
+/* ---------------------- EQUIPOS (14) ---------------------- */
 /* points/wins/poles/podiums = temporada actual (arranca en 0,
    la temporada todavía no empezó: primera carrera 12/09). */
 const DEFAULT_TEAMS = [
@@ -37,8 +37,6 @@ const DEFAULT_TEAMS = [
   { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23, rivalryA: 1.40, rivalryB: 2.90 },
   { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/team/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37, rivalryA: 1.95, rivalryB: 1.90 },
   { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32, rivalryA: 1.95, rivalryB: 1.90 },
-  { id: "chevrolet",     name: "Chevrolet",        color: "#CD9834", logo: "assets/team/chevrolet.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 31, rivalryA: 1.95, rivalryB: 1.90 },
-  { id: "toyota", name: "Toyota", color: "#EB0A1E", logo: "assets/team/toyota.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 38, rivalryA: 1.95, rivalryB: 1.90 },
 ];
 
 /* ---------------------- PILOTOS (28) ---------------------- */
@@ -323,46 +321,6 @@ const DEFAULT_DRIVERS = [
     odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
     powerRank: 28, powerRankPrev: 28,
   },
-  {
-    id: "fede", name: "Fede Cabrera", number: 68, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
-    teamId: "toyota", status: "confirmado", rumorTeams: [],
-    age: 20, seasons: 1, bestResult: "\u2014",
-    bio: "Piloto confirmado para Toyota en la Temporada 26/27.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 120, oddsPrev: 120, probability: 0.2, oddsHistory: [120, 120, 120, 120],
-    powerRank: 29, powerRankPrev: 29,
-  },
-  {
-    id: "guardia", name: "Guardia", number: 77, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
-    teamId: "toyota", status: "confirmado", rumorTeams: [],
-    age: 22, seasons: 1, bestResult: "\u2014",
-    bio: "Piloto confirmado para Toyota en la Temporada 26/27.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 122, oddsPrev: 122, probability: 0.2, oddsHistory: [122, 122, 122, 122],
-    powerRank: 30, powerRankPrev: 30,
-  },
-  {
-    id: "nasri", name: "Nasri", number: 17, country: "Venezuela", flag: "\u{1F1FB}\u{1F1EA}",
-    teamId: "chevrolet", status: "confirmado", rumorTeams: [],
-    age: 21, seasons: 1, bestResult: "\u2014",
-    bio: "Piloto confirmado para Chevrolet en la Temporada 26/27.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 115, oddsPrev: 115, probability: 0.2, oddsHistory: [115, 115, 115, 115],
-    powerRank: 31, powerRankPrev: 31,
-  },
-  {
-    id: "edwin", name: "Edwin", number: 44, country: "República Dominicana", flag: "\u{1F1E9}\u{1F1F4}",
-    teamId: "chevrolet", status: "confirmado", rumorTeams: [],
-    age: 23, seasons: 1, bestResult: "\u2014",
-    bio: "Piloto confirmado para Chevrolet en la Temporada 26/27.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 118, oddsPrev: 118, probability: 0.2, oddsHistory: [118, 118, 118, 118],
-    powerRank: 32, powerRankPrev: 32,
-  },
 ];
 
 /* ---------------------- CALENDARIO (24 fechas) ---------------------- */
@@ -421,8 +379,8 @@ const DEFAULT_NEWS = [
   },
 ];
 
-/* Sistema de puntos por carrera (top 16) */
-const POINTS_SYSTEM = [35, 32, 29, 26, 23, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1];
+/* Sistema de puntos por carrera (top 14) */
+const POINTS_SYSTEM = [30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1];
 
 /* ---------------------- HISTORIAL DE CAMPEONES ---------------------- */
 const DEFAULT_HISTORY = [

@@ -189,8 +189,7 @@ function recalcOdds() {
     chichar: 101.00, tapara: 105.00, luca: 107.00,
     hernandez: 55.00, fabian: 102.00,
     yzaac: 110.00, ianfalla: 63.00, ventura: 102.00,
-    santiago: 102.00, hitan: 102.00, jose: 102.00, agustin: 102.00,
-    fede: 120.00, guardia: 122.00, nasri: 115.00, edwin: 118.00
+    santiago: 102.00, hitan: 102.00, jose: 102.00, agustin: 102.00
   };
 
   function getDriverId(d) {
@@ -213,10 +212,7 @@ function recalcOdds() {
 
   if (remainingRaces <= 0) return;
 
-  /* Techo de remontada FIJO para el cálculo de cuotas (base previa),
-     independiente del reparto real de puntos (POINTS_SYSTEM).
-     Así el nuevo sistema de puntos no altera la sensación de las cuotas. */
-  const maxPointsPerRace = 30;
+  const maxPointsPerRace = Math.max(...POINTS_SYSTEM);
   const maxPointsRemaining = remainingRaces * maxPointsPerRace;
 
   /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
@@ -411,9 +407,7 @@ function recalcOdds() {
 }
 
 function recalcConstructorOdds() {
-  /* Techo de remontada FIJO para el cálculo de cuotas (base previa),
-     independiente del reparto real de puntos (POINTS_SYSTEM). */
-  const maxPointsPerDriver = 30;
+  const maxPointsPerDriver = Math.max(...POINTS_SYSTEM);
   let remainingRaces = 0;
   DB.calendar.forEach(race => {
     if (!race.results?.r1) remainingRaces++;
@@ -566,7 +560,7 @@ function checkMathematicalChampion() {
     if (!race.results?.r2?.orderIds?.length) remainingRaces++;
   });
   if (remainingRaces <= 0) return null;
-  const maxPointsRemaining = remainingRaces * 30;
+  const maxPointsRemaining = remainingRaces * Math.max(...POINTS_SYSTEM);
   const sorted = [...drivers].sort((a, b) => b.season.points - a.season.points);
   const leader = sorted[0];
   const canStillCatch = sorted.slice(1).some(d => d.season.points + maxPointsRemaining > leader.season.points);
