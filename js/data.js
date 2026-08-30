@@ -360,12 +360,6 @@ const DEFAULT_NEWS = [
     text: "Mercedes anunció oficialmente la contratación de Coffin, quien llega tras un cierre de temporada sobresaliente con Audi FXR: segundo lugar en casi todas las últimas fechas y cinco poles consecutivas. El venezolano competirá con el número 99 y llega con el objetivo de pelear el campeonato desde el primer fin de semana.",
   },
   {
-    id: 3, title: "Carreon firma con Red Bull",
-    date: "2026-07-25", category: "Fichajes",
-    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1200&auto=format&fit=crop",
-    text: "Manuel Carreon, ganador de dos carreras la temporada pasada con McLaren, ocupará el asiento que deja Pujalski en Red Bull. Pese a un cierre de año irregular, el mexicano convenció al equipo con destellos de gran nivel.",
-  },
-  {
     id: 4, title: "Gabriel Moran, nuevo piloto de Ferrari",
     date: "2026-07-20", category: "Fichajes",
     image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop",
