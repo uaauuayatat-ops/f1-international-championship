@@ -724,11 +724,73 @@ function powerTrendArrow(rank, prevRank) {
 /* ----------------------------------------------------------
    6) RENDER: INICIO
    ---------------------------------------------------------- */
+/* ----------------------------------------------------------
+   FAVORITOS DEL GP (inicio)
+   Base: favoritos definidos por GP (seed/admin) o rendimiento.
+   Con resultados cargados, un piloto que NO estaba entre los
+   favoritos entra si terminó mejor que algún favorito.
+   ---------------------------------------------------------- */
+function raceFavorites(race, key) {
+  const order = (race.results && race.results[key] && race.results[key].orderIds) || [];
+  let favs = (race.favorites && race.favorites[key]) || [];
+  if (!favs.length) {
+    // Sin favoritos definidos → por rendimiento (puntos de temporada).
+    // En pretemporada (todos 0) cae al favorito del campeonato (cuota más baja).
+    const byPerf = [...DB.drivers].sort((a,b) =>
+      (b.season.points || 0) - (a.season.points || 0) || (a.odds ?? 99) - (b.odds ?? 99));
+    favs = byPerf.slice(0,3).map(d => d.id);
+  }
+  if (!order.length) return favs.slice(0,3);
+
+  // Con resultados: recorrer el orden; un favorito cuenta, y un piloto
+  // de afuera entra si quedó delante de al menos un favorito.
+  const out = [];
+  for (let idx = 0; idx < order.length && out.length < 3; idx++) {
+    const id = order[idx];
+    if (out.includes(id)) continue;
+    if (favs.includes(id)) { out.push(id); continue; }
+    const beatsFavorite = favs.some(f => order.indexOf(f) > idx);
+    if (beatsFavorite) out.push(id);
+  }
+  return out;
+}
+
+function favDriverChip(id) {
+  const d = getDriver(id);
+  if (!d) return "";
+  return `
+    <div class="mini-driver-card">
+      <span class="mini-name">${d.flag} ${d.name}</span>
+      <span class="mini-team">${teamName(d.teamId)}</span>
+    </div>`;
+}
+
+function renderHomeFavorites() {
+  const wrap = document.getElementById("home-favoritos");
+  if (!wrap) return;
+  const nextRace = DB.calendar.find(r => !(r.results.r1 && r.results.r2)) || DB.calendar[DB.calendar.length - 1];
+  if (!nextRace) return;
+  const sab = raceFavorites(nextRace, "r1").map(favDriverChip).join("");
+  const dom = raceFavorites(nextRace, "r2").map(favDriverChip).join("");
+  wrap.innerHTML = `
+    <div class="card">
+      <h3>Sábado · ${nextRace.circuit}</h3>
+      <p class="next-gp-date">Clasificación — ${fmtDateShort(nextRace.r1)}</p>
+      ${sab || '<p class="next-gp-date">Sin favoritos todavía</p>'}
+    </div>
+    <div class="card">
+      <h3>Domingo · ${nextRace.circuit}</h3>
+      <p class="next-gp-date">Carrera — ${fmtDateShort(nextRace.r2)}</p>
+      ${dom || '<p class="next-gp-date">Sin favoritos todavía</p>'}
+    </div>`;
+}
+
 function renderHome() {
   const leader = [...DB.drivers]
   .filter(d => d.odds != null)
   .sort((a, b) => a.odds - b.odds)[0];
   const el = id => document.getElementById(id);
+  renderHomeFavorites();
   renderMathematicalChampion();
   renderConstructorChampion();
   if (el("home-favorito")) {

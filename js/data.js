@@ -84,9 +84,9 @@ const DEFAULT_DRIVERS = [
   {
     id: "acosta", name: "Hernán Acosta", number: 40, country: "Argentina", flag: "\u{1F1E6}\u{1F1F7}",
     teamId: "redbull", status: "confirmado", rumorTeams: [],
-    age: 28, seasons: 5, bestResult: "4°",
+    age: 28, seasons: 5, bestResult: "3°",
     bio: "Grandes actuaciones al mando de un Alpine que solo daba para P4 o P5. Ahora estrena asiento en Red Bull.",
-    career: { wins: 0, podiums: 0, poles: 0, fastLaps: 1, dnf: 3, points: 150 },
+    career: { wins: 0, podiums: 1, poles: 0, fastLaps: 1, dnf: 3, points: 150 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
     odds: 8.50, oddsPrev: 9.00, probability: 9, oddsHistory: [9.00, 8.90, 8.70, 8.50],
     powerRank: 5, powerRankPrev: 7,
@@ -325,7 +325,7 @@ const DEFAULT_DRIVERS = [
 
 /* ---------------------- CALENDARIO (24 fechas) ---------------------- */
 const DEFAULT_CALENDAR = [
-  { round: 1,  circuit: "Bahréin",        flag: "\u{1F1E7}\u{1F1ED}", r1: "2026-09-12", r2: "2026-09-13" },
+  { round: 1,  circuit: "Bahréin",        flag: "\u{1F1E7}\u{1F1ED}", r1: "2026-09-12", r2: "2026-09-13", favorites: { r1: ["pichardo","coffin","carreon"], r2: ["coffin","alexander","moran"] } },
   { round: 2,  circuit: "Qatar",          flag: "\u{1F1F6}\u{1F1E6}", r1: "2026-09-19", r2: "2026-09-20" },
   { round: 3,  circuit: "China",          flag: "\u{1F1E8}\u{1F1F3}", r1: "2026-09-26", r2: "2026-09-27" },
   { round: 4,  circuit: "Malasia",        flag: "\u{1F1F2}\u{1F1FE}", r1: "2026-10-03", r2: "2026-10-04" },
