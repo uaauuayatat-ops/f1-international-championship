@@ -325,7 +325,7 @@ const DEFAULT_DRIVERS = [
 
 /* ---------------------- CALENDARIO (24 fechas) ---------------------- */
 const DEFAULT_CALENDAR = [
-  { round: 1,  circuit: "Bahréin",        flag: "\u{1F1E7}\u{1F1ED}", r1: "2026-09-12", r2: "2026-09-13", favorites: { r1: ["pichardo","coffin","carreon"], r2: ["coffin","alexander","moran"] } },
+  { round: 1,  circuit: "Bahréin",        flag: "\u{1F1E7}\u{1F1ED}", r1: "2026-09-12", r2: "2026-09-13", favorites: { r1: [{id:"pichardo",c:2.60},{id:"coffin",c:2.80},{id:"carreon",c:3.50}], r2: [{id:"coffin",c:2.60},{id:"alexander",c:3.20},{id:"moran",c:4.50}] } },
   { round: 2,  circuit: "Qatar",          flag: "\u{1F1F6}\u{1F1E6}", r1: "2026-09-19", r2: "2026-09-20" },
   { round: 3,  circuit: "China",          flag: "\u{1F1E8}\u{1F1F3}", r1: "2026-09-26", r2: "2026-09-27" },
   { round: 4,  circuit: "Malasia",        flag: "\u{1F1F2}\u{1F1FE}", r1: "2026-10-03", r2: "2026-10-04" },

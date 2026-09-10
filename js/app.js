@@ -726,43 +726,73 @@ function powerTrendArrow(rank, prevRank) {
    ---------------------------------------------------------- */
 /* ----------------------------------------------------------
    FAVORITOS DEL GP (inicio)
-   Base: favoritos definidos por GP (seed/admin) o rendimiento.
-   Con resultados cargados, un piloto que NO estaba entre los
-   favoritos entra si terminó mejor que algún favorito.
+   Cada GP/sesión puede definir sus favoritos con cuota propia
+   de ganar ESA carrera: { id, c }. Si no hay definidos, se
+   calculan por rendimiento (puntos de temporada; en pre-temp.
+   cae al favorito del campeonato). Si hay resultados cargados,
+   un piloto que NO estaba en el favoritismo entra al listado si
+   terminó mejor que algún favorito (se le calcula su cuota).
    ---------------------------------------------------------- */
+function computeRaceCuota(d) {
+  const rec = (d.recentPositions || []).slice(-5);
+  let strength = 0;
+  if (rec.length) {
+    const avg = rec.reduce((a, b) => a + b, 0) / rec.length;
+    strength += Math.max(0, 1 - (avg - 1) / 10);
+  } else {
+    strength += 0.35;
+  }
+  strength += Math.min((d.season?.points || 0) / 60, 0.6);
+  const p = Math.max(0.05, Math.min(0.5, 0.1 + strength * 0.4));
+  return Math.max(1.60, Math.min(15, Math.round((1 / p) * 100) / 100));
+}
+
 function raceFavorites(race, key) {
   const order = (race.results && race.results[key] && race.results[key].orderIds) || [];
   let favs = (race.favorites && race.favorites[key]) || [];
   if (!favs.length) {
     // Sin favoritos definidos → por rendimiento (puntos de temporada).
-    // En pretemporada (todos 0) cae al favorito del campeonato (cuota más baja).
     const byPerf = [...DB.drivers].sort((a,b) =>
       (b.season.points || 0) - (a.season.points || 0) || (a.odds ?? 99) - (b.odds ?? 99));
     favs = byPerf.slice(0,3).map(d => d.id);
   }
-  if (!order.length) return favs.slice(0,3);
 
-  // Con resultados: recorrer el orden; un favorito cuenta, y un piloto
-  // de afuera entra si quedó delante de al menos un favorito.
+  // Normalizar: acepta strings o { id, c }
+  const base = favs.map(f => {
+    const obj = typeof f === "string" ? { id: f } : f;
+    const d = getDriver(obj.id);
+    return d ? { id: d.id, c: obj.c || computeRaceCuota(d) } : null;
+  }).filter(Boolean).slice(0,3);
+
+  if (!order.length) return base;
+
+  // Con resultados: un favorito cuenta, y un piloto de afuera
+  // entra si quedó delante de al menos un favorito.
+  const favIds = base.map(f => f.id);
   const out = [];
   for (let idx = 0; idx < order.length && out.length < 3; idx++) {
     const id = order[idx];
-    if (out.includes(id)) continue;
-    if (favs.includes(id)) { out.push(id); continue; }
-    const beatsFavorite = favs.some(f => order.indexOf(f) > idx);
-    if (beatsFavorite) out.push(id);
+    if (out.some(f => f.id === id)) continue;
+    const existing = base.find(f => f.id === id);
+    if (existing) { out.push(existing); continue; }
+    const beatsFavorite = favIds.some(f => order.indexOf(f) > idx);
+    if (beatsFavorite) {
+      const d = getDriver(id);
+      if (d) out.push({ id: d.id, c: computeRaceCuota(d) });
+    }
   }
   return out;
 }
 
-function favDriverChip(id) {
-  const d = getDriver(id);
+function favDriverChip(f) {
+  const d = getDriver(f.id);
   if (!d) return "";
+  const pct = Math.round((100 / f.c) * 10) / 10;
   return `
     <div class="mini-driver-card">
       <span class="mini-name">${d.flag} ${d.name}</span>
       <span class="mini-team">${teamName(d.teamId)}</span>
-      <span class="fav-odds" style="margin-top:0; margin-left:auto; font-size:.8rem;">Cuota ${d.odds ?? "—"} · ${d.probability ?? 0}% probabilidad</span>
+      <span class="fav-odds" style="margin-top:0; margin-left:auto; font-size:.8rem;">Cuota ${f.c} · ${pct}% prob.</span>
     </div>`;
 }
 
@@ -775,13 +805,13 @@ function renderHomeFavorites() {
   const dom = raceFavorites(nextRace, "r2").map(favDriverChip).join("");
   wrap.innerHTML = `
     <div class="card">
-      <h3>Sábado · ${nextRace.circuit}</h3>
-      <p class="next-gp-date">Clasificación — ${fmtDateShort(nextRace.r1)}</p>
+      <h3>Sábado · Carrera</h3>
+      <p class="next-gp-date">${nextRace.circuit} — ${fmtDateShort(nextRace.r1)}</p>
       ${sab || '<p class="next-gp-date">Sin favoritos todavía</p>'}
     </div>
     <div class="card">
-      <h3>Domingo · ${nextRace.circuit}</h3>
-      <p class="next-gp-date">Carrera — ${fmtDateShort(nextRace.r2)}</p>
+      <h3>Domingo · Carrera</h3>
+      <p class="next-gp-date">${nextRace.circuit} — ${fmtDateShort(nextRace.r2)}</p>
       ${dom || '<p class="next-gp-date">Sin favoritos todavía</p>'}
     </div>`;
 }
