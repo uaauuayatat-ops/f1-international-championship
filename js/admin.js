@@ -1,12 +1,6 @@
 /* ============================================================
    F1 INTERNATIONAL CHAMPIONSHIP — admin.js
-   ------------------------------------------------------------
-   Panel de administración. Todo corre en el navegador; los
-   cambios se guardan en la base de datos compartida de Firestore
-   (ver js/firebase-config.js), así que se ven para todos los
-   que entren al sitio, no solo en esta computadora. La contraseña
-   es una barrera básica para uso entre amigos, NO seguridad real
-   — no la uses con datos sensibles. Ver README para cómo cambiarla.
+   Panel de administración.
    ============================================================ */
 
 function isAdminLogged() { return sessionStorage.getItem(AUTH_KEY) === "1"; }
@@ -42,7 +36,6 @@ function initAdmin() {
     loginBox.classList.remove("hidden");
   });
 
-  // Tabs
   document.querySelectorAll(".admin-tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
@@ -91,26 +84,11 @@ function renderAdminDriversList() {
 }
 
 document.addEventListener("submit", (e) => {
-  if (e.target.id === "driver-form") {
-    e.preventDefault();
-    saveDriverFromForm();
-  }
-  if (e.target.id === "news-form") {
-    e.preventDefault();
-    saveNewsFromForm();
-  }
-  if (e.target.id === "result-form") {
-    e.preventDefault();
-    saveResultFromForm();
-  }
-  if (e.target.id === "season-form") {
-    e.preventDefault();
-    closeSeasonFromForm();
-  }
-  if (e.target.id === "circuit-form") {
-    e.preventDefault();
-    addCircuitFromForm();
-  }
+  if (e.target.id === "driver-form") { e.preventDefault(); saveDriverFromForm(); }
+  if (e.target.id === "news-form") { e.preventDefault(); saveNewsFromForm(); }
+  if (e.target.id === "result-form") { e.preventDefault(); saveResultFromForm(); }
+  if (e.target.id === "season-form") { e.preventDefault(); closeSeasonFromForm(); }
+  if (e.target.id === "circuit-form") { e.preventDefault(); addCircuitFromForm(); }
 });
 
 function editDriverForm(id) {
@@ -231,12 +209,6 @@ function renderAdminCalendar() {
         <label><input type="checkbox" data-dnf="${i}"> DNF</label>
       </div>`).join("");
   }
-  const poleSelect = document.getElementById("result-pole-select");
-  const flSelect = document.getElementById("result-fl-select");
-  [poleSelect, flSelect].forEach(sel => {
-    if (sel) sel.innerHTML = `<option value="">—</option>` + DB.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join("");
-  });
-
   const list = document.getElementById("admin-calendar-list");
   if (list) {
     list.innerHTML = DB.calendar.map(r => `
@@ -256,10 +228,8 @@ function saveResultFromForm() {
     if (!sel.value) return;
     if (dnfChecked) dnfIds.push(sel.value); else orderIds.push(sel.value);
   });
-  const poleId = document.getElementById("result-pole-select").value || null;
-  const fastLapId = document.getElementById("result-fl-select").value || null;
   if (!orderIds.length) { alert("Cargá al menos un puesto."); return; }
-  submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId);
+  submitRaceResult(round, raceKey, orderIds, dnfIds);
   renderAdminAll();
   toast("Resultado cargado y clasificaciones recalculadas ✔");
 }
@@ -304,15 +274,14 @@ function updateDriverPower(id, value) {
 function renderAdminSeason() {
   const label = document.getElementById("current-season-label");
   if (label) label.textContent = DB.season;
-   const cont = document.getElementById("current-season-label").parentElement;
-
-if (!document.getElementById("sync-data-btn")) {
-  cont.insertAdjacentHTML("beforeend", `
-    <button id="sync-data-btn" class="btn" onclick="syncFromDataJS()">
-      🔄 Actualizar Firebase desde data.js
-    </button>
-  `);
-                         }
+  const cont = document.getElementById("current-season-label")?.parentElement;
+  if (cont && !document.getElementById("sync-data-btn")) {
+    cont.insertAdjacentHTML("beforeend", `
+      <button id="sync-data-btn" class="btn" onclick="syncFromDataJS()">
+        Actualizar Firebase desde data.js
+      </button>
+    `);
+  }
 }
 function closeSeasonFromForm() {
   if (!confirm("Esto archiva la temporada actual en el historial y reinicia los puntos para la próxima. ¿Continuar?")) return;

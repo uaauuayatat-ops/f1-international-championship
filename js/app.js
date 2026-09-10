@@ -600,7 +600,7 @@ function renderConstructorChampion() {
     </div>`;
 }
 
-function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
+function submitRaceResult(round, raceKey, orderIds, dnfIds) {
   orderIds.forEach((id, idx) => {
     const d = getDriver(id);
     if (!d) return;
@@ -616,9 +616,6 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds, poleId, fastLapId) {
     d.season.dnf++;
     d.recentPositions = [...(d.recentPositions||[]), 20].slice(-8);
   });
-  if (poleId) { const d = getDriver(poleId); if (d) d.season.poles++; }
-  if (fastLapId) { const d = getDriver(fastLapId); if (d) d.season.fastLaps++; }
-
   const race = DB.calendar.find(r => r.round === round);
   if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() };
 
@@ -961,10 +958,8 @@ function renderDriversStandings() {
       <td>${teamName(d.teamId)}</td>
       <td class="strong">${d.season.points}</td>
       <td>${d.season.wins}</td>
-      <td>${d.season.poles}</td>
       <td>${d.season.podiums}</td>
       <td>${d.season.dnf}</td>
-      <td>${d.season.fastLaps}</td>
       <td>${d.pos === 1 ? "—" : "-" + d.gap}</td>
       <td>${d.odds ?? "—"}</td>
       <td>${trendArrow(d.odds, d.oddsPrev)}</td>
@@ -988,7 +983,6 @@ function renderConstructorsStandings() {
       </td>
       <td class="strong">${t.points}</td>
       <td>${t.wins}</td>
-      <td>${t.poles}</td>
       <td>${t.podiums}</td>
       <td>${t.odds ?? "—"}</td>
     </tr>`).join("");
@@ -1315,7 +1309,6 @@ function renderStats() {
     "stat-wins": topBy(d=>d.season.wins+d.career.wins, 5),
     "stat-poles": topBy(d=>d.season.poles+d.career.poles, 5),
     "stat-podiums": topBy(d=>d.season.podiums+d.career.podiums, 5),
-    "stat-fastlaps": topBy(d=>d.season.fastLaps+d.career.fastLaps, 5),
     "stat-points": topBy(d=>d.season.points, 5),
     "stat-dnf": topBy(d=>d.season.dnf+d.career.dnf, 5),
   };
@@ -1326,7 +1319,6 @@ function renderStats() {
     if (id === "stat-wins") getter = d=>d.season.wins+d.career.wins;
     else if (id === "stat-poles") getter = d=>d.season.poles+d.career.poles;
     else if (id === "stat-podiums") getter = d=>d.season.podiums+d.career.podiums;
-    else if (id === "stat-fastlaps") getter = d=>d.season.fastLaps+d.career.fastLaps;
     else if (id === "stat-points") getter = d=>d.season.points;
     else if (id === "stat-dnf") getter = d=>d.season.dnf+d.career.dnf;
     el.innerHTML = statList(list, getter);
