@@ -189,7 +189,7 @@ function recalcOdds() {
     chichar: 101.00, tapara: 105.00, luca: 107.00,
     hernandez: 55.00, fefe: 20.00,
     yzaac: 110.00, ianfalla: 63.00, ventura: 102.00,
-    santiago: 102.00, hitan: 102.00, jose: 102.00, agustin: 102.00
+    santiago: 23.00, hitan: 102.00, jose: 102.00, agustin: 102.00
   };
 
   function getDriverId(d) {
@@ -762,6 +762,7 @@ function favDriverChip(id) {
     <div class="mini-driver-card">
       <span class="mini-name">${d.flag} ${d.name}</span>
       <span class="mini-team">${teamName(d.teamId)}</span>
+      <span class="fav-odds" style="margin-top:0; margin-left:auto; font-size:.8rem;">Cuota ${d.odds ?? "—"} · ${d.probability ?? 0}% probabilidad</span>
     </div>`;
 }
 

@@ -29,14 +29,14 @@ const DEFAULT_TEAMS = [
   { id: "mercedes",   name: "Mercedes",      color: "#00D2BE", logo: "assets/team/mercedes.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 3.0, rivalryA: 1.25, rivalryB: 3.90 },
   { id: "mclaren",    name: "McLaren",       color: "#FF8000", logo: "assets/team/mclaren.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 25, rivalryA: 1.90, rivalryB: 1.95 },
   { id: "audifxr",    name: "Audi FXR",      color: "#BB0A30", logo: "assets/team/audi.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 10, rivalryA: 1.95, rivalryB: 1.90 },
-  { id: "porsche",    name: "Porsche",       color: "#D5001C", logo: "assets/team/porsche.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14, rivalryA: 1.50, rivalryB: 2.60 },
+  { id: "porsche",    name: "Porsche",       color: "#D5001C", logo: "assets/team/porsche.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 14, rivalryA: 2.60, rivalryB: 1.50 },
   { id: "racingbulls", name: "Racing Bulls",    color: "#6C98FF", logo: "assets/team/racingbulls.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 36, rivalryA: 1.75, rivalryB: 2.10 },
   { id: "lamborghini",    name: "Lamborghini",      color: "#D8A016", logo: "assets/team/lamborghini.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 21, rivalryA: 1.60, rivalryB: 2.35 },
   { id: "astonmartin",name: "Aston Martin",  color: "#006F62", logo: "assets/team/astonmartin.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 13, rivalryA: 1.65, rivalryB: 2.25 },
   { id: "alpine",     name: "Alpine",        color: "#0090FF", logo: "assets/team/alpine.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 17, rivalryA: 1.60, rivalryB: 2.35 },
   { id: "lotus", name: "Lotus Renault Racing", color: "#C6F300", logo: "assets/team/lotus.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 23, rivalryA: 1.40, rivalryB: 2.90 },
   { id: "bmw",     name: "BMW",        color: "#2B115A", logo: "assets/team/bmw.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 37, rivalryA: 1.95, rivalryB: 1.90 },
-  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32, rivalryA: 1.95, rivalryB: 1.90 },
+  { id: "alphatauri", name: "Alpha Tauri", color: "#1634CB", logo: "assets/team/alphatauri.png", points: 0, wins: 0, poles: 0, podiums: 0, odds: 32, rivalryA: 1.90, rivalryB: 1.95 },
 ];
 
 /* ---------------------- PILOTOS (28) ---------------------- */
@@ -288,7 +288,7 @@ const DEFAULT_DRIVERS = [
     bio: "Piloto confirmado para esta temporada.",
     career: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 6, points: 5 },
     season: { wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0, points: 0 },
-    odds: 102, oddsPrev: 102, probability: 0.3, oddsHistory: [102, 102, 102, 102],
+    odds: 23, oddsPrev: 23, probability: 4.3, oddsHistory: [102, 102, 102, 23],
     powerRank: 25, powerRankPrev: 26,
   },
   {
