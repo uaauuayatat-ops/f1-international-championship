@@ -188,8 +188,8 @@ function recalcOdds() {
     jeanfranco: 41.00, raneri: 51.00, camilo: 67.00, dave: 81.00,
     chichar: 101.00, tapara: 105.00, luca: 107.00,
     hernandez: 55.00, fefe: 20.00,
-    yzaac: 110.00, ianfalla: 63.00, ventura: 102.00,
-    santiago: 23.00, hitan: 102.00, jose: 102.00, agustin: 102.00
+    fernando: 110.00, ianfalla: 63.00, ventura: 102.00,
+    santiago: 23.00, hitan: 102.00, jose: 25.00, agustin: 102.00
   };
 
   function getDriverId(d) {
