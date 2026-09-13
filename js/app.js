@@ -617,7 +617,7 @@ function submitRaceResult(round, raceKey, orderIds, dnfIds) {
     d.recentPositions = [...(d.recentPositions||[]), 20].slice(-8);
   });
   const race = DB.calendar.find(r => r.round === round);
-  if (race) race.results[raceKey] = { orderIds, dnfIds, poleId, fastLapId, loadedAt: new Date().toISOString() };
+  if (race) race.results[raceKey] = { orderIds, dnfIds, loadedAt: new Date().toISOString() };
 
   recalcTeams();
   recalcOdds();
