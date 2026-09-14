@@ -95,6 +95,11 @@ function hideLoader() {
 
 let DB = null;
 
+/* Máximo de puntos que un piloto puede sumar en un fin de semana:
+   30 (1° clasificación combinada) + 1 (ganar sábado) + 1 (ganar domingo)
+   + 3 (extra por ganar ambas secciones). */
+const MAX_GP_POINTS = Math.max(...POINTS_SYSTEM) + 5;
+
 /* ----------------------------------------------------------
    2) HELPERS GENERALES
    ---------------------------------------------------------- */
@@ -212,8 +217,9 @@ function recalcOdds() {
 
   if (remainingRaces <= 0) return;
 
-  const maxPointsPerRace = Math.max(...POINTS_SYSTEM);
-  const maxPointsRemaining = remainingRaces * maxPointsPerRace;
+  const remainingGps = DB.calendar.filter(r =>
+    !((r.results?.r1?.orderIds?.length > 0) && (r.results?.r2?.orderIds?.length > 0))).length;
+  const maxPointsRemaining = remainingGps * MAX_GP_POINTS;
 
   /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
   if (completedRaces === 0) {
@@ -407,18 +413,19 @@ function recalcOdds() {
 }
 
 function recalcConstructorOdds() {
-  const maxPointsPerDriver = Math.max(...POINTS_SYSTEM);
   let remainingRaces = 0;
   DB.calendar.forEach(race => {
-    if (!race.results?.r1) remainingRaces++;
-    if (!race.results?.r2) remainingRaces++;
+    if (!(race.results?.r1?.orderIds?.length > 0)) remainingRaces++;
+    if (!(race.results?.r2?.orderIds?.length > 0)) remainingRaces++;
   });
 
   const totalRaces = DB.calendar.length * 2;
   const completedRaces = totalRaces - remainingRaces;
   const seasonProgress = totalRaces > 0 ? completedRaces / totalRaces : 0;
 
-  const maxPointsRemaining = remainingRaces * 2 * maxPointsPerDriver;
+  const remainingGps = DB.calendar.filter(r =>
+    !((r.results?.r1?.orderIds?.length > 0) && (r.results?.r2?.orderIds?.length > 0))).length;
+  const maxPointsRemaining = remainingGps * 2 * MAX_GP_POINTS;
 
   /* --- PRE-TEMPORADA: usar cuotas fijas de data.js --- */
   if (completedRaces === 0) {
@@ -434,7 +441,7 @@ function recalcConstructorOdds() {
 
   const possibilities = DB.teams.map(team => {
     const teamDrivers = DB.drivers.filter(d => d.teamId === team.id);
-    const maxRemaining = remainingRaces * teamDrivers.length * maxPointsPerDriver;
+    const maxRemaining = remainingGps * teamDrivers.length * MAX_GP_POINTS;
     return { team, teamDrivers, currentPoints: team.points || 0, maxPossiblePoints: (team.points || 0) + maxRemaining };
   });
 
@@ -554,13 +561,10 @@ function recalcAll() {
 function checkMathematicalChampion() {
   const drivers = DB.drivers || [];
   if (!drivers.length || !DB.calendar) return null;
-  let remainingRaces = 0;
-  DB.calendar.forEach(race => {
-    if (!race.results?.r1?.orderIds?.length) remainingRaces++;
-    if (!race.results?.r2?.orderIds?.length) remainingRaces++;
-  });
-  if (remainingRaces <= 0) return null;
-  const maxPointsRemaining = remainingRaces * Math.max(...POINTS_SYSTEM);
+  const remainingGps = DB.calendar.filter(r =>
+    !((r.results?.r1?.orderIds?.length > 0) && (r.results?.r2?.orderIds?.length > 0))).length;
+  if (remainingGps <= 0) return null;
+  const maxPointsRemaining = remainingGps * MAX_GP_POINTS;
   const sorted = [...drivers].sort((a, b) => b.season.points - a.season.points);
   const leader = sorted[0];
   const canStillCatch = sorted.slice(1).some(d => d.season.points + maxPointsRemaining > leader.season.points);
@@ -600,25 +604,81 @@ function renderConstructorChampion() {
     </div>`;
 }
 
-function submitRaceResult(round, raceKey, orderIds, dnfIds) {
-  orderIds.forEach((id, idx) => {
-    const d = getDriver(id);
-    if (!d) return;
-    const pts = POINTS_SYSTEM[idx] || 0;
-    d.season.points += pts;
-    if (idx === 0) d.season.wins++;
-    if (idx < 3) d.season.podiums++;
-    d.recentPositions = [...(d.recentPositions||[]), idx+1].slice(-8);
+/* ----------------------------------------------------------
+   RECÁLCULO DE PUNTOS DE TEMPORADA
+   El puntaje de cada fin de semana sale de:
+   - Clasificación combinada: suma de tiempos sábado + domingo
+     → posiciones → 30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1
+   - Ganar una sección (sábado o domingo) → +1
+   - Ganar ambas secciones → +3 extra
+   Un piloto que no termina una de las dos secciones no entra
+   a la clasificación combinada del fin de semana.
+   ---------------------------------------------------------- */
+function recalcSeasonPoints() {
+  DB.drivers.forEach(d => {
+    d.season = { ...d.season, points: 0, wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0 };
+    d.recentPositions = [];
   });
-  dnfIds.forEach(id => {
-    const d = getDriver(id);
-    if (!d) return;
-    d.season.dnf++;
-    d.recentPositions = [...(d.recentPositions||[]), 20].slice(-8);
-  });
-  const race = DB.calendar.find(r => r.round === round);
-  if (race) race.results[raceKey] = { orderIds, dnfIds, loadedAt: new Date().toISOString() };
+  const addPt = id => { const d = getDriver(id); if (d) d.season.points += 1; };
 
+  DB.calendar.forEach(race => {
+    const r1 = race.results?.r1;
+    const r2 = race.results?.r2;
+    const r1Done = r1?.orderIds?.length > 0;
+    const r2Done = r2?.orderIds?.length > 0;
+
+    /* Bonus por ganar cada sección */
+    if (r1Done) addPt(r1.orderIds[0]);
+    if (r2Done) addPt(r2.orderIds[0]);
+
+    /* Extra por ganar ambas secciones */
+    const w1 = r1Done ? r1.orderIds[0] : null;
+    const w2 = r2Done ? r2.orderIds[0] : null;
+    if (w1 && w2 && w1 === w2) {
+      const d = getDriver(w1);
+      if (d) d.season.points += 3;
+    }
+
+    /* Clasificación combinada del fin de semana (solo con las dos secciones,
+       y solo pilotos que terminaron ambas con tiempo registrado) */
+    if (r1Done && r2Done) {
+      const bothFinish = r1.orderIds.filter(id =>
+        r2.orderIds.includes(id) && r1.times?.[id] != null && r2.times?.[id] != null);
+      const ranked = bothFinish
+        .map(id => ({ id, total: r1.times[id] + r2.times[id] }))
+        .sort((a, b) => a.total - b.total);
+
+      ranked.forEach(({ id }, idx) => {
+        const pts = POINTS_SYSTEM[idx] || 0;
+        const d = getDriver(id);
+        if (!d || !pts) { if (d) d.recentPositions.push(idx + 1); return; }
+        d.season.points += pts;
+        if (idx === 0) d.season.wins++;
+        if (idx < 3) d.season.podiums++;
+        d.recentPositions.push(idx + 1);
+      });
+    }
+
+    /* DNFs y posición reciente de quienes no clasifican */
+    [r1, r2].forEach(ses => {
+      if (!ses?.orderIds?.length) return;
+      (ses.dnfIds || []).forEach(id => {
+        const d = getDriver(id);
+        if (!d) return;
+        d.season.dnf++;
+        d.recentPositions.push(20);
+      });
+    });
+  });
+
+  DB.drivers.forEach(d => { d.recentPositions = (d.recentPositions || []).slice(-8); });
+}
+
+function submitRaceResult(round, raceKey, orderIds, dnfIds, times) {
+  const race = DB.calendar.find(r => r.round === round);
+  if (race) race.results[raceKey] = { orderIds, dnfIds, times: times || {}, loadedAt: new Date().toISOString() };
+
+  recalcSeasonPoints();
   recalcTeams();
   recalcOdds();
   recalcConstructorOdds();

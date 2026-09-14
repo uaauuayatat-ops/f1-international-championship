@@ -206,6 +206,7 @@ function renderAdminCalendar() {
           <option value="">—</option>
           ${DB.drivers.map(x => `<option value="${x.id}">${x.name}</option>`).join("")}
         </select>
+        <input type="text" data-time-idx="${i}" placeholder="m:ss.mmm" title="Tiempo del piloto (min:seg.mmm)">
         <label><input type="checkbox" data-dnf="${i}"> DNF</label>
       </div>`).join("");
   }
@@ -218,18 +219,36 @@ function renderAdminCalendar() {
       </div>`).join("");
   }
 }
+function parseTimeToSec(val) {
+  const s = (val || "").trim();
+  if (!s) return null;
+  if (s.includes(":")) {
+    const parts = s.split(":");
+    const minutes = parseInt(parts[0], 10) || 0;
+    const secs = parseFloat(parts[1].replace(",", "."));
+    if (isNaN(secs)) return null;
+    return Math.round((minutes * 60 + secs) * 1000) / 1000;
+  }
+  const secs = parseFloat(s.replace(",", "."));
+  return isNaN(secs) ? null : Math.round(secs * 1000) / 1000;
+}
+
 function saveResultFromForm() {
   const round = parseInt(document.getElementById("result-round-select").value);
   const raceKey = document.getElementById("result-race-key").value;
   const orderIds = [];
   const dnfIds = [];
+  const times = {};
   document.querySelectorAll("[data-order-idx]").forEach((sel, i) => {
     const dnfChecked = document.querySelector(`[data-dnf="${i}"]`)?.checked;
     if (!sel.value) return;
-    if (dnfChecked) dnfIds.push(sel.value); else orderIds.push(sel.value);
+    if (dnfChecked) { dnfIds.push(sel.value); return; }
+    orderIds.push(sel.value);
+    const t = parseTimeToSec(document.querySelector(`[data-time-idx="${i}"]`)?.value);
+    if (t != null) times[sel.value] = t;
   });
   if (!orderIds.length) { alert("Cargá al menos un puesto."); return; }
-  submitRaceResult(round, raceKey, orderIds, dnfIds);
+  submitRaceResult(round, raceKey, orderIds, dnfIds, times);
   renderAdminAll();
   toast("Resultado cargado y clasificaciones recalculadas ✔");
 }
