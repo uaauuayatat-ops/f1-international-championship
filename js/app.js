@@ -611,8 +611,8 @@ function renderConstructorChampion() {
      → posiciones → 30, 27, 24, 21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1
    - Ganar una sección (sábado o domingo) → +1
    - Ganar ambas secciones → +3 extra
-   Un piloto que no termina una de las dos secciones no entra
-   a la clasificación combinada del fin de semana.
+   - No participar un día → ese día cuenta +2:00 (2 minutos de penalización)
+   - Abandonar (DNF) un día → queda fuera de la clasificación del fin de semana
    ---------------------------------------------------------- */
 function recalcSeasonPoints() {
   DB.drivers.forEach(d => {
@@ -639,14 +639,32 @@ function recalcSeasonPoints() {
       if (d) d.season.points += 3;
     }
 
-    /* Clasificación combinada del fin de semana (solo con las dos secciones,
-       y solo pilotos que terminaron ambas con tiempo registrado) */
-    if (r1Done && r2Done) {
-      const bothFinish = r1.orderIds.filter(id =>
-        r2.orderIds.includes(id) && r1.times?.[id] != null && r2.times?.[id] != null);
-      const ranked = bothFinish
-        .map(id => ({ id, total: r1.times[id] + r2.times[id] }))
-        .sort((a, b) => a.total - b.total);
+    /* Clasificación combinada del fin de semana
+       - Abandonar (DNF) un día → queda fuera de la clasificación (sin puntos del finde)
+       - No participar un día → ese día suma +2:00 al tiempo combinado */
+    if (r1Done || r2Done) {
+      const dayState = ses => {
+        const map = {};
+        if (!ses?.orderIds?.length) return map;
+        (ses.dnfIds || []).forEach(id => { map[id] = "dnf"; });
+        ses.orderIds.forEach(id => {
+          map[id] = map[id] === "dnf" ? "dnf" : (ses.times?.[id] != null ? "time" : "absent");
+        });
+        return map;
+      };
+      const map1 = dayState(r1);
+      const map2 = dayState(r2);
+      const eligible = [];
+      new Set([...Object.keys(map1), ...Object.keys(map2)]).forEach(id => {
+        const s1 = map1[id] || "absent";
+        const s2 = map2[id] || "absent";
+        if (s1 === "dnf" || s2 === "dnf") return;
+        if (s1 !== "time" && s2 !== "time") return;
+        const t1 = s1 === "time" ? r1.times[id] : 120;
+        const t2 = s2 === "time" ? r2.times[id] : 120;
+        eligible.push({ id, total: t1 + t2 });
+      });
+      const ranked = eligible.sort((a, b) => a.total - b.total);
 
       ranked.forEach(({ id }, idx) => {
         const pts = POINTS_SYSTEM[idx] || 0;
