@@ -206,7 +206,13 @@ function renderAdminCalendar() {
           <option value="">—</option>
           ${DB.drivers.map(x => `<option value="${x.id}">${x.name}</option>`).join("")}
         </select>
-        <input type="text" data-time-idx="${i}" placeholder="m:ss.mmm" title="Tiempo del piloto (min:seg.mmm)">
+        <div class="time-inputs">
+          <input type="number" data-time-m="${i}" min="0" placeholder="min" title="Minutos">
+          <span class="time-sep">:</span>
+          <input type="number" data-time-s="${i}" min="0" max="59" placeholder="seg" title="Segundos">
+          <span class="time-sep">.</span>
+          <input type="number" data-time-ms="${i}" min="0" max="999" placeholder="milési" title="Milésimas de segundo (0-999)">
+        </div>
         <label><input type="checkbox" data-dnf="${i}"> DNF</label>
       </div>`).join("");
   }
@@ -219,18 +225,18 @@ function renderAdminCalendar() {
       </div>`).join("");
   }
 }
-function parseTimeToSec(val) {
-  const s = (val || "").trim();
-  if (!s) return null;
-  if (s.includes(":")) {
-    const parts = s.split(":");
-    const minutes = parseInt(parts[0], 10) || 0;
-    const secs = parseFloat(parts[1].replace(",", "."));
-    if (isNaN(secs)) return null;
-    return Math.round((minutes * 60 + secs) * 1000) / 1000;
-  }
-  const secs = parseFloat(s.replace(",", "."));
-  return isNaN(secs) ? null : Math.round(secs * 1000) / 1000;
+function getRowTime(i) {
+  const mEl = document.querySelector(`[data-time-m="${i}"]`);
+  const sEl = document.querySelector(`[data-time-s="${i}"]`);
+  const msEl = document.querySelector(`[data-time-ms="${i}"]`);
+  if (!mEl && !sEl && !msEl) return null;
+  let m = parseInt(mEl?.value, 10); if (isNaN(m)) m = 0;
+  let s = parseInt(sEl?.value, 10); if (isNaN(s)) s = 0;
+  let ms = parseInt(msEl?.value, 10); if (isNaN(ms)) ms = 0;
+  if (!mEl.value && !sEl.value && !msEl.value) return null;
+  s += Math.floor(ms / 1000); ms = ms % 1000;
+  m += Math.floor(s / 60); s = s % 60;
+  return Math.round((m * 60 + s + ms / 1000) * 1000) / 1000;
 }
 
 function saveResultFromForm() {
@@ -244,10 +250,13 @@ function saveResultFromForm() {
     if (!sel.value) return;
     if (dnfChecked) { dnfIds.push(sel.value); return; }
     orderIds.push(sel.value);
-    const t = parseTimeToSec(document.querySelector(`[data-time-idx="${i}"]`)?.value);
+    const t = getRowTime(i);
     if (t != null) times[sel.value] = t;
   });
   if (!orderIds.length) { alert("Cargá al menos un puesto."); return; }
+  const missingTimes = orderIds.filter(id => times[id] == null);
+  if (missingTimes.length &&
+      !confirm(`Faltan tiempos de: ${missingTimes.map(id => { const d = getDriver(id); return d ? d.name : id; }).join(", ")}.\nEsos días se contarán como +2:00. ¿Guardar igual?`)) return;
   submitRaceResult(round, raceKey, orderIds, dnfIds, times);
   renderAdminAll();
   toast("Resultado cargado y clasificaciones recalculadas ✔");
