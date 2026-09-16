@@ -367,6 +367,10 @@ form.admin-form textarea { resize: vertical; min-height: 80px; }
 .inline-label input { width: 80px; padding: 5px 8px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--white); }
 .order-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: .84rem; }
 .order-row select { flex: 1; padding: 7px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg-alt); color: var(--white); }
+.time-inputs { display: flex; align-items: center; gap: 4px; }
+.time-inputs input { width: 52px; padding: 7px 4px; text-align: center; border-radius: 5px; border: 1px solid var(--border); background: var(--bg-alt); color: var(--white); font-size: .8rem; }
+.time-inputs input[data-time-ms] { width: 60px; }
+.time-sep { color: var(--gray); font-weight: 700; }
 #admin-login { max-width: 380px; margin: 80px auto; text-align: center; }
 .hidden { display: none !important; }
 .empty { color: var(--gray); font-style: italic; padding: 20px 0; }
