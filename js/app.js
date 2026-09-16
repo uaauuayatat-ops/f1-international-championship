@@ -614,6 +614,31 @@ function renderConstructorChampion() {
    - No participar un día → ese día cuenta +2:00 (2 minutos de penalización)
    - Abandonar (DNF) un día → queda fuera de la clasificación del fin de semana
    ---------------------------------------------------------- */
+function computeWeekendRanking(r1, r2) {
+  const dayState = ses => {
+    const map = {};
+    if (!ses?.orderIds?.length) return map;
+    (ses.dnfIds || []).forEach(id => { map[id] = "dnf"; });
+    ses.orderIds.forEach(id => {
+      map[id] = map[id] === "dnf" ? "dnf" : (ses.times?.[id] != null ? "time" : "absent");
+    });
+    return map;
+  };
+  const map1 = dayState(r1);
+  const map2 = dayState(r2);
+  const eligible = [];
+  new Set([...Object.keys(map1), ...Object.keys(map2)]).forEach(id => {
+    const s1 = map1[id] || "absent";
+    const s2 = map2[id] || "absent";
+    if (s1 === "dnf" || s2 === "dnf") return;
+    if (s1 !== "time" && s2 !== "time") return;
+    const t1 = s1 === "time" ? r1.times[id] : 120;
+    const t2 = s2 === "time" ? r2.times[id] : 120;
+    eligible.push({ id, total: t1 + t2 });
+  });
+  return eligible.sort((a, b) => a.total - b.total);
+}
+
 function recalcSeasonPoints() {
   DB.drivers.forEach(d => {
     d.season = { ...d.season, points: 0, wins: 0, podiums: 0, poles: 0, fastLaps: 0, dnf: 0 };
@@ -643,28 +668,7 @@ function recalcSeasonPoints() {
        - Abandonar (DNF) un día → queda fuera de la clasificación (sin puntos del finde)
        - No participar un día → ese día suma +2:00 al tiempo combinado */
     if (r1Done || r2Done) {
-      const dayState = ses => {
-        const map = {};
-        if (!ses?.orderIds?.length) return map;
-        (ses.dnfIds || []).forEach(id => { map[id] = "dnf"; });
-        ses.orderIds.forEach(id => {
-          map[id] = map[id] === "dnf" ? "dnf" : (ses.times?.[id] != null ? "time" : "absent");
-        });
-        return map;
-      };
-      const map1 = dayState(r1);
-      const map2 = dayState(r2);
-      const eligible = [];
-      new Set([...Object.keys(map1), ...Object.keys(map2)]).forEach(id => {
-        const s1 = map1[id] || "absent";
-        const s2 = map2[id] || "absent";
-        if (s1 === "dnf" || s2 === "dnf") return;
-        if (s1 !== "time" && s2 !== "time") return;
-        const t1 = s1 === "time" ? r1.times[id] : 120;
-        const t2 = s2 === "time" ? r2.times[id] : 120;
-        eligible.push({ id, total: t1 + t2 });
-      });
-      const ranked = eligible.sort((a, b) => a.total - b.total);
+      const ranked = computeWeekendRanking(r1, r2);
 
       ranked.forEach(({ id }, idx) => {
         const pts = POINTS_SYSTEM[idx] || 0;
@@ -1331,6 +1335,89 @@ function renderPowerRanking() {
 /* ----------------------------------------------------------
    13) RENDER: CALENDARIO
    ---------------------------------------------------------- */
+function fmtTime(t) {
+  if (t == null) return "—";
+  const m = Math.floor(t / 60);
+  const s = t - m * 60;
+  return `${String(m).padStart(2, "0")}:${s.toFixed(3).padStart(6, "0")}`;
+}
+
+function gpHistoryHTML(round) {
+  const race = DB.calendar.find(r => r.round === round);
+  if (!race) return "<p>Sin datos.</p>";
+  const r1 = race.results?.r1;
+  const r2 = race.results?.r2;
+  const r1Done = r1?.orderIds?.length > 0;
+  const r2Done = r2?.orderIds?.length > 0;
+  if (!r1Done && !r2Done) return "<p>Esta carrera todavía no se disputó.</p>";
+
+  const driverName = id => { const d = getDriver(id); return d ? `${d.country} ${d.name}` : id; };
+
+  const sessionHTML = (label, ses) => {
+    if (!ses?.orderIds?.length) return "";
+    const dnf = ses.dnfIds || [];
+    const rows = ses.orderIds.map((id, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${driverName(id)}</td>
+        <td>${fmtTime(ses.times?.[id])}</td>
+      </tr>`).join("");
+    const dnfNote = dnf.length
+      ? `<div class="gp-dnf">Abandonaron: ${dnf.map(driverName).join(", ")}</div>`
+      : "";
+    return `<section class="gp-session">
+      <h4>${label}</h4>
+      <table class="gp-table"><tbody>${rows}</tbody></table>
+      ${dnfNote}
+    </section>`;
+  };
+
+  const ranked = computeWeekendRanking(r1, r2);
+  const rows = ranked.map(({ id, total }, i) => {
+    const pts = POINTS_SYSTEM[i] || 0;
+    return `<tr>
+      <td>${i + 1}</td>
+      <td>${driverName(id)}</td>
+      <td>${fmtTime(total)}</td>
+      <td><b>${pts}</b></td>
+    </tr>`;
+  }).join("");
+  const combined = ranked.length ? `<section class="gp-session">
+    <h4>Clasificación del fin de semana</h4>
+    <table class="gp-table gp-combined"><thead>
+      <tr><th>#</th><th>Piloto</th><th>Suma total</th><th>Pts</th></tr>
+    </thead><tbody>${rows}</tbody></table>
+  </section>` : "";
+
+  let bonus = "";
+  const w1 = r1Done ? r1.orderIds[0] : null;
+  const w2 = r2Done ? r2.orderIds[0] : null;
+  const parts = [];
+  if (w1) parts.push(`Sábado: <b>${driverName(w1)}</b> +1`);
+  if (w2) parts.push(`Domingo: <b>${driverName(w2)}</b> +1`);
+  if (w1 && w2 && w1 === w2) parts.push(`Doble: <b>${driverName(w1)}</b> +3`);
+  if (parts.length) bonus = `<div class="gp-bonus">${parts.join(" · ")}</div>`;
+
+  return `<div class="gp-detail-inner">
+    <div class="gp-day-col">${sessionHTML("Sábado · Clasificación + Carrera", r1)}</div>
+    <div class="gp-day-col">${sessionHTML("Domingo · Clasificación + Carrera", r2)}</div>
+    ${combined}
+    ${bonus}
+  </div>`;
+}
+
+function toggleGpDetail(round) {
+  const detail = document.getElementById(`gp-detail-${round}`);
+  if (!detail) return;
+  const btn = document.querySelector(`[data-toggle-gp="${round}"]`);
+  if (!detail.dataset.rendered) {
+    detail.innerHTML = gpHistoryHTML(round);
+    detail.dataset.rendered = "1";
+  }
+  detail.hidden = !detail.hidden;
+  if (btn) btn.textContent = detail.hidden ? "Ver resultado" : "Ocultar";
+}
+
 function renderCalendar() {
   const wrap = document.getElementById("calendar-list");
   if (!wrap) return;
@@ -1357,6 +1444,8 @@ function renderCalendar() {
     else if (nextRound && r.round === nextRound.round) s = "proximo";
     else s = "pendiente";
 
+    const hasResult = r1Done || r2Done;
+
     return `
       <div class="card calendar-card fade-up status-${s}">
         <div class="cal-round">R${r.round}</div>
@@ -1366,8 +1455,12 @@ function renderCalendar() {
           <p>Clasificación + Carrera sábado: ${fmtDateShort(r.r1)}</p>
           <p>Clasificación + Carrera domingo: ${fmtDateShort(r.r2)}</p>
         </div>
-        <span class="badge badge-${s}">${statusLabel(s)}</span>
-      </div>`;
+        <div class="cal-actions">
+          <span class="badge badge-${s}">${statusLabel(s)}</span>
+          ${hasResult ? `<button class="btn-mini" data-toggle-gp="${r.round}">Ver resultado</button>` : ""}
+        </div>
+      </div>
+      <div id="gp-detail-${r.round}" class="gp-detail" hidden></div>`;
   }).join("");
 }
 
