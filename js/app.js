@@ -1457,7 +1457,7 @@ function renderCalendar() {
         </div>
         <div class="cal-actions">
           <span class="badge badge-${s}">${statusLabel(s)}</span>
-          ${hasResult ? `<button class="btn-mini" data-toggle-gp="${r.round}">Ver resultado</button>` : ""}
+          ${hasResult ? `<button class="btn-mini" data-toggle-gp="${r.round}" onclick="toggleGpDetail(${r.round})">Ver resultado</button>` : ""}
         </div>
       </div>
       <div id="gp-detail-${r.round}" class="gp-detail" hidden></div>`;
