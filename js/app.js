@@ -10,7 +10,7 @@
    ============================================================ */
 
 const AUTH_KEY = "f1_admin_session";
-const ADMIN_PASSWORD = "f1admin2027";
+const ADMIN_PASSWORD = "Campeonatof126/27";
 
 /* ----------------------------------------------------------
    1) BASE DE DATOS COMPARTIDA (Firebase Firestore)
