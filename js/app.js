@@ -261,7 +261,10 @@ function recalcOdds() {
   const totalRaces = completedRaces + remainingRaces;
   const seasonProgress = totalRaces > 0 ? completedRaces / totalRaces : 0;
 
-  drivers.forEach(d => {
+  /* El líder se calcula primero: así el "piso vs líder" usa su cuota ya actualizada. */
+  const driversInOrder = [...drivers].sort((a, b) => (b === leader ? 1 : 0) - (a === leader ? 1 : 0));
+
+  driversInOrder.forEach(d => {
     const id = getDriverId(d);
     const isFreeDriver = ["libre1","libre2","libre3","libre4"].includes(id);
     if (isFreeDriver) { d.odds = null; d.probability = null; return; }
@@ -303,30 +306,30 @@ function recalcOdds() {
     const deficitRatio = Math.min(1, deficit / Math.max(1, maxPointsRemaining));
 
     /* ---------- PERFORMANCE SCORE ----------
-       Rango real: -0.40 (muy mal) a +0.80 (dominante).
-       Un favorito que no gana ni sube al podio sube de cuota.
-       Un underdog que gana carreras baja fuerte. */
+       Rango real: -0.35 (muy mal) a +0.55 (dominante).
+       3 victorias sobre 24 fines de semana dan un favorito fuerte,
+       pero nunca una cuota de 1.05. */
     let performanceScore = 0;
-    performanceScore += Math.min(wins, 8) * 0.10;
-    performanceScore += Math.min(podiums, 12) * 0.04;
-    performanceScore += Math.min(poles, 10) * 0.02;
-    performanceScore += Math.min(fastestLaps, 10) * 0.01;
-    performanceScore += recentForm * 0.15;
-    performanceScore -= Math.min(retirements, 8) * 0.035;
-    performanceScore = Math.max(-0.40, Math.min(0.80, performanceScore));
+    performanceScore += Math.min(wins, 6) * 0.06;
+    performanceScore += Math.min(podiums, 8) * 0.03;
+    performanceScore += Math.min(poles, 10) * 0.01;
+    performanceScore += Math.min(fastestLaps, 10) * 0.005;
+    performanceScore += recentForm * 0.12;
+    performanceScore -= Math.min(retirements, 5) * 0.03;
+    performanceScore = Math.max(-0.35, Math.min(0.55, performanceScore));
 
     /* ---------- POINTS INFLUENCE ----------
        Cuanto más grande es la ventaja del líder, más fuerte el efecto.
        Al inicio de temporada los puntos pesan menos, al final pesan más. */
-    const pointsInfluence = deficitRatio * (0.20 + seasonProgress * 0.80);
+    const pointsInfluence = deficitRatio * (0.10 + seasonProgress * 0.60);
 
     /* Performance multiplier: fav que rinde mal → odds suben.
        Underdog que rinde bien → odds bajan. */
-    let performanceMultiplier = 1 - performanceScore;
-    performanceMultiplier = Math.max(0.55, Math.min(1.50, performanceMultiplier));
+    let performanceMultiplier = 1 - performanceScore * 0.60;
+    performanceMultiplier = Math.max(0.70, Math.min(1.25, performanceMultiplier));
 
     /* Points multiplier: quien va abajo tiene cuotas más altas. */
-    let pointsMultiplier = 1 + pointsInfluence * 1.50;
+    let pointsMultiplier = 1 + pointsInfluence * 1.10;
 
     /* ---------- LEADER BONUS ----------
        El líder recibe una reducción de cuota proporcional a su ventaja. */
@@ -335,42 +338,38 @@ function recalcOdds() {
       const secondPoints = second?.season?.points || 0;
       const gapToSecond = Math.max(0, leaderPoints - secondPoints);
       const leaderAdvantageRatio = maxPointsRemaining > 0 ? Math.min(1, gapToSecond / maxPointsRemaining) : 1;
-      let leaderReduction = 0.05;
-      leaderReduction += leaderAdvantageRatio * 0.15;
-      leaderReduction += seasonProgress * 0.05;
-      leaderReduction = Math.max(0.03, Math.min(0.25, leaderReduction));
+      let leaderReduction = 0.03;
+      leaderReduction += leaderAdvantageRatio * 0.12;
+      leaderReduction += seasonProgress * 0.04;
+      leaderReduction = Math.max(0.02, Math.min(0.18, leaderReduction));
       pointsMultiplier *= 1 - leaderReduction;
     } else {
-      /* BRACKET DE DÉFICIT — más agresivo que antes */
-      if (deficitRatio < 0.10) pointsMultiplier *= 0.92;
+      /* BRACKET DE DÉFICIT — suave */
+      if (deficitRatio < 0.10) pointsMultiplier *= 0.96;
       else if (deficitRatio < 0.25) pointsMultiplier *= 1.00;
-      else if (deficitRatio < 0.45) pointsMultiplier *= 1.12;
-      else if (deficitRatio < 0.65) pointsMultiplier *= 1.28;
-      else if (deficitRatio < 0.85) pointsMultiplier *= 1.45;
-      else pointsMultiplier *= 1.65;
+      else if (deficitRatio < 0.45) pointsMultiplier *= 1.08;
+      else if (deficitRatio < 0.65) pointsMultiplier *= 1.18;
+      else if (deficitRatio < 0.85) pointsMultiplier *= 1.30;
+      else pointsMultiplier *= 1.45;
     }
 
     /* ---------- BASE ODDS ----------
-       Se usa startingOdds la primera vez, luego el odds actual como base.
-       Esto permite que las cuotas converjan hacia el rendimiento real. */
+       La cuota siempre se calcula sobre la cuota inicial (startingOdds),
+       nunca sobre la cuota anterior: así no se va acumulando carrera tras
+       carrera ni visita tras visita. */
     let baseOdds = d.startingOdds;
     if (typeof baseOdds !== "number" || !isFinite(baseOdds)) {
       baseOdds = (typeof d.odds === "number" && isFinite(d.odds)) ? d.odds : 50;
     }
     baseOdds = Math.max(1.05, Math.min(200, baseOdds));
 
-    /* Si ya hay odds calculadas, las usamos como base (no partimos de starting cada vez) */
-    if (completedRaces > 0 && typeof d.odds === "number" && isFinite(d.odds) && d.odds > 0) {
-      baseOdds = d.odds;
-    }
-
     let newOdds = baseOdds * performanceMultiplier * pointsMultiplier;
 
     /* ---------- BONUS / PENALIDAD POR ÚLTIMA CARRERA ---------- */
     if (d !== leader) {
       if (pointsGained <= 0) newOdds *= 1.12;
-      else if (pointsGained >= 27) newOdds *= 0.90;
-      else if (pointsGained >= 19) newOdds *= 0.94;
+else if (pointsGained >= 27) newOdds *= 0.96;
+      else if (pointsGained >= 19) newOdds *= 0.98;
     }
 
     /* ---------- PISO VS LÍDER ----------
@@ -383,17 +382,6 @@ function recalcOdds() {
         newOdds = Math.max(newOdds, minimumOdds);
       }
     }
-
-    /* ---------- DAMPING (movimiento máximo por ciclo) ----------
-       Mucho más amplio que antes para que los cambios se noten.
-       Al inicio de temporada se mueve más (mercado se está formando).
-       Al final, más estable (ya hay certeza). */
-    const previousOdds = typeof d.odds === "number" ? d.odds : baseOdds;
-    const maxOddsMovement = seasonProgress < 0.15 ? 0.25
-                          : seasonProgress < 0.35 ? 0.20
-                          : seasonProgress < 0.60 ? 0.15
-                          : 0.10;
-    newOdds = Math.max(previousOdds * (1 - maxOddsMovement), Math.min(previousOdds * (1 + maxOddsMovement), newOdds));
 
     newOdds = Math.max(1.05, Math.min(200, newOdds));
     newOdds = Math.round(newOdds * 100) / 100;
@@ -554,8 +542,21 @@ function recalcPower() {
 
 function recalcAll() {
   recalcTeams();
+  recalcConstructorOdds();
   recalcPower();
   saveDB(DB);
+}
+
+function forceRecalcOdds() {
+  recalcTeams();
+  recalcOdds();
+  recalcConstructorOdds();
+  recalcPower();
+  const mathematicalChampion = checkMathematicalChampion();
+  if (mathematicalChampion) DB.mathematicalChampion = mathematicalChampion.id;
+  saveDB(DB);
+  renderCurrentPage();
+  if (typeof toast === "function") toast("Cuotas recalculadas ✔");
 }
 
 function checkMathematicalChampion() {
@@ -1580,7 +1581,6 @@ function initSearch(inputId, cardsSelector, containerSelector) {
 function renderCurrentPage() {
   const page = document.body.dataset.page;
   recalcTeams();
-  recalcOdds();
   recalcConstructorOdds();
   recalcPower();
   if (page === "home") renderHome();
