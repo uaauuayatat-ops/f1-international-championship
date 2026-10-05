@@ -10,7 +10,7 @@
    ============================================================ */
 
 const AUTH_KEY = "f1_admin_session";
-const ADMIN_PASSWORD = "Campeonatof126/27";
+const ADMIN_PASSWORD = "f1admin2027";
 
 /* ----------------------------------------------------------
    1) BASE DE DATOS COMPARTIDA (Firebase Firestore)
@@ -398,7 +398,7 @@ function recalcOdds() {
     newOdds = Math.max(1.05, Math.min(200, newOdds));
     newOdds = Math.round(newOdds * 100) / 100;
 
-    d.oddsPrev = typeof d.odds === "number" ? d.odds : startingOdds;
+    d.oddsPrev = typeof d.odds === "number" ? d.odds : baseOdds;
     d.odds = newOdds;
     d.probability = Math.round((100 / newOdds) * 10) / 10;
     d.oddsHistory = [...(d.oddsHistory || []), newOdds].slice(-10);
