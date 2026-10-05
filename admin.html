@@ -169,8 +169,11 @@
 
     <!-- CUOTAS Y POWER RANKING MANUAL -->
     <section id="tab-odds" class="admin-tab">
-      <h2 class="section-title">Ajuste manual</h2>
+<h2 class="section-title">Ajuste manual</h2>
       <p style="max-width:640px">Las cuotas y el power ranking se recalculan solos al cargar resultados, pero podés forzar un valor manualmente si querés reflejar algo puntual (una lesión, un cambio de motor, etc).</p>
+      <div style="margin-bottom:18px">
+        <button class="btn secondary" type="button" onclick="forceRecalcOdds()">Forzar recálculo de cuotas</button>
+      </div>
       <div id="admin-odds-power-list"></div>
     </section>
 
